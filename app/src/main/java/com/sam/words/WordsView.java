@@ -14,8 +14,12 @@ public class WordsView extends View {
     private int firstLetterHeight;
     private Paint mTextPaint;
     private String firstLetter = "A";
-    private int firstLetterX = 50;
-    private int firstLetterY = 300;
+    private int paddingHor = 100;
+    private int paddingVer = 200;
+    private int viewLeft = -1;
+    private int viewRight = -1;
+    private int viewTop = -1;
+    private int viewBottom = -1;
 
 
     public WordsView(Context context, AttributeSet attrs) {
@@ -32,12 +36,40 @@ public class WordsView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawText(firstLetter, firstLetterX, firstLetterY, mTextPaint);
-        canvas.drawRect(
-                firstLetterX,
-                firstLetterY - firstLetterHeight,
-                firstLetterX + firstLetterWidth,
-                firstLetterY,
+
+        int[] coords = {-1, -1};
+        this.getLocationInWindow(coords);
+
+        if (viewLeft == -1)
+            viewLeft = getLeft();
+        if (viewRight == -1)
+            viewRight = getRight();
+        if (viewTop == -1)
+            viewTop = getTop();
+        if (viewBottom == - 1)
+            viewBottom  = getBottom();
+
+        int textX = viewLeft + paddingHor;
+        int textY = viewTop + paddingVer;
+
+        canvas.drawText(
+                firstLetter,
+                textX,
+                textY + firstLetterHeight,
                 mTextPaint);
+        canvas.drawRect(
+                textX,
+                textY,
+                textX + firstLetterWidth,
+                textY + firstLetterHeight,
+                mTextPaint);
+
+        canvas.drawRect(
+                viewLeft + 5,
+                viewTop + 5,
+                viewRight - 5,
+                viewBottom - 5,
+                mTextPaint
+        );
     }
 }

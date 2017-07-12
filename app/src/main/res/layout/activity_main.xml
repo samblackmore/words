@@ -7,7 +7,6 @@
     tools:context="com.sam.words.MainActivity">
 
     <com.sam.words.WordsView
-        android:paddingTop="?android:attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
