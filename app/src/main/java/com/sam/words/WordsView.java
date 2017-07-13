@@ -22,7 +22,7 @@ public class WordsView extends View {
     private List<Rect> sentenceBounds;
     private int paddingHor = 100;
     private int paddingVer = 200;
-    private int textSizePx = 100;
+    private int textSizePx = 10;
     private int viewLeft = -1;
     private int viewRight = -1;
     private int viewTop = -1;
@@ -88,6 +88,22 @@ public class WordsView extends View {
         return list;
     }
 
+    public void increaseTextSize(int amount) {
+        textSizePx += amount;
+        init();
+    }
+
+    private void init() {
+        mTextPaint.setTextSize(textSizePx);
+
+        // Line height is height of the tallest letter - l
+        Rect bounds = new Rect();
+        mTextPaint.getTextBounds("l", 0, 1, bounds);
+        lineHeight = bounds.height();
+        lineSpacing = (int) ((lineHeight * lineSeperation) - lineHeight);
+
+        //sentenceBounds = getBoundsPerLetter(mTextPaint, sentence);
+    }
 
     public WordsView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -97,18 +113,8 @@ public class WordsView extends View {
         );
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTypeface(crimsonText);
-        mTextPaint.setTextSize(textSizePx);
         mTextPaint.setStyle(Paint.Style.STROKE);
-
-        // Line height is height of the tallest letter - l
-        Rect bounds = new Rect();
-        mTextPaint.getTextBounds("l", 0, 1, bounds);
-        lineHeight = bounds.height();
-        lineSpacing = (int) ((lineHeight * lineSeperation) - lineHeight);
-
-        //sentenceBounds = getBoundsPerLetter(mTextPaint, sentence);
-
-
+        init();
     }
 
     @Override
