@@ -17,11 +17,12 @@ public class WordsView extends View {
     private int firstLetterWidth;
     private int sentenceHeight;
     private Paint mTextPaint;
-    private String sentence = "The quick brown fox jumps over the lazy dog";
+    private String sentence = "The quick brown fox jumps over the lazy dog. THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG!";
     private List<String> lines;
     private List<Rect> sentenceBounds;
     private int paddingHor = 100;
     private int paddingVer = 200;
+    private int textSizePx = 100;
     private int viewLeft = -1;
     private int viewRight = -1;
     private int viewTop = -1;
@@ -68,11 +69,13 @@ public class WordsView extends View {
     private List<String> lineWrap(Paint paint, int widthAvailable, String string) {
 
         List<String> list = new ArrayList<>();
-        String line = "";
+        String[] words = string.split(" ");
+        String line = words[0];
 
         // For each next word, see if we can add it to the line
-        for (String nextWord : string.split(" ")) {;
-            String lineWithNextWord = line + nextWord;
+        for (int i = 1; i < words.length; i++) {
+            String nextWord = words[i];
+            String lineWithNextWord = line + " " + nextWord;
             float testWidth = paint.measureText(lineWithNextWord, 0, lineWithNextWord.length());
             // If proposed line is too long
             if (widthAvailable - testWidth <= 0) {
@@ -81,6 +84,7 @@ public class WordsView extends View {
             }
             else line = lineWithNextWord;
         }
+        list.add(line);
         return list;
     }
 
@@ -93,7 +97,7 @@ public class WordsView extends View {
         );
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTypeface(crimsonText);
-        mTextPaint.setTextSize(300);
+        mTextPaint.setTextSize(textSizePx);
         mTextPaint.setStyle(Paint.Style.STROKE);
 
         // Line height is height of the tallest letter - l
@@ -112,9 +116,10 @@ public class WordsView extends View {
         super.onDraw(canvas);
         calculateDimensions();
 
+        // TODO - Don't calculate this on every draw
         lines = lineWrap(mTextPaint, textAreaRight - textAreaLeft, sentence);
 
-        for (int i = 1; i < lines.size(); i++) {
+        for (int i = 1; i < lines.size()+1; i++) {
             String line = lines.get(i-1);
             canvas.drawText(
                     line,
