@@ -18,6 +18,7 @@ public class WordsView extends View {
     private int sentenceHeight;
     private Paint mTextPaint;
     private String sentence = "The quick brown fox jumps over the lazy dog";
+    private List<String> lines;
     private List<Rect> sentenceBounds;
     private int paddingHor = 100;
     private int paddingVer = 200;
@@ -53,13 +54,32 @@ public class WordsView extends View {
     }
 
     private List<Rect> getBoundsPerLetter(Paint paint, String string) {
+        Rect bounds = new Rect();
         List<Rect> list = new ArrayList<>();
         for (int i = 0; i < string.length(); i++) {
-            Rect bounds = new Rect();
             paint.getTextBounds(string, i, i + 1, bounds);
             float width = paint.measureText(string, i, i + 1);
             bounds.set(0, 0, (int) width, bounds.height());
             list.add(bounds);
+        }
+        return list;
+    }
+
+    private List<String> lineWrap(Paint paint, int widthAvailable, String string) {
+
+        List<String> list = new ArrayList<>();
+        String line = "";
+
+        // For each next word, see if we can add it to the line
+        for (String nextWord : string.split(" ")) {;
+            String lineWithNextWord = line + nextWord;
+            float testWidth = paint.measureText(lineWithNextWord, 0, lineWithNextWord.length());
+            // If proposed line is too long
+            if (widthAvailable - testWidth <= 0) {
+                list.add(line);
+                line = nextWord;
+            }
+            else line = lineWithNextWord;
         }
         return list;
     }
@@ -82,7 +102,9 @@ public class WordsView extends View {
         lineHeight = bounds.height();
         lineSpacing = (int) ((lineHeight * lineSeperation) - lineHeight);
 
-        sentenceBounds = getBoundsPerLetter(mTextPaint, sentence);
+        //sentenceBounds = getBoundsPerLetter(mTextPaint, sentence);
+
+
     }
 
     @Override
@@ -90,22 +112,18 @@ public class WordsView extends View {
         super.onDraw(canvas);
         calculateDimensions();
 
-        int[] coords = {-1, -1};
-        this.getLocationInWindow(coords);
+        lines = lineWrap(mTextPaint, textAreaRight - textAreaLeft, sentence);
 
-        canvas.drawText(
-                sentence,
-                textAreaLeft,
-                textAreaTop + lineHeight,
-                mTextPaint);
+        for (int i = 1; i < lines.size(); i++) {
+            String line = lines.get(i-1);
+            canvas.drawText(
+                    line,
+                    textAreaLeft,
+                    textAreaTop + (i*lineHeight) + ((i-1) * lineSpacing),
+                    mTextPaint);
+        }
 
-        canvas.drawText(
-                sentence,
-                textAreaLeft,
-                textAreaTop + (2*lineHeight) + lineSpacing,
-                mTextPaint);
-
-        int nextX = textAreaLeft;
+        /*int nextX = textAreaLeft;
         for (Rect rect : sentenceBounds) {
             canvas.drawRect(
                     nextX,
@@ -114,7 +132,7 @@ public class WordsView extends View {
                     textAreaTop + lineHeight - rect.height(),
                     mTextPaint);
             nextX += rect.width();
-        }
+        }*/
 
         // Text area
         canvas.drawRect(
