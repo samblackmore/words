@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -17,12 +18,12 @@ public class WordsView extends View {
     private int firstLetterWidth;
     private int sentenceHeight;
     private Paint mTextPaint;
-    private String sentence = "The quick brown fox jumps over the lazy dog. THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG!";
+    private String sentence = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog! The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog! The quick brown fox jumps over the lazy dog ";
     private List<String> lines;
     private List<Rect> sentenceBounds;
     private int paddingHor = 100;
     private int paddingVer = 200;
-    private int textSizePx = 100;
+    private int textSizePx = 10;
     private int viewLeft = -1;
     private int viewRight = -1;
     private int viewTop = -1;
@@ -31,9 +32,11 @@ public class WordsView extends View {
     private int textAreaRight;
     private int textAreaTop;
     private int textAreaBottom;
-    private float lineSeperation = 1.5f;
+    private float lineSeperation = 1.7f;
     private int lineSpacing;
     private int lineHeight;
+    private int linesPerDropCap = 3;
+    private int dropCapWidth;
     private int dropCapHeight;
     private int dropCapTextSize;
 
@@ -98,7 +101,7 @@ public class WordsView extends View {
         boolean goingUp = true;
         Rect bounds = new Rect();
 
-        while (lineHeight != targetLineHeight) {
+        while (Math.abs(targetLineHeight - lineHeight) > 2) {
 
             paint.setTextSize(newSize);
             paint.getTextBounds("A", 0, 1, bounds);
@@ -137,8 +140,12 @@ public class WordsView extends View {
         lineHeight = bounds.height();
         lineSpacing = (int) ((lineHeight * lineSeperation) - lineHeight);
 
-        dropCapHeight = (3 * lineHeight) + (2 * lineSpacing);
+        dropCapHeight = (linesPerDropCap * lineHeight) + ((linesPerDropCap - 1) * lineSpacing);
         dropCapTextSize = getFontSizeToMatchLineHeight(mTextPaint, dropCapHeight);
+        mTextPaint.setTextSize(dropCapTextSize);
+        mTextPaint.getTextBounds("A", 0, 1, bounds);
+        dropCapWidth = bounds.width();
+        mTextPaint.setTextSize(textSizePx);
 
         //sentenceBounds = getBoundsPerLetter(mTextPaint, sentence);
     }
@@ -160,18 +167,6 @@ public class WordsView extends View {
         super.onDraw(canvas);
         calculateDimensions();
 
-        // TODO - Don't calculate this on every draw
-        lines = lineWrap(mTextPaint, textAreaRight - textAreaLeft, sentence);
-
-        for (int i = 1; i < lines.size()+1; i++) {
-            String line = lines.get(i-1);
-            canvas.drawText(
-                    line,
-                    textAreaLeft,
-                    textAreaTop + (i*lineHeight) + ((i-1) * lineSpacing),
-                    mTextPaint);
-        }
-
         float savedTextHeight = mTextPaint.getTextSize();
         mTextPaint.setTextSize(dropCapTextSize);
         canvas.drawText(
@@ -180,6 +175,36 @@ public class WordsView extends View {
                 textAreaTop + dropCapHeight,
                 mTextPaint);
         mTextPaint.setTextSize(savedTextHeight);
+
+        // TODO - Don't calculate this on every draw
+        lines = lineWrap(mTextPaint, textAreaRight - textAreaLeft - dropCapWidth - lineSpacing, sentence);
+
+        List<String> dropCapLines = lines.subList(0, Math.min(lines.size(), linesPerDropCap));
+
+        for (int i = 1; i < dropCapLines.size()+1; i++) {
+            String line = dropCapLines.get(i-1);
+            canvas.drawText(
+                    line,
+                    textAreaLeft + dropCapWidth + lineSpacing,
+                    textAreaTop + (i*lineHeight) + ((i-1) * lineSpacing),
+                    mTextPaint);
+        }
+
+        String remainingText = "";
+        if (lines.size() > linesPerDropCap) {
+            remainingText = TextUtils.join(" ", lines.subList(linesPerDropCap, lines.size()));
+            lines = lineWrap(mTextPaint, textAreaRight - textAreaLeft, remainingText);
+
+            for (int i = 1; i < lines.size() + 1; i++) {
+                String line = lines.get(i - 1);
+                canvas.drawText(
+                        line,
+                        textAreaLeft,
+                        textAreaTop + dropCapHeight + lineSpacing + (i * lineHeight) + ((i - 1) * lineSpacing),
+                        mTextPaint);
+            }
+        }
+
 
         /*int nextX = textAreaLeft;
         for (Rect rect : sentenceBounds) {
@@ -190,7 +215,7 @@ public class WordsView extends View {
                     textAreaTop + lineHeight - rect.height(),
                     mTextPaint);
             nextX += rect.width();
-        }*/
+        }
 
         // Text area
         canvas.drawRect(
@@ -208,6 +233,6 @@ public class WordsView extends View {
                 viewRight - 5,
                 viewBottom - 5,
                 mTextPaint
-        );
+        );*/
     }
 }
