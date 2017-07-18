@@ -21,9 +21,9 @@ public class WordsView extends View {
     private String sentence = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog! The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog! The quick brown fox jumps over the lazy dog ";
     private List<String> lines;
     private List<Rect> sentenceBounds;
-    private int paddingHor = 100;
-    private int paddingVer = 200;
-    private int textSizePx = 10;
+    private int paddingHor = 0;
+    private int paddingVer = 0;
+    private int textSizePx = 30;
     private int viewLeft = -1;
     private int viewRight = -1;
     private int viewTop = -1;
@@ -131,6 +131,11 @@ public class WordsView extends View {
         init();
     }
 
+    public void decreaseTextSize(int amount) {
+        textSizePx -= amount;
+        init();
+    }
+
     private void init() {
         mTextPaint.setTextSize(textSizePx);
 
@@ -159,6 +164,10 @@ public class WordsView extends View {
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTypeface(crimsonText);
         mTextPaint.setStyle(Paint.Style.STROKE);
+
+        paddingHor = getPaddingLeft();
+        paddingVer = getPaddingTop();
+
         init();
     }
 

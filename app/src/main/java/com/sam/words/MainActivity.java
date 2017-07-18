@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         findViewById(R.id.btn_increase_font_size).setOnClickListener(this);
+        findViewById(R.id.btn_decrease_font_size).setOnClickListener(this);
         findViewById(R.id.btn_start).setOnClickListener(this);
         wordsView = (WordsView) findViewById(R.id.words_view);
     }
@@ -27,6 +28,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_increase_font_size:
                 wordsView.increaseTextSize(10);
+                wordsView.invalidate();
+                break;
+            case R.id.btn_decrease_font_size:
+                wordsView.decreaseTextSize(10);
                 wordsView.invalidate();
                 break;
         }
