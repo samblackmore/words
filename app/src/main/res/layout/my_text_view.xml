@@ -22,4 +22,11 @@
         android:textAlignment="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
+
+    <com.sam.words.WordsView
+        android:id="@+id/words_view"
+        android:paddingLeft="@dimen/story_horizontal_padding"
+        android:paddingTop="@dimen/story_vertical_padding"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </android.support.v7.widget.CardView>

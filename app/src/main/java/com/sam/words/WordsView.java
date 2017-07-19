@@ -135,6 +135,10 @@ public class WordsView extends View {
         init();
     }
 
+    public void setText(String text) {
+        sentence = text;
+    }
+
     private void init() {
         mTextPaint.setTextSize(textSizePx);
 
@@ -178,14 +182,14 @@ public class WordsView extends View {
         float savedTextHeight = mTextPaint.getTextSize();
         mTextPaint.setTextSize(dropCapTextSize);
         canvas.drawText(
-                "A",
+                String.valueOf(sentence.charAt(0)),
                 textAreaLeft,
                 textAreaTop + dropCapHeight,
                 mTextPaint);
         mTextPaint.setTextSize(savedTextHeight);
 
         // TODO - Don't calculate this on every draw
-        lines = lineWrap(mTextPaint, textAreaRight - textAreaLeft - dropCapWidth - lineSpacing, sentence);
+        lines = lineWrap(mTextPaint, textAreaRight - textAreaLeft - dropCapWidth - lineSpacing, sentence.substring(1, sentence.length()));
 
         List<String> dropCapLines = lines.subList(0, Math.min(lines.size(), linesPerDropCap));
 

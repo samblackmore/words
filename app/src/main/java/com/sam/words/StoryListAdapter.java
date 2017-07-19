@@ -20,11 +20,13 @@ class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.ViewHolder>
 
         CardView mCardView;
         TextView mTextView;
+        WordsView mWordsView;
 
-        ViewHolder(CardView cardView, TextView textView) {
+        ViewHolder(CardView cardView, TextView textView, WordsView wordsView) {
             super(cardView);
             mCardView = cardView;
             mTextView = textView;
+            mWordsView = wordsView;
         }
     }
 
@@ -40,8 +42,9 @@ class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.ViewHolder>
                 .inflate(R.layout.my_text_view, parent, false);
 
         TextView textView = (TextView) v.findViewById(R.id.info_text);
+        WordsView wordsView = (WordsView) v.findViewById(R.id.words_view);
 
-        ViewHolder vh = new ViewHolder(v, textView);
+        ViewHolder vh = new ViewHolder(v, textView, wordsView);
         return vh;
     }
 
@@ -51,7 +54,7 @@ class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.ViewHolder>
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.mTextView.setText(mDataset[position]);
-
+        holder.mWordsView.setText(mDataset[position]);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
