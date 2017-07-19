@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_view"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="48dp"
+    android:layout_marginLeft="24dp"
+    android:layout_marginTop="24dp"
+    android:layout_marginRight="24dp"
+    card_view:contentPaddingTop="24dp"
+    card_view:contentPaddingLeft="8dp"
+    card_view:contentPaddingRight="8dp"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="4dp"
+    >
 
-</TextView>
+    <TextView
+    android:id="@+id/info_text"
+        android:text="placeholder"
+        android:textAlignment="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+</android.support.v7.widget.CardView>
