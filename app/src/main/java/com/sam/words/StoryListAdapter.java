@@ -1,8 +1,10 @@
 package com.sam.words;
 
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -36,13 +38,21 @@ class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.ViewHolder>
 
     // Create new views (invoked by the layout manager)
     @Override
-    public StoryListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public StoryListAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         // create a new view
         CardView v = (CardView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.my_text_view, parent, false);
 
         TextView textView = (TextView) v.findViewById(R.id.info_text);
         WordsView wordsView = (WordsView) v.findViewById(R.id.words_view);
+
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(parent.getContext(), SwipeActivity.class);
+                parent.getContext().startActivity(intent);
+            }
+        });
 
         ViewHolder vh = new ViewHolder(v, textView, wordsView);
         return vh;
