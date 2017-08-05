@@ -7,12 +7,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import static com.sam.words.StoryListAdapter.EXTRA_STORY;
 
 public class StoryActivity extends AppCompatActivity {
+
+    private String mStory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,18 +26,25 @@ public class StoryActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
-        String story = intent.getStringExtra(EXTRA_STORY);
+        mStory = intent.getStringExtra(EXTRA_STORY);
 
-        StoryPageAdapter storyPageAdapter = new StoryPageAdapter(getSupportFragmentManager(), story);
+        final StoryPageAdapter storyPageAdapter = new StoryPageAdapter(getSupportFragmentManager(), mStory);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(storyPageAdapter);
 
-        EditText input = (EditText) findViewById(R.id.input);
+        final EditText input = (EditText) findViewById(R.id.input);
         Button submit = (Button) findViewById(R.id.submit);
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mStory += " " + input.getText();
+                storyPageAdapter.setStory(mStory);
+            }
+        });
     }
-
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_swipe, menu);
