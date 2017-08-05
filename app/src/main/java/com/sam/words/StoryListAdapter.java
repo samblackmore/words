@@ -15,6 +15,8 @@ import android.widget.TextView;
 class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.ViewHolder> {
     private String[] mDataset;
 
+    public static final String EXTRA_STORY = "STORY";
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
@@ -44,18 +46,18 @@ class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.ViewHolder>
                 .inflate(R.layout.my_text_view, parent, false);
 
         TextView textView = (TextView) v.findViewById(R.id.info_text);
-        WordsView wordsView = (WordsView) v.findViewById(R.id.words_view);
+        final WordsView wordsView = (WordsView) v.findViewById(R.id.words_view);
 
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(parent.getContext(), SwipeActivity.class);
+                intent.putExtra(EXTRA_STORY, wordsView.getText());
                 parent.getContext().startActivity(intent);
             }
         });
 
-        ViewHolder vh = new ViewHolder(v, textView, wordsView);
-        return vh;
+        return new ViewHolder(v, textView, wordsView);
     }
 
     // Replace the contents of a view (invoked by the layout manager)

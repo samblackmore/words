@@ -1,5 +1,6 @@
 package com.sam.words;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import static com.sam.words.StoryListAdapter.EXTRA_STORY;
 
 public class SwipeActivity extends AppCompatActivity {
 
@@ -33,10 +36,15 @@ public class SwipeActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
+    static String mStory;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe);
+
+        Intent intent = getIntent();
+        mStory = intent.getStringExtra(EXTRA_STORY);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -116,8 +124,8 @@ public class SwipeActivity extends AppCompatActivity {
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 
             WordsView wordsView = (WordsView) rootView.findViewById(R.id.words_view);
-            
-            wordsView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            wordsView.setText(mStory + " page " + getArguments().getInt(ARG_SECTION_NUMBER));
 
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
 

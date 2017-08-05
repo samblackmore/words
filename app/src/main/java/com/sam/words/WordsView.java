@@ -139,6 +139,10 @@ public class WordsView extends View {
         sentence = text;
     }
 
+    public String getText() {
+        return sentence;
+    }
+
     private void init() {
         mTextPaint.setTextSize(textSizePx);
 
