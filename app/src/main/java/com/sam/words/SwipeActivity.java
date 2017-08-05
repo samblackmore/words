@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import static com.sam.words.StoryListAdapter.EXTRA_STORY;
@@ -36,6 +38,9 @@ public class SwipeActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
+    EditText mInput;
+    Button mSubmit;
+
     static String mStory;
 
     @Override
@@ -56,15 +61,18 @@ public class SwipeActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        mInput = (EditText) findViewById(R.id.input);
+        mSubmit = (Button) findViewById(R.id.submit);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
 
     }
 
@@ -121,13 +129,13 @@ public class SwipeActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_swipe, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 
             WordsView wordsView = (WordsView) rootView.findViewById(R.id.words_view);
 
             wordsView.setText(mStory + " page " + getArguments().getInt(ARG_SECTION_NUMBER));
 
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
 
             return rootView;
         }
