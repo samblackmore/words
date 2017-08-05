@@ -5,7 +5,6 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -89,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 myRef.setValue(myStory);
 
 
-                Intent intent = new Intent(this, TabActivity.class);
+                Intent intent = new Intent(this, BrowseActivity.class);
                 startActivity(intent);
                 break;
             case R.id.btn_increase_font_size:

@@ -51,7 +51,7 @@ class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.ViewHolder>
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(parent.getContext(), SwipeActivity.class);
+                Intent intent = new Intent(parent.getContext(), StoryActivity.class);
                 intent.putExtra(EXTRA_STORY, wordsView.getText());
                 parent.getContext().startActivity(intent);
             }
