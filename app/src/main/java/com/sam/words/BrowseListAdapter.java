@@ -50,7 +50,7 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
     public void onBindViewHolder(BrowseStoryHolder holder, int position) {
         Story story = mDataset.get(position);
         holder.mLikesView.setText(String.valueOf(story.getLikes()));
-        holder.mDateView.setText(String.valueOf(story.getDateUpdated()));
+        holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
         holder.mWordsView.setText(story.getContent());
     }
 
