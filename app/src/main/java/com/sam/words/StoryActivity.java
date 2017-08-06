@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import static com.sam.words.StoryListAdapter.EXTRA_STORY;
+import static com.sam.words.BrowseListAdapter.EXTRA_STORY;
 
 public class StoryActivity extends AppCompatActivity {
 

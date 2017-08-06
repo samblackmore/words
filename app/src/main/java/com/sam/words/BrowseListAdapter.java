@@ -15,7 +15,7 @@ import java.util.List;
  * Created by samhb on 2017-07-18.
  */
 
-class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.ViewHolder> {
+class BrowseListAdapter extends RecyclerView.Adapter<BrowseListAdapter.ViewHolder> {
     private static List<Story> mDataset = new ArrayList<>();
 
     public static final String EXTRA_STORY = "STORY";
@@ -37,13 +37,13 @@ class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.ViewHolder>
         }
     }
 
-    StoryListAdapter(List<Story> myDataset) {
+    BrowseListAdapter(List<Story> myDataset) {
         mDataset = myDataset;
     }
 
     // Create new views (invoked by the layout manager)
     @Override
-    public StoryListAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+    public BrowseListAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         // create a new view
         CardView v = (CardView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.my_text_view, parent, false);

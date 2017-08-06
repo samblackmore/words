@@ -68,7 +68,7 @@ public class BrowseTabFragment extends Fragment {
                     mStories.add(story);
                 }
 
-                RecyclerView.Adapter mAdapter = new StoryListAdapter(mStories);
+                RecyclerView.Adapter mAdapter = new BrowseListAdapter(mStories);
                 mRecyclerView.setAdapter(mAdapter);
             }
 
@@ -78,7 +78,7 @@ public class BrowseTabFragment extends Fragment {
             }
         });
 
-        RecyclerView.Adapter mAdapter = new StoryListAdapter(mStories);
+        RecyclerView.Adapter mAdapter = new BrowseListAdapter(mStories);
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
