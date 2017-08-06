@@ -12,43 +12,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by samhb on 2017-07-18.
+ * Adapts a list of stories into a list of card views in a Browse fragment
  */
 
-class BrowseListAdapter extends RecyclerView.Adapter<BrowseListAdapter.ViewHolder> {
+class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
     private static List<Story> mDataset = new ArrayList<>();
 
-    public static final String EXTRA_STORY = "STORY";
-
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    static class ViewHolder extends RecyclerView.ViewHolder {
-
-        CardView mCardView;
-        TextView mTextView;
-        WordsView mWordsView;
-
-        ViewHolder(CardView cardView, TextView textView, WordsView wordsView) {
-            super(cardView);
-            mCardView = cardView;
-            mTextView = textView;
-            mWordsView = wordsView;
-        }
-    }
+    static final String EXTRA_STORY = "STORY";
 
     BrowseListAdapter(List<Story> myDataset) {
         mDataset = myDataset;
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
-    public BrowseListAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-        // create a new view
+    public BrowseStoryHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+
         CardView v = (CardView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.my_text_view, parent, false);
 
-        TextView textView = (TextView) v.findViewById(R.id.info_text);
+        TextView likesView = (TextView) v.findViewById(R.id.story_likes);
+        TextView dateView = (TextView) v.findViewById(R.id.story_date);
         final WordsView wordsView = (WordsView) v.findViewById(R.id.words_view);
 
         v.setOnClickListener(new View.OnClickListener() {
@@ -60,19 +43,17 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseListAdapter.ViewHolde
             }
         });
 
-        return new ViewHolder(v, textView, wordsView);
+        return new BrowseStoryHolder(v, likesView, dateView, wordsView);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-        holder.mTextView.setText(mDataset.get(position).getAuthor());
-        holder.mWordsView.setText(mDataset.get(position).getTitle());
+    public void onBindViewHolder(BrowseStoryHolder holder, int position) {
+        Story story = mDataset.get(position);
+        holder.mLikesView.setText(String.valueOf(story.getLikes()));
+        holder.mDateView.setText(String.valueOf(story.getDateUpdated()));
+        holder.mWordsView.setText(story.getContent());
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mDataset.size();
