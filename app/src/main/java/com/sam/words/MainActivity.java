@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
 
+        signInAnonymously();
+
         wordsView = (WordsView) findViewById(R.id.words_view);
     }
 
@@ -77,17 +79,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_start:
-
-                signInAnonymously();
-
-                // Write a message to the database
-                DatabaseReference myRef = mDatabase.getReference("authenticated_post");
-
-                Story myStory = new Story("J. K. Rolling", "The Great Hatsby");
-
-                myRef.setValue(myStory);
-
-
                 Intent intent = new Intent(this, BrowseActivity.class);
                 startActivity(intent);
                 break;

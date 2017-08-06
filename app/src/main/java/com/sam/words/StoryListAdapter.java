@@ -8,12 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by samhb on 2017-07-18.
  */
 
 class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.ViewHolder> {
-    private String[] mDataset;
+    private static List<Story> mDataset = new ArrayList<>();
 
     public static final String EXTRA_STORY = "STORY";
 
@@ -34,7 +37,7 @@ class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.ViewHolder>
         }
     }
 
-    StoryListAdapter(String[] myDataset) {
+    StoryListAdapter(List<Story> myDataset) {
         mDataset = myDataset;
     }
 
@@ -65,13 +68,13 @@ class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.ViewHolder>
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mTextView.setText(mDataset[position]);
-        holder.mWordsView.setText(mDataset[position]);
+        holder.mTextView.setText(mDataset.get(position).getAuthor());
+        holder.mWordsView.setText(mDataset.get(position).getTitle());
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        return mDataset.size();
     }
 }
