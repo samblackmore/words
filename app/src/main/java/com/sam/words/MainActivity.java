@@ -1,6 +1,8 @@
 package com.sam.words;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,7 +16,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -36,15 +37,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setupButton(R.id.btn_increase_font_size, R.color.white, R.color.black);
-        setupButton(R.id.btn_decrease_font_size, R.color.white, R.color.black);
-        setupButton(R.id.btn_start, R.color.colorAccent, R.color.white);
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
 
         signInAnonymously();
+
+        SharedPreferences sharedPrefs = getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        if (sharedPrefs.contains(getString(R.string.saved_text_size))) {
+            Intent intent = new Intent(this, BrowseActivity.class);
+            startActivity(intent);
+        }
+
+        setContentView(R.layout.activity_main);
+        setupButton(R.id.btn_increase_font_size, R.color.white, R.color.black);
+        setupButton(R.id.btn_decrease_font_size, R.color.white, R.color.black);
+        setupButton(R.id.btn_start, R.color.colorAccent, R.color.white);
 
         wordsView = (WordsView) findViewById(R.id.words_view);
     }
@@ -79,6 +89,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_start:
+
+                SharedPreferences sharedPrefs = getSharedPreferences(
+                        getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+                SharedPreferences.Editor editor = sharedPrefs.edit();
+                editor.putInt(getString(R.string.saved_text_size), wordsView.getTextSize());
+                editor.apply();
+
+                Toast.makeText(MainActivity.this,
+                        "Saved text size: " + wordsView.getTextSize(),
+                        Toast.LENGTH_LONG)
+                        .show();
+
                 Intent intent = new Intent(this, BrowseActivity.class);
                 startActivity(intent);
                 break;

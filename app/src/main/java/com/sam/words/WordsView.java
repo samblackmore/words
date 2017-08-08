@@ -1,6 +1,7 @@
 package com.sam.words;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -22,7 +23,7 @@ public class WordsView extends View {
     private List<Rect> sentenceBounds;
     private int paddingHor = 0;
     private int paddingVer = 0;
-    private int textSizePx = 30;
+    private int textSizePx;
     private int viewLeft = -1;
     private int viewRight = -1;
     private int viewTop = -1;
@@ -143,6 +144,10 @@ public class WordsView extends View {
         return sentence;
     }
 
+    public int getTextSize() {
+        return textSizePx;
+    }
+
     private void init() {
         mTextPaint.setTextSize(textSizePx);
 
@@ -164,10 +169,20 @@ public class WordsView extends View {
 
     public WordsView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
         Typeface crimsonText = Typeface.createFromAsset(
                 context.getAssets(),
                 "fonts/CrimsonText/CrimsonText-Regular.ttf"
         );
+
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        int defaultTextSize = getResources().getInteger(R.integer.default_text_size);
+
+        textSizePx = sharedPref.getInt(
+                context.getString(R.string.saved_text_size), defaultTextSize);
+
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTypeface(crimsonText);
         mTextPaint.setStyle(Paint.Style.STROKE);
@@ -234,7 +249,7 @@ public class WordsView extends View {
                     textAreaTop + lineHeight - rect.height(),
                     mTextPaint);
             nextX += rect.width();
-        }
+        }*/
 
         // Text area
         canvas.drawRect(
@@ -252,6 +267,6 @@ public class WordsView extends View {
                 viewRight - 5,
                 viewBottom - 5,
                 mTextPaint
-        );*/
+        );
     }
 }
