@@ -18,16 +18,16 @@ public class WordsView extends View {
     private int firstLetterWidth;
     private int sentenceHeight;
     private Paint mTextPaint;
-    private String sentence = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog! The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog! The quick brown fox jumps over the lazy dog ";
+    private String sentence = "Loading...";
     private List<String> lines;
     private List<Rect> sentenceBounds;
     private int paddingHor = 0;
     private int paddingVer = 0;
     private int textSizePx;
-    private int viewLeft = -1;
-    private int viewRight = -1;
-    private int viewTop = -1;
-    private int viewBottom = -1;
+    private int viewY = 0;
+    private int viewWidth = 0;
+    private int viewX = 0;
+    private int viewHeight = 0;
     private int textAreaLeft;
     private int textAreaRight;
     private int textAreaTop;
@@ -41,22 +41,15 @@ public class WordsView extends View {
     private int dropCapTextSize;
 
     private void calculateDimensions() {
-        if (viewLeft == -1) {
-            viewLeft = getLeft();
-            textAreaLeft = viewLeft + paddingHor;
-        }
-        if (viewRight == -1) {
-            viewRight = getRight();
-            textAreaRight = viewRight - paddingHor;
-        }
-        if (viewTop == -1) {
-            viewTop = getTop();
-            textAreaTop = viewTop + paddingVer;
-        }
-        if (viewBottom == - 1) {
-            viewBottom = getBottom();
-            textAreaBottom = viewBottom - paddingVer;
-        }
+        viewX = 0;
+        viewY = 0;
+        viewWidth = getWidth();
+        viewHeight = getHeight();
+
+        textAreaTop = paddingVer;
+        textAreaLeft = paddingHor;
+        textAreaRight = viewWidth - paddingHor;
+        textAreaBottom = viewHeight - paddingVer;
     }
 
     private List<Rect> getBoundsPerLetter(Paint paint, String string) {
@@ -262,10 +255,10 @@ public class WordsView extends View {
 
         // Outer border
         canvas.drawRect(
-                viewLeft + 5,
-                viewTop + 5,
-                viewRight - 5,
-                viewBottom - 5,
+                viewY + 5,
+                viewX + 5,
+                viewWidth - 5,
+                viewHeight - 5,
                 mTextPaint
         );
     }
