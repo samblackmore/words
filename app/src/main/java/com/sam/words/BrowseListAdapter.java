@@ -32,6 +32,8 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
 
         TextView likesView = (TextView) v.findViewById(R.id.story_likes);
         TextView dateView = (TextView) v.findViewById(R.id.story_date);
+        TextView titleView = (TextView) v.findViewById(R.id.story_title);
+        TextView authorView = (TextView) v.findViewById(R.id.story_author);
         final WordsView wordsView = (WordsView) v.findViewById(R.id.words_view);
 
         v.setOnClickListener(new View.OnClickListener() {
@@ -43,7 +45,7 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
             }
         });
 
-        return new BrowseStoryHolder(v, likesView, dateView, wordsView);
+        return new BrowseStoryHolder(v, likesView, dateView, titleView, authorView, wordsView);
     }
 
     @Override
@@ -52,8 +54,8 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
         holder.mLikesView.setText(String.valueOf(story.getLikes()));
         holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
 
-        holder.mWordsView.setTitle(story.getTitle());
-        holder.mWordsView.setAuthor(story.getAuthor());
+        holder.mTitleView.setText(story.getTitle());
+        holder.mAuthorView.setText(story.getAuthor());
         holder.mWordsView.setText(story.getContent());
     }
 

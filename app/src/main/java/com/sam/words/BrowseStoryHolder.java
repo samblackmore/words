@@ -13,13 +13,17 @@ class BrowseStoryHolder extends RecyclerView.ViewHolder {
     CardView mCardView;
     TextView mLikesView;
     TextView mDateView;
+    TextView mTitleView;
+    TextView mAuthorView;
     WordsView mWordsView;
 
-    BrowseStoryHolder(CardView card, TextView likes, TextView date, WordsView words) {
+    BrowseStoryHolder(CardView card, TextView likes, TextView date, TextView title, TextView author, WordsView words) {
         super(card);
         mCardView = card;
         mLikesView = likes;
         mDateView = date;
+        mTitleView = title;
+        mAuthorView = author;
         mWordsView = words;
     }
 }
