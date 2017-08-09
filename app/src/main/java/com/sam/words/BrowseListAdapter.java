@@ -1,6 +1,7 @@
 package com.sam.words;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,6 +28,16 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
     @Override
     public BrowseStoryHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
 
+        Typeface typefaceBold = Typeface.createFromAsset(
+                parent.getContext().getAssets(),
+                "fonts/CrimsonText/CrimsonText-Bold.ttf"
+        );
+
+        Typeface typefaceItalic = Typeface.createFromAsset(
+                parent.getContext().getAssets(),
+                "fonts/CrimsonText/CrimsonText-Italic.ttf"
+        );
+
         CardView v = (CardView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.my_text_view, parent, false);
 
@@ -35,6 +46,10 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
         TextView titleView = (TextView) v.findViewById(R.id.story_title);
         TextView authorView = (TextView) v.findViewById(R.id.story_author);
         final WordsView wordsView = (WordsView) v.findViewById(R.id.words_view);
+
+        titleView.setTypeface(typefaceBold);
+        titleView.setTextSize((float) SharedPreferencesHelper.getTextSize(parent.getContext()) / 2);
+        authorView.setTypeface(typefaceItalic);
 
         v.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -31,13 +31,7 @@ public class WordsView extends View {
                 "fonts/CrimsonText/CrimsonText-Regular.ttf"
         );
 
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-
-        int defaultTextSize = getResources().getInteger(R.integer.default_text_size);
-
-        textSize = sharedPref.getInt(
-                context.getString(R.string.saved_text_size), defaultTextSize);
+        textSize = SharedPreferencesHelper.getTextSize(context);
 
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setStyle(Paint.Style.STROKE);
@@ -115,7 +109,7 @@ public class WordsView extends View {
         }
 
         // Debug view border
-        canvas.drawRect(viewX, viewY, viewWidth, viewHeight, mTextPaint);
+        // canvas.drawRect(viewX, viewY, viewWidth, viewHeight, mTextPaint);
     }
 
     private int getTextHeight(Paint paint, String text) {
