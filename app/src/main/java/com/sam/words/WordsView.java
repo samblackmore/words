@@ -79,16 +79,20 @@ public class WordsView extends View {
             mTextPaint.setTextSize(textSize);
 
             int dropCapLinesX = viewX + dropCapWidth + lineSpacing;
+            int dropCapLinesW = viewWidth - dropCapLinesX;
 
-            List<String> lines = lineWrap(mTextPaint, viewWidth - dropCapLinesX, content.substring(1, content.length()));
+            List<String> lines = lineWrap(mTextPaint, dropCapLinesW, content.substring(1, content.length()));
             List<String> dropCapLines = lines.subList(0, Math.min(lines.size(), linesPerDropCap));
 
             for (int i = 1; i < dropCapLines.size() + 1; i++) {
-                canvas.drawText(
-                        dropCapLines.get(i - 1),
+                drawTextJustified(
+                        canvas,
+                        mTextPaint,
                         dropCapLinesX,
                         viewY + (i * lineHeight) + ((i - 1) * lineSpacing),
-                        mTextPaint);
+                        dropCapLinesW,
+                        dropCapLines.get(i - 1)
+                );
             }
 
             // Draw any remaining lines under the drop cap
@@ -99,29 +103,47 @@ public class WordsView extends View {
                 lines = lineWrap(mTextPaint, viewWidth, remainingText);
 
                 for (int i = 1; i < lines.size() + 1; i++) {
-                    canvas.drawText(
-                            lines.get(i - 1),
+                    drawTextJustified(
+                            canvas,
+                            mTextPaint,
                             viewX,
                             viewY + dropCapHeight + lineSpacing + (i * lineHeight) + ((i - 1) * lineSpacing),
-                            mTextPaint);
+                            viewWidth,
+                            lines.get(i - 1)
+                    );
                 }
             }
         }
 
         // Debug view border
-        // canvas.drawRect(viewX, viewY, viewWidth, viewHeight, mTextPaint);
+        canvas.drawRect(viewX, viewY, viewWidth, viewHeight, mTextPaint);
+    }
+
+    private void drawTextJustified(Canvas canvas, Paint paint, int x, int y, int width, String text) {
+
+        String[] words = text.split(" ");
+
+        int widthToFill = width - getTextWidth(paint, text);
+        int spaceWidth = getTextWidth(paint, "| |") - getTextWidth(paint, "||");
+        int spaceJustified = spaceWidth + (widthToFill / words.length);
+        int wordX = x;
+
+        for (String word : words) {
+            canvas.drawText(word, wordX, y, paint);
+            wordX += getTextWidth(paint, word) + spaceJustified;
+        }
     }
 
     private int getTextHeight(Paint paint, String text) {
         Rect bounds = new Rect();
-        paint.getTextBounds(text, 0, 1, bounds);
+        paint.getTextBounds(text, 0, text.length(), bounds);
         return bounds.height();
     }
 
     private int getTextWidth(Paint paint, String text) {
         Rect bounds = new Rect();
-        paint.getTextBounds(text, 0, 1, bounds);
-        return bounds.height();
+        paint.getTextBounds(text, 0, text.length(), bounds);
+        return bounds.width();
     }
 
     private List<Rect> getBoundsPerLetter(Paint paint, String string) {
