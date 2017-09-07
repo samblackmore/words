@@ -33,7 +33,7 @@ public class StoryActivity extends AppCompatActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(storyPageAdapter);
 
-        final EditText input = (EditText) findViewById(R.id.input);
+        /*final EditText input = (EditText) findViewById(R.id.input);
         Button submit = (Button) findViewById(R.id.submit);
 
         submit.setOnClickListener(new View.OnClickListener() {
@@ -42,7 +42,7 @@ public class StoryActivity extends AppCompatActivity {
                 mStory += " " + input.getText();
                 storyPageAdapter.setStory(mStory);
             }
-        });
+        });*/
     }
     
     @Override

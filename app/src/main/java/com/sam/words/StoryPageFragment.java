@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 /**
  * A page in a story. Contains a single WordsView representing that page.
@@ -32,9 +33,12 @@ public class StoryPageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_story_page, container, false);
         WordsView wordsView = (WordsView) rootView.findViewById(R.id.words_view);
-        wordsView.setText(getArguments().getString(ARG_PAGE_CONTENT)
-                        + " page "
-                        + getArguments().getInt(ARG_PAGE_NUMBER));
+        TextView chapterView = (TextView) rootView.findViewById(R.id.chapter);
+        TextView pageNumberView = (TextView) rootView.findViewById(R.id.page_number);
+
+        wordsView.setText(getArguments().getString(ARG_PAGE_CONTENT));
+        chapterView.setText("Chapter " + getArguments().getInt(ARG_PAGE_NUMBER));
+        pageNumberView.setText("Page " + getArguments().getInt(ARG_PAGE_NUMBER));
         return rootView;
     }
 }
