@@ -39,7 +39,7 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
         );
 
         CardView v = (CardView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.my_text_view, parent, false);
+                .inflate(R.layout.card_view, parent, false);
 
         TextView likesView = (TextView) v.findViewById(R.id.story_likes);
         TextView dateView = (TextView) v.findViewById(R.id.story_date);

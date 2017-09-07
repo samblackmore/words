@@ -62,8 +62,6 @@
         <com.sam.words.WordsView
             android:id="@+id/words_view"
             android:layout_marginTop="48dp"
-            android:paddingLeft="@dimen/story_horizontal_padding"
-            android:paddingTop="@dimen/story_vertical_padding"
             android:layout_below="@+id/story_author"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
