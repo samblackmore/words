@@ -1,5 +1,7 @@
 package com.sam.words;
 
+import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,7 +19,19 @@ public class StoryPageFragment extends Fragment {
     private static final String ARG_PAGE_NUMBER = "page_number";
     private static final String ARG_PAGE_CONTENT = "page_content";
 
+    private static Typeface typeface;
+
     public StoryPageFragment() {
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        typeface = Typeface.createFromAsset(
+                context.getAssets(),
+                "fonts/CrimsonText/CrimsonText-Regular.ttf"
+        );
     }
 
     public static StoryPageFragment newInstance(int pageNumber, String content) {
@@ -38,7 +52,11 @@ public class StoryPageFragment extends Fragment {
 
         wordsView.setText(getArguments().getString(ARG_PAGE_CONTENT));
         chapterView.setText("Chapter " + getArguments().getInt(ARG_PAGE_NUMBER));
-        pageNumberView.setText("Page " + getArguments().getInt(ARG_PAGE_NUMBER));
+        pageNumberView.setText("page " + getArguments().getInt(ARG_PAGE_NUMBER));
+        chapterView.setTypeface(typeface);
+        chapterView.setTextSize(48);
+        chapterView.setTextColor(getResources().getColor(R.color.black));
+        pageNumberView.setTypeface(typeface);
         return rootView;
     }
 }

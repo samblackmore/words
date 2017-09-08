@@ -151,7 +151,7 @@ public class WordsView extends View {
         }
 
         // Debug view border
-        canvas.drawRect(viewX, viewY, viewWidth-1, viewHeight-1, mTextPaint);
+        //canvas.drawRect(viewX, viewY, viewWidth-1, viewHeight-1, mTextPaint);
     }
 
     private int getTextHeight(Paint paint, String text) {
