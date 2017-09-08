@@ -86,7 +86,7 @@ public class WordsView extends View {
         page.draw(canvas, mTextPaint);
 
         // Debug view border
-        //canvas.drawRect(0, 0, viewWidth-1, viewHeight-1, paint);
+        canvas.drawRect(0, 0, getWidth()-1, getHeight()-1, mTextPaint);
     }
 
     protected List<Page> calculatePages(List<Chapter> chapters) {
@@ -119,11 +119,11 @@ public class WordsView extends View {
             if (chapterContent.length() > 0) {
 
                 char dChar = chapterContent.charAt(0);
-                int dWidth = getTextWidth(mTextPaint, String.valueOf(dChar));
                 int dHeight = (linesPerDropCap * lineHeight) + ((linesPerDropCap - 1) * lineSpacing);
                 int dTextSize = getFontSizeToMatchLineHeight(mTextPaint, dHeight);
-
                 mTextPaint.setTextSize(dTextSize);
+                int dWidth = getTextWidth(mTextPaint, String.valueOf(dChar));
+
                 newPage.setDropCap(new DropCap(dChar, dWidth, dHeight, dTextSize));
 
                 // Step 3 - Lines around drop cap
