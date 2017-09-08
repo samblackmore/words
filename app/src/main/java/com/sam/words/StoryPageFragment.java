@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A page in a story. Contains a single WordsView representing that page.
  */
@@ -50,7 +53,11 @@ public class StoryPageFragment extends Fragment {
         TextView chapterView = (TextView) rootView.findViewById(R.id.chapter);
         TextView pageNumberView = (TextView) rootView.findViewById(R.id.page_number);
 
-        wordsView.setText(getArguments().getString(ARG_PAGE_CONTENT));
+        Chapter chapter = new Chapter("Chapter", getArguments().getString(ARG_PAGE_CONTENT));
+        List<Chapter> chapters = new ArrayList<>();
+        chapters.add(chapter);
+
+        wordsView.setText(chapters);
         chapterView.setText("Chapter " + getArguments().getInt(ARG_PAGE_NUMBER));
         pageNumberView.setText("page " + getArguments().getInt(ARG_PAGE_NUMBER));
         chapterView.setTypeface(typeface);

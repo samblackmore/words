@@ -55,7 +55,7 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(parent.getContext(), StoryActivity.class);
-                intent.putExtra(EXTRA_STORY, wordsView.getText());
+                intent.putExtra(EXTRA_STORY, "Hello this is some test text");
                 parent.getContext().startActivity(intent);
             }
         });
@@ -69,9 +69,13 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
         holder.mLikesView.setText(String.valueOf(story.getLikes()));
         holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
 
+        Chapter chapter = new Chapter("Chapter", story.getContent());
+        List<Chapter> chapters = new ArrayList<>();
+        chapters.add(chapter);
+
         holder.mTitleView.setText(story.getTitle());
         holder.mAuthorView.setText(story.getAuthor());
-        holder.mWordsView.setText(story.getContent());
+        holder.mWordsView.setText(chapters);
     }
 
     @Override

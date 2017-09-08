@@ -1,7 +1,6 @@
 package com.sam.words;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -15,11 +14,10 @@ import java.util.List;
 
 public class WordsView extends View {
 
-    private int textSize;
-    private String content = "Hello world!";
     private Paint mTextPaint;
     private Typeface typeface;
-
+    private Page page;
+    private int textSize;
     private float lineSeperation = 1.7f;
     private int linesPerDropCap = 3;
 
@@ -79,9 +77,21 @@ public class WordsView extends View {
         setMeasuredDimension(width, height);
     }
 
+
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        page.draw(canvas, mTextPaint);
+
+        // Debug view border
+        //canvas.drawRect(0, 0, viewWidth-1, viewHeight-1, paint);
+    }
+
+    protected List<Page> calculatePages(List<Chapter> chapters) {
+
+        List<Page> pages = new ArrayList<>();
 
         int viewX = 0;
         int viewY = 0;
@@ -94,67 +104,55 @@ public class WordsView extends View {
         int lineHeight = getTextHeight(mTextPaint, "I");
         int lineSpacing = (int) ((lineHeight * lineSeperation) - lineHeight);
 
-        String dropCap;
-        int dropCapWidth = 0;
-        int dropCapHeight = (linesPerDropCap * lineHeight) + ((linesPerDropCap - 1) * lineSpacing);
+        for (Chapter chapter : chapters) {
 
-        if (content.length() > 0) {
+            Page newPage = new Page(typeface, textSize, lineHeight, lineSeperation);
+            String chapterContent = chapter.getContent();
 
-            // Start by drawing the drop cap
+            // Step 1 - Chapter title
 
-            mTextPaint.setTextSize(getFontSizeToMatchLineHeight(mTextPaint, dropCapHeight));
+            // TODO - Title layout
+            newPage.setChapterTitle(chapter.getTitle());
 
-            dropCap = String.valueOf(content.charAt(0));
-            dropCapWidth = getTextWidth(mTextPaint, dropCap);
+            // Step 2 - Drop cap
 
-            canvas.drawText(
-                    dropCap,
-                    viewX,
-                    viewY + dropCapHeight,
-                    mTextPaint);
-        }
+            if (chapterContent.length() > 0) {
 
-        if (content.length() > 1) {
+                char dChar = chapterContent.charAt(0);
+                int dWidth = getTextWidth(mTextPaint, String.valueOf(dChar));
+                int dHeight = (linesPerDropCap * lineHeight) + ((linesPerDropCap - 1) * lineSpacing);
+                int dTextSize = getFontSizeToMatchLineHeight(mTextPaint, dHeight);
 
-            // Draw the first lines that wrap around the drop cap
+                mTextPaint.setTextSize(dTextSize);
+                newPage.setDropCap(new DropCap(dChar, dWidth, dHeight, dTextSize));
 
-            mTextPaint.setTextSize(textSize);
+                // Step 3 - Lines around drop cap
 
-            int dropCapLinesX = viewX + dropCapWidth + lineSpacing;
+                if (chapterContent.length() > 1) {
 
-            List<String> lines = lineWrap(mTextPaint, viewWidth - dropCapLinesX, content.substring(1, content.length()));
-            List<String> dropCapLines = lines.subList(0, Math.min(lines.size(), linesPerDropCap));
+                    mTextPaint.setTextSize(textSize);
+                    int dropCapLinesX = viewX + dWidth + lineSpacing;
 
-            for (int i = 1; i < dropCapLines.size() + 1; i++) {
-                canvas.drawText(
-                        dropCapLines.get(i - 1),
-                        dropCapLinesX,
-                        viewY + (i * lineHeight) + ((i - 1) * lineSpacing),
-                        mTextPaint);
-            }
+                    List<String> lines = lineWrap(mTextPaint, viewWidth - dropCapLinesX, chapterContent.substring(1, chapterContent.length()));
+                    newPage.setDropCapLines(lines.subList(0, Math.min(lines.size(), linesPerDropCap)));
 
-            // Draw any remaining lines under the drop cap
+                    // Step 4 - Remaining lines
 
-            if (lines.size() > linesPerDropCap) {
+                    if (lines.size() > linesPerDropCap) {
 
-                String remainingText = TextUtils.join(" ", lines.subList(linesPerDropCap, lines.size()));
-                lines = lineWrap(mTextPaint, viewWidth, remainingText);
-
-                for (int i = 1; i < lines.size() + 1; i++) {
-                    canvas.drawText(
-                            lines.get(i - 1),
-                            viewX,
-                            viewY + dropCapHeight + lineSpacing + (i * lineHeight) + ((i - 1) * lineSpacing),
-                            mTextPaint);
+                        String remainingText = TextUtils.join(" ", lines.subList(linesPerDropCap, lines.size()));
+                        newPage.setLines(lineWrap(mTextPaint, viewWidth, remainingText));
+                    }
                 }
             }
+
+            pages.add(newPage);
         }
 
-        // Debug view border
-        //canvas.drawRect(viewX, viewY, viewWidth-1, viewHeight-1, mTextPaint);
+        return pages;
     }
 
-    private int getTextHeight(Paint paint, String text) {
+    int getTextHeight(Paint paint, String text) {
         Rect bounds = new Rect();
         paint.getTextBounds(text, 0, 1, bounds);
         return bounds.height();
@@ -248,12 +246,13 @@ public class WordsView extends View {
         textSize -= amount;
     }
 
-    public void setText(String text) {
-        content = text;
-    }
+    public List<Page> setText(List<Chapter> chapters) {
+        List<Page> pages = calculatePages(chapters);
 
-    public String getText() {
-        return content;
+        // FIXME - get the right page
+        page = pages.get(0);
+
+        return pages;
     }
 
     public int getTextSize() {
