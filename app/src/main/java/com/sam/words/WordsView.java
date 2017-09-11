@@ -18,7 +18,7 @@ public class WordsView extends View {
     private Typeface typeface;
     private List<Chapter> chapters;
     private Page page;
-    private int pageNumber;
+    private int pageNumber = 1;
     private int textSize;
     private float lineSeperation = 1.7f;
     private int linesPerDropCap = 3;
@@ -77,9 +77,6 @@ public class WordsView extends View {
 
         //MUST CALL THIS
         setMeasuredDimension(width, height);
-
-        List<Page> pages = calculatePages(chapters);
-        page = pages.get(pageNumber);
     }
 
 
@@ -88,8 +85,12 @@ public class WordsView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (page != null)
-            page.draw(canvas, mTextPaint);
+        if (chapters != null) {
+            List<Page> pages = calculatePages(chapters);
+
+            if (pageNumber > 0 && pageNumber <= pages.size())
+                pages.get(pageNumber-1).draw(canvas, mTextPaint);
+        }
 
         // Debug view border
         canvas.drawRect(0, 0, getWidth()-1, getHeight()-1, mTextPaint);

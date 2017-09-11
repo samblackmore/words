@@ -18,6 +18,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     WordsView wordsView;
@@ -56,7 +59,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setupButton(R.id.btn_decrease_font_size, R.color.white, R.color.black);
         setupButton(R.id.btn_start, R.color.colorAccent, R.color.white);
 
+        Chapter chapter = new Chapter("Chapter", "Hello there this is some test text");
+        List<Chapter> chapters = new ArrayList<>();
+        chapters.add(chapter);
+
         wordsView = (WordsView) findViewById(R.id.words_view);
+        wordsView.setText(chapters);
     }
 
 
