@@ -58,6 +58,7 @@ public class StoryPageFragment extends Fragment {
         chapters.add(chapter);
 
         wordsView.setText(chapters);
+        wordsView.setPageNumber(getArguments().getInt(ARG_PAGE_NUMBER));
         chapterView.setText("Chapter " + getArguments().getInt(ARG_PAGE_NUMBER));
         pageNumberView.setText("page " + getArguments().getInt(ARG_PAGE_NUMBER));
         chapterView.setTypeface(typeface);

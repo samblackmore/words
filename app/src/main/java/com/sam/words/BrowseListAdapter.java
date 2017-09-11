@@ -76,6 +76,7 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
         holder.mTitleView.setText(story.getTitle());
         holder.mAuthorView.setText(story.getAuthor());
         holder.mWordsView.setText(chapters);
+        holder.mWordsView.setPageNumber(0);
     }
 
     @Override
