@@ -1,5 +1,6 @@
 package com.sam.words;
 
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -43,8 +46,20 @@ public class BrowseTabFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_browse_section, container, false);
-        //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_TAB_TITLE)));
+
+        if (getArguments().getInt(ARG_TAB_TITLE) == 3) {
+            RelativeLayout addStoryContainer = (RelativeLayout) rootView.findViewById(R.id.add_story_container);
+            Button addStoryButton = (Button) rootView.findViewById(R.id.add_story);
+
+            int color = getResources().getColor(R.color.colorAccent);
+            int textColor = getResources().getColor(R.color.white);
+            addStoryButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+            addStoryButton.setTextColor(textColor);
+            addStoryContainer.setVisibility(View.VISIBLE);
+        }
+
+
+        //TextView textView = (TextView) rootView.findViewById(R.id.section_label);;
 
         final RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.stories_list);
 

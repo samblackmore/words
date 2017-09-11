@@ -4,11 +4,29 @@
     android:layout_height="match_parent"
     tools:context="com.sam.words.BrowseTabFragment">
 
+    <RelativeLayout
+        android:id="@+id/add_story_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/gray"
+        android:visibility="gone"
+        >
+        <Button
+            android:id="@+id/add_story"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add_story"
+            android:textAlignment="center"
+            android:layout_margin="24dp"
+            />
+    </RelativeLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/stories_list"
         android:scrollbars="none"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_below="@+id/add_story_container"
         />
 
 </RelativeLayout>
