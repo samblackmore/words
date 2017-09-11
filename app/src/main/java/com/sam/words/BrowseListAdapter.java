@@ -51,32 +51,28 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
         titleView.setTextSize((float) SharedPreferencesHelper.getTextSize(parent.getContext()) / 2);
         authorView.setTypeface(typefaceItalic);
 
-        v.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(parent.getContext(), StoryActivity.class);
-                intent.putExtra(EXTRA_STORY, "Yep, long story! Back in August we had this surprise office meeting where we all had to go into the canteen and listen to a call from one of the McAfee VPs. He said he was flying out to Montreal from California to be with us the next day to answer any questions we had and the reason is because McAfee decided they're shutting down the whole Montreal office so everyone would be out of a job. Was definitely a shock because we'd just been doing the \"Q3 kick-off\" where we hear the roadmap for the rest of the year. Apparently no-one in Montreal knew about it because we'd even been doing interviews that week and were looking to hire 6 new people. Someone had even turned down a job offer from somewhere else the day before because McAfee offered to pay more money. So we've all been looking for new jobs ever since and luckily we had until October 2nd to figure it out. So a couple of weeks ago I had a few interviews and last week I accepted an offer from my number 1 choice which was Unity, have you heard of it?");
-                parent.getContext().startActivity(intent);
-            }
-        });
-
         return new BrowseStoryHolder(v, likesView, dateView, titleView, authorView, wordsView);
     }
 
     @Override
-    public void onBindViewHolder(BrowseStoryHolder holder, int position) {
-        Story story = mDataset.get(position);
+    public void onBindViewHolder(final BrowseStoryHolder holder, int position) {
+        final Story story = mDataset.get(position);
         holder.mLikesView.setText(String.valueOf(story.getLikes()));
         holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
 
-        Chapter chapter = new Chapter("Chapter", story.getContent());
-        List<Chapter> chapters = new ArrayList<>();
-        chapters.add(chapter);
-
         holder.mTitleView.setText(story.getTitle());
         holder.mAuthorView.setText(story.getAuthor());
-        holder.mWordsView.setText(chapters);
+        holder.mWordsView.setText(story.getChapters());
         holder.mWordsView.setPageNumber(0);
+
+        holder.mCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(holder.mCardView.getContext(), StoryActivity.class);
+                intent.putExtra(EXTRA_STORY, story.getId());
+                holder.mCardView.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override

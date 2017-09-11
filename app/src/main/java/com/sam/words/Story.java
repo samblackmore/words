@@ -1,17 +1,21 @@
 package com.sam.words;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Created by samhb on 2017-07-19.
+ * A POJO to store and retrieve from the backend
  */
 
 public class Story {
 
+    private int id = 0;
     private String author;
     private String title;
-    private String content;
+    private List<Chapter> chapters = new ArrayList<>();
     private long dateCreated;
     private long dateUpdated;
-    private int likes;
+    private int likes = 0;
 
     public Story() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -22,8 +26,6 @@ public class Story {
         this.title = title;
         dateCreated = System.currentTimeMillis();
         dateUpdated = System.currentTimeMillis();
-        likes = 0;
-        content = "";
     }
 
     public String getAuthor() {
@@ -34,8 +36,8 @@ public class Story {
         return title;
     }
 
-    public String getContent() {
-        return content;
+    public List<Chapter> getChapters() {
+        return chapters;
     }
 
     public long getDateCreated() {
@@ -48,5 +50,9 @@ public class Story {
 
     public int getLikes() {
         return likes;
+    }
+
+    public int getId() {
+        return id;
     }
 }
