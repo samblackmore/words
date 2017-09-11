@@ -50,7 +50,6 @@ public class StoryPageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_story_page, container, false);
         WordsView wordsView = (WordsView) rootView.findViewById(R.id.words_view);
-        TextView chapterView = (TextView) rootView.findViewById(R.id.chapter);
         TextView pageNumberView = (TextView) rootView.findViewById(R.id.page_number);
 
         Chapter chapter = new Chapter("Chapter", getArguments().getString(ARG_PAGE_CONTENT));
@@ -59,11 +58,7 @@ public class StoryPageFragment extends Fragment {
 
         wordsView.setText(chapters);
         wordsView.setPageNumber(getArguments().getInt(ARG_PAGE_NUMBER));
-        chapterView.setText("Chapter " + getArguments().getInt(ARG_PAGE_NUMBER));
         pageNumberView.setText("page " + getArguments().getInt(ARG_PAGE_NUMBER));
-        chapterView.setTypeface(typeface);
-        chapterView.setTextSize(48);
-        chapterView.setTextColor(getResources().getColor(R.color.black));
         pageNumberView.setTypeface(typeface);
         return rootView;
     }
