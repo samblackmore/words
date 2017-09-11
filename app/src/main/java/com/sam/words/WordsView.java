@@ -113,13 +113,14 @@ public class WordsView extends View {
 
         for (Chapter chapter : chapters) {
 
-            Page newPage = new Page(typeface, textSize, lineHeight, lineSeperation);
+            Page firstPage = new Page(typeface, textSize, lineHeight, lineSeperation);
             String chapterContent = chapter.getContent();
+            List<String> leftOverLines = new ArrayList<>();
 
             // Step 1 - Chapter title
 
             // TODO - Title layout
-            newPage.setChapterTitle(chapter.getTitle());
+            firstPage.setChapterTitle(chapter.getTitle());
 
             // Step 2 - Drop cap
 
@@ -131,7 +132,7 @@ public class WordsView extends View {
                 mTextPaint.setTextSize(dTextSize);
                 int dWidth = getTextWidth(mTextPaint, String.valueOf(dChar));
 
-                newPage.setDropCap(new DropCap(dChar, dWidth, dHeight, dTextSize));
+                firstPage.setDropCap(new DropCap(dChar, dWidth, dHeight, dTextSize));
 
                 // Step 3 - Lines around drop cap
 
@@ -141,19 +142,38 @@ public class WordsView extends View {
                     int dropCapLinesX = viewX + dWidth + lineSpacing;
 
                     List<String> lines = lineWrap(mTextPaint, viewWidth - dropCapLinesX, chapterContent.substring(1, chapterContent.length()));
-                    newPage.setDropCapLines(lines.subList(0, Math.min(lines.size(), linesPerDropCap)));
+                    firstPage.setDropCapLines(lines.subList(0, Math.min(lines.size(), linesPerDropCap)));
 
                     // Step 4 - Remaining lines
 
                     if (lines.size() > linesPerDropCap) {
 
                         String remainingText = TextUtils.join(" ", lines.subList(linesPerDropCap, lines.size()));
-                        newPage.setLines(lineWrap(mTextPaint, viewWidth, remainingText));
+                        List<String> remainingLines = lineWrap(mTextPaint, viewWidth, remainingText);
+
+                        int linesLeftOnPage = Math.max(0, (viewHeight - (dHeight + lineSpacing)) / (lineHeight + lineSpacing));
+
+                        if (linesLeftOnPage > 0)
+                            firstPage.setLines(remainingLines.subList(0, linesLeftOnPage));
+
+                        leftOverLines = remainingLines.subList(linesLeftOnPage, remainingLines.size() - 1);
                     }
                 }
-            }
 
-            pages.add(newPage);
+                pages.add(firstPage);
+
+                // Step 5 - Remaining pages in chapter
+
+                int line = 0;
+                int linesPerPage = viewHeight / (lineHeight + lineSpacing);
+
+                while (line < leftOverLines.size() - 1) {
+                    Page newPage = new Page(typeface, textSize, lineHeight, lineSeperation);
+                    newPage.setLines(leftOverLines.subList(line, line + Math.min(linesPerPage, leftOverLines.size() - 1 - line)));
+                    line += linesPerPage;
+                    pages.add(newPage);
+                }
+            }
         }
 
         return pages;
