@@ -16,6 +16,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -72,8 +73,17 @@ public class BrowseTabFragment extends Fragment {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("stories");
 
-        // Attach a listener to read the data at our posts reference
-        ref.addValueEventListener(new ValueEventListener() {
+        Query query = null;
+
+        switch (getArguments().getInt(ARG_TAB_TITLE)) {
+            case 1: query = ref.orderByChild("likes"); break;
+            case 2: query = ref.orderByChild("dateCreated"); break;
+            case 3: query = ref.orderByChild("author").equalTo("Sam"); break;
+        }
+
+        assert query != null;
+
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
