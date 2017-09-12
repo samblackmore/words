@@ -1,8 +1,11 @@
 package com.sam.words;
 
+import android.app.DialogFragment;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -57,6 +60,14 @@ public class BrowseTabFragment extends Fragment {
             addStoryButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
             addStoryButton.setTextColor(textColor);
             addStoryContainer.setVisibility(View.VISIBLE);
+
+            addStoryButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DialogFragment fragment = new NewStoryFragment();
+                    fragment.show(getActivity().getFragmentManager(), "newstory");
+                }
+            });
         }
 
 

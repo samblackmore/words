@@ -15,9 +15,10 @@
             android:id="@+id/add_story"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/add_story"
+            android:text="@string/new_story"
             android:textAlignment="center"
-            android:layout_margin="24dp"
+            android:layout_margin="12dp"
+            android:padding="24dp"
             />
     </RelativeLayout>
 
