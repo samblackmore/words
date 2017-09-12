@@ -1,35 +1,39 @@
 package com.sam.words;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A POJO to store and retrieve from the backend
  */
 
-public class Story {
+class Story {
 
-    private int id = 0;
-    private String author;
+    private String storyId;
+    private String userId;
+    private String authorName;
     private String title;
-    private List<Chapter> chapters = new ArrayList<>();
+    private List<Chapter> chapters;
     private long dateCreated;
     private long dateUpdated;
     private int likes = 0;
 
     public Story() {
-        // Default constructor required for calls to DataSnapshot.getValue(User.class)
+        // Default constructor required for calls to DataSnapshot.getValue(Story.class)
     }
 
-    public Story(String author, String title) {
-        this.author = author;
+    Story(String storyId, String userId, String title, String authorName, List<Chapter> chapters) {
+        this.storyId = storyId;
+        this.userId = userId;
         this.title = title;
+        this.authorName = authorName;
+        this.chapters = chapters;
+
         dateCreated = System.currentTimeMillis();
         dateUpdated = System.currentTimeMillis();
     }
 
-    public String getAuthor() {
-        return author;
+    public String getAuthorName() {
+        return authorName;
     }
 
     public String getTitle() {
@@ -52,7 +56,7 @@ public class Story {
         return likes;
     }
 
-    public int getId() {
-        return id;
+    public String getId() {
+        return storyId;
     }
 }

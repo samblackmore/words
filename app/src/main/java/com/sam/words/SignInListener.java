@@ -11,11 +11,10 @@ import com.google.firebase.auth.FirebaseUser;
 class SignInListener implements OnCompleteListener<AuthResult> {
 
     private BrowseTabFragment fragment;
-    private FirebaseAuth auth;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
 
     SignInListener(BrowseTabFragment fragment) {
         this.fragment = fragment;
-        auth = FirebaseAuth.getInstance();
     }
 
     @Override

@@ -5,11 +5,15 @@ package com.sam.words;
  * on a new page
  */
 
-public class Chapter {
+class Chapter {
     private String title;
     private String content;
 
-    public Chapter(String title, String content) {
+    public Chapter() {
+        // Default constructor required for calls to DataSnapshot.getValue(Chapter.class)
+    }
+
+    Chapter(String title, String content) {
         this.title = title;
         this.content = content;
     }
