@@ -3,7 +3,6 @@ package com.sam.words;
 import android.app.DialogFragment;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,22 +12,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,13 +27,16 @@ import java.util.List;
  */
 
 public class BrowseTabFragment extends Fragment implements View.OnClickListener {
-    // Fragment arguments
-    private static final String ARG_TAB_TITLE = "TITLE";
 
-    private FirebaseAuth mAuth;
+    private static final String ARG_TAB_SECTION = "SECTION";
+
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference ref = database.getReference("stories");
+
+    private RecyclerView mRecyclerView;
     private Button addStoryButton;
     private ProgressBar progressBar;
-    List<Story> mStories = new ArrayList<>();
 
     public BrowseTabFragment() {
     }
@@ -50,7 +44,7 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
     public static BrowseTabFragment newInstance(int sectionNumber) {
         BrowseTabFragment fragment = new BrowseTabFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_TAB_TITLE, sectionNumber);
+        args.putInt(ARG_TAB_SECTION, sectionNumber);
         fragment.setArguments(args);
         return fragment;
     }
@@ -59,72 +53,34 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_browse_section, container, false);
-
-        if (getArguments().getInt(ARG_TAB_TITLE) == 3) {
-
-            // Show the new story button
-            progressBar = (ProgressBar) rootView.findViewById(R.id.sign_in_progress);
-            FrameLayout addStoryContainer = (FrameLayout) rootView.findViewById(R.id.add_story_container);
-            addStoryContainer.setVisibility(View.VISIBLE);
-
-            // Set up button
-            addStoryButton = (Button) rootView.findViewById(R.id.add_story);
-            int color = getResources().getColor(R.color.colorAccent);
-            int textColor = getResources().getColor(R.color.white);
-            addStoryButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-            addStoryButton.setTextColor(textColor);
-
-            // Check if signed in
-            mAuth = FirebaseAuth.getInstance();
-            updateUI(mAuth.getCurrentUser());
-
-            addStoryButton.setOnClickListener(this);
-        }
-
-
-        //TextView textView = (TextView) rootView.findViewById(R.id.section_label);;
-
-        final RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.stories_list);
-
-        mRecyclerView.setHasFixedSize(true);
-
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(rootView.getContext());
+
+        addStoryButton = (Button) rootView.findViewById(R.id.add_story);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.sign_in_progress);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.stories_list);
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("stories");
-
         Query query = null;
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        switch (getArguments().getInt(ARG_TAB_TITLE)) {
-            case 1: query = ref.orderByChild("likes"); break;
-            case 2: query = ref.orderByChild("dateCreated"); break;
-            case 3: query = ref.orderByChild("author").equalTo("Sam"); break;
+        BrowseTab section = BrowseTab.getSection(getArguments().getInt(ARG_TAB_SECTION));
+
+        switch (section) {
+            case TOP:
+                query = ref.orderByChild("likes");
+                break;
+            case NEW:
+                query = ref.orderByChild("dateCreated");
+                break;
+            case ME:
+                showNewStoryButton();
+                query = (currentUser == null ? null : ref.orderByChild("userId").equalTo(currentUser.getUid()));
+                break;
         }
 
-        assert query != null;
-
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                mStories = new ArrayList<>();
-
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Story story = child.getValue(Story.class);
-                    mStories.add(story);
-                }
-
-                RecyclerView.Adapter mAdapter = new BrowseListAdapter(mStories);
-                mRecyclerView.setAdapter(mAdapter);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getContext(), "Failed to get stories! " + databaseError.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        if (query != null)
+            query.addValueEventListener(new BrowseDataListener(this));
 
         return rootView;
     }
@@ -133,6 +89,22 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
     public void onClick(View v) {
         if (v.getId() == R.id.add_story)
             addNewStory();
+    }
+
+    private void showNewStoryButton() {
+
+        // Show container
+        FrameLayout addStoryContainer = (FrameLayout) addStoryButton.getParent();
+        addStoryContainer.setVisibility(View.VISIBLE);
+
+        // Set up button
+        int color = getResources().getColor(R.color.colorAccent);
+        int textColor = getResources().getColor(R.color.white);
+        addStoryButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+        addStoryButton.setTextColor(textColor);
+        addStoryButton.setOnClickListener(this);
+
+        updateUI(mAuth.getCurrentUser());
     }
 
     public void updateUI(FirebaseUser user) {
@@ -175,5 +147,10 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
             showLoading();
             mAuth.signInAnonymously().addOnCompleteListener(getActivity(), new SignInListener(this));
         }
+    }
+
+    public void setStories(List<Story> stories) {
+        RecyclerView.Adapter mAdapter = new BrowseListAdapter(stories);
+        mRecyclerView.setAdapter(mAdapter);
     }
 }

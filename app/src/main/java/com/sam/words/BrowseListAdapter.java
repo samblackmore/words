@@ -69,7 +69,7 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(holder.mCardView.getContext(), StoryActivity.class);
-                intent.putExtra(EXTRA_STORY, story.getId());
+                intent.putExtra(EXTRA_STORY, story.getStoryId());
                 holder.mCardView.getContext().startActivity(intent);
             }
         });

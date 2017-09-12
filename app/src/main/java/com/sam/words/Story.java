@@ -32,6 +32,14 @@ class Story {
         dateUpdated = System.currentTimeMillis();
     }
 
+    public String getStoryId() {
+        return storyId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
     public String getAuthorName() {
         return authorName;
     }
@@ -54,9 +62,5 @@ class Story {
 
     public int getLikes() {
         return likes;
-    }
-
-    public String getId() {
-        return storyId;
     }
 }
