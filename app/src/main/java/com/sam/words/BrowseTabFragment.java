@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +35,7 @@ public class BrowseTabFragment extends Fragment {
     // Fragment arguments
     private static final String ARG_TAB_TITLE = "TITLE";
 
+    private FirebaseAuth mAuth;
     List<Story> mStories = new ArrayList<>();
 
     public BrowseTabFragment() {
@@ -52,22 +55,33 @@ public class BrowseTabFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_browse_section, container, false);
 
         if (getArguments().getInt(ARG_TAB_TITLE) == 3) {
-            RelativeLayout addStoryContainer = (RelativeLayout) rootView.findViewById(R.id.add_story_container);
-            Button addStoryButton = (Button) rootView.findViewById(R.id.add_story);
 
+            // Show the new story button
+            RelativeLayout addStoryContainer = (RelativeLayout) rootView.findViewById(R.id.add_story_container);
+            addStoryContainer.setVisibility(View.VISIBLE);
+
+            // Set up button
+            Button addStoryButton = (Button) rootView.findViewById(R.id.add_story);
             int color = getResources().getColor(R.color.colorAccent);
             int textColor = getResources().getColor(R.color.white);
             addStoryButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
             addStoryButton.setTextColor(textColor);
-            addStoryContainer.setVisibility(View.VISIBLE);
 
-            addStoryButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DialogFragment fragment = new NewStoryFragment();
-                    fragment.show(getActivity().getFragmentManager(), "newstory");
-                }
-            });
+            // Check if signed in
+            mAuth = FirebaseAuth.getInstance();
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+
+            if (currentUser == null) {
+                addStoryButton.setText(getResources().getString(R.string.sign_in));
+            } else {
+                addStoryButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DialogFragment fragment = new NewStoryFragment();
+                        fragment.show(getActivity().getFragmentManager(), "newstory");
+                    }
+                });
+            }
         }
 
 
@@ -114,9 +128,6 @@ public class BrowseTabFragment extends Fragment {
                 Toast.makeText(getContext(), "Failed to get stories! " + databaseError.toString(), Toast.LENGTH_SHORT).show();
             }
         });
-
-        RecyclerView.Adapter mAdapter = new BrowseListAdapter(mStories);
-        mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
     }
