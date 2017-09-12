@@ -124,7 +124,7 @@ public class WordsView extends View {
 
             // Step 2 - Drop cap
 
-            if (chapterContent.length() > 0) {
+            if (chapterContent != null && chapterContent.length() > 0) {
 
                 char dChar = chapterContent.charAt(0);
                 int dHeight = (linesPerDropCap * lineHeight) + ((linesPerDropCap - 1) * lineSpacing);

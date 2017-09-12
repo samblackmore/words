@@ -150,7 +150,8 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
     }
 
     public void setStories(List<Story> stories) {
-        RecyclerView.Adapter mAdapter = new BrowseListAdapter(stories);
+        BrowseTab section = BrowseTab.getSection(getArguments().getInt(ARG_TAB_SECTION));
+        RecyclerView.Adapter mAdapter = new BrowseListAdapter(section, stories);
         mRecyclerView.setAdapter(mAdapter);
     }
 }
