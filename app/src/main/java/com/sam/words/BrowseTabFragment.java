@@ -76,10 +76,7 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
 
             // Check if signed in
             mAuth = FirebaseAuth.getInstance();
-            FirebaseUser currentUser = mAuth.getCurrentUser();
-
-            if (currentUser == null)
-                signOut();
+            updateUI(mAuth.getCurrentUser());
 
             addStoryButton.setOnClickListener(this);
         }
@@ -138,53 +135,45 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
             addNewStory();
     }
 
-    public void signIn() {
-        addStoryButton.setText(getResources().getString(R.string.new_story));
+    public void updateUI(FirebaseUser user) {
+
+        hideLoading();
+
+        // Refresh the options menu
+        BrowseActivity activity = (BrowseActivity) getActivity();
+        activity.invalidateOptionsMenu();
+
+        if (user == null) {
+            addStoryButton.setText(getResources().getString(R.string.sign_in));
+        } else {
+            addStoryButton.setText(getResources().getString(R.string.new_story));
+        }
     }
 
-    public void signOut() {
-        addStoryButton.setText(getResources().getString(R.string.sign_in));
+    private void showLoading() {
+        progressBar.setVisibility(View.VISIBLE);
+        addStoryButton.setText("");
+        addStoryButton.setEnabled(false);
+    }
+
+    private void hideLoading() {
+        progressBar.setVisibility(View.GONE);
+        addStoryButton.setEnabled(true);
+    }
+
+    public void toast(String text) {
+        Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
     }
 
     private void addNewStory() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
-
-            // Already signed in
             DialogFragment fragment = new NewStoryFragment();
             fragment.show(getActivity().getFragmentManager(), "newstory");
-
         } else {
-
-            // Change to sign in button
-            signOut();
-            progressBar.setVisibility(View.VISIBLE);
-            addStoryButton.setText("");
-            addStoryButton.setEnabled(false);
-
-            mAuth.signInAnonymously().addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-
-                    // Stop loading
-                    progressBar.setVisibility(View.GONE);
-                    addStoryButton.setEnabled(true);
-
-                    if (task.isSuccessful()) {
-                        signIn();
-
-                        // Add the sign out button to options menu
-                        BrowseActivity activity = (BrowseActivity) getActivity();
-                        activity.invalidateOptionsMenu();
-
-                        Toast.makeText(getActivity(), "Authentication success!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        signOut();
-                        Toast.makeText(getActivity(), "Authentication failed", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+            showLoading();
+            mAuth.signInAnonymously().addOnCompleteListener(getActivity(), new SignInListener(this));
         }
     }
 }

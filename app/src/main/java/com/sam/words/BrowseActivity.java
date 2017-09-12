@@ -74,15 +74,11 @@ public class BrowseActivity extends AppCompatActivity {
                 return true;
             case R.id.action_sign_out:
                 mAuth.signOut();
-                FirebaseUser currentUser = mAuth.getCurrentUser();
-                if (currentUser == null)
-                    Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
 
                 FragmentManager fm = getSupportFragmentManager();
-
                 BrowseTabFragment frag = (BrowseTabFragment) fm.findFragmentById(R.id.container);
-
-                frag.signOut();
+                frag.updateUI(null);
 
                 invalidateOptionsMenu();
                 return true;
