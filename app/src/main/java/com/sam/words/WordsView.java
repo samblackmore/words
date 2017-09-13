@@ -93,7 +93,7 @@ public class WordsView extends View {
         }
 
         // Debug view border
-        canvas.drawRect(0, 0, getWidth()-1, getHeight()-1, mTextPaint);
+        //canvas.drawRect(0, 0, getWidth()-1, getHeight()-1, mTextPaint);
     }
 
     protected List<Page> calculatePages(List<Chapter> chapters) {
@@ -153,7 +153,7 @@ public class WordsView extends View {
 
                         int linesLeftOnPage = Math.max(0, (viewHeight - (dHeight + lineSpacing)) / (lineHeight + lineSpacing));
 
-                        if (linesLeftOnPage > 0)
+                        if (remainingLines.size() > 0)
                             firstPage.setLines(remainingLines.subList(0, linesLeftOnPage));
 
                         leftOverLines = remainingLines.subList(linesLeftOnPage, remainingLines.size() - 1);
@@ -188,7 +188,7 @@ public class WordsView extends View {
     private int getTextWidth(Paint paint, String text) {
         Rect bounds = new Rect();
         paint.getTextBounds(text, 0, 1, bounds);
-        return bounds.height();
+        return bounds.width();
     }
 
     private List<Rect> getBoundsPerLetter(Paint paint, String string) {
@@ -273,7 +273,7 @@ public class WordsView extends View {
         textSize -= amount;
     }
 
-    public void setText(List<Chapter> chapters) {
+    public void setChapters(List<Chapter> chapters) {
         this.chapters = chapters;
     }
 

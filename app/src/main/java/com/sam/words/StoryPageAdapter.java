@@ -10,14 +10,14 @@ import android.support.v4.app.FragmentStatePagerAdapter;
  */
 class StoryPageAdapter extends FragmentStatePagerAdapter {
 
-    private String mStory;
+    private Story mStory;
 
-    StoryPageAdapter(FragmentManager fm, String story) {
+    StoryPageAdapter(FragmentManager fm, Story story) {
         super(fm);
         mStory = story;
     }
 
-    void setStory(String story) {
+    void setStory(Story story) {
         mStory = story;
         notifyDataSetChanged();
     }
@@ -25,7 +25,7 @@ class StoryPageAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         // Instantiate the fragment for the given page
-        return StoryPageFragment.newInstance(position + 1, mStory);
+        return StoryPageFragment.newInstance(position + 1);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         setupButton(R.id.btn_start, R.color.colorAccent, R.color.white);
 
         wordsView = (WordsView) findViewById(R.id.words_view);
-        wordsView.setText(chapters);
+        wordsView.setChapters(chapters);
     }
 
     @Override

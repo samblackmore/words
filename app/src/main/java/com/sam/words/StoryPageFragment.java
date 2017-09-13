@@ -9,9 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A page in a story. Contains a single WordsView representing that page.
  */
@@ -23,6 +20,7 @@ public class StoryPageFragment extends Fragment {
     private static final String ARG_PAGE_CONTENT = "page_content";
 
     private static Typeface typeface;
+    private WordsView wordsView;
 
     public StoryPageFragment() {
     }
@@ -37,11 +35,10 @@ public class StoryPageFragment extends Fragment {
         );
     }
 
-    public static StoryPageFragment newInstance(int pageNumber, String content) {
+    public static StoryPageFragment newInstance(int pageNumber) {
         StoryPageFragment fragment = new StoryPageFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE_NUMBER, pageNumber);
-        args.putString(ARG_PAGE_CONTENT, content);
         fragment.setArguments(args);
         return fragment;
     }
@@ -49,17 +46,17 @@ public class StoryPageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_story_page, container, false);
-        WordsView wordsView = (WordsView) rootView.findViewById(R.id.words_view);
         TextView pageNumberView = (TextView) rootView.findViewById(R.id.page_number);
+        wordsView = (WordsView) rootView.findViewById(R.id.words_view);
 
-        Chapter chapter = new Chapter("Chapter", getArguments().getString(ARG_PAGE_CONTENT));
-        List<Chapter> chapters = new ArrayList<>();
-        chapters.add(chapter);
-
-        wordsView.setText(chapters);
+        wordsView.setChapters(((StoryActivity) getActivity()).getStory().getChapters());
         wordsView.setPageNumber(getArguments().getInt(ARG_PAGE_NUMBER));
         pageNumberView.setText("page " + getArguments().getInt(ARG_PAGE_NUMBER));
         pageNumberView.setTypeface(typeface);
         return rootView;
+    }
+
+    public void updateStory(Story story) {
+        wordsView.setChapters(story.getChapters());
     }
 }
