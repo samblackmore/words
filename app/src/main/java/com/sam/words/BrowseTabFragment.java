@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -68,10 +69,10 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
 
         switch (section) {
             case TOP:
-                query = ref.orderByChild("likes");
+                query = ref.orderByChild("likes").limitToLast(10);
                 break;
             case NEW:
-                query = ref.orderByChild("dateCreated");
+                query = ref.orderByChild("dateCreated").limitToLast(10);
                 break;
             case ME:
                 showNewStoryButton();
@@ -94,7 +95,7 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
     private void showNewStoryButton() {
 
         // Show container
-        FrameLayout addStoryContainer = (FrameLayout) addStoryButton.getParent();
+        FrameLayout addStoryContainer = (FrameLayout) addStoryButton.getParent().getParent();
         addStoryContainer.setVisibility(View.VISIBLE);
 
         // Set up button
@@ -150,8 +151,8 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
     }
 
     public void setStories(List<Story> stories) {
-        BrowseTab section = BrowseTab.getSection(getArguments().getInt(ARG_TAB_SECTION));
-        RecyclerView.Adapter mAdapter = new BrowseListAdapter(section, stories);
+        Collections.reverse(stories);
+        RecyclerView.Adapter mAdapter = new BrowseListAdapter(stories);
         mRecyclerView.setAdapter(mAdapter);
     }
 }

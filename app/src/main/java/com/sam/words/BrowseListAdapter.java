@@ -17,14 +17,12 @@ import java.util.List;
  */
 
 class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
-    private static List<Story> mDataset = new ArrayList<>();
-    BrowseTab section;
 
     static final String EXTRA_STORY = "STORY";
+    private List<Story> mDataset = new ArrayList<>();
 
-    BrowseListAdapter(BrowseTab section, List<Story> myDataset) {
+    BrowseListAdapter(List<Story> myDataset) {
         mDataset = myDataset;
-        this.section = section;
     }
 
     @Override
@@ -64,8 +62,7 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
 
         holder.mTitleView.setText(story.getTitle());
         holder.mAuthorView.setText(story.getAuthorName());
-        holder.mWordsView.setText(story.getChapters());
-        holder.mWordsView.setPageNumber(0);
+        holder.mWordsView.setChapters(story.getChapters());
 
         holder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
