@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +25,10 @@ import java.util.List;
 public class NewStoryFragment extends DialogFragment {
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference ref = database.getReference("stories");
     private FirebaseAuth auth = FirebaseAuth.getInstance();
+
+    private String[] query;
+    private List<WordQueryResult> queryResults;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -55,9 +58,6 @@ public class NewStoryFragment extends DialogFragment {
 
     private void postStory(String title, String author, String content) {
 
-        List<Chapter> chapters = new ArrayList<>();
-        chapters.add(new Chapter("Chapter One", content));
-
         FirebaseUser user = auth.getCurrentUser();
 
         if (user == null) {
@@ -65,8 +65,36 @@ public class NewStoryFragment extends DialogFragment {
             return;
         }
 
+        checkDictionary(title);
+        checkDictionary(content);
+
+        /*List<Chapter> chapters = new ArrayList<>();
+        chapters.add(new Chapter("Chapter One", content));
+
+        DatabaseReference ref = database.getReference("stories");
         DatabaseReference newRef = ref.push();
 
-        newRef.setValue(new Story(newRef.getKey(), user.getUid(), title, author, chapters));
+        newRef.setValue(new Story(newRef.getKey(), user.getUid(), title, author, chapters));*/
+    }
+
+    private void checkDictionary(String string) {
+        DatabaseReference ref = database.getReference("words");
+
+        query = string.split(" ");
+        queryResults = new ArrayList<>();
+
+        for (String word : query) {
+            Query query = ref.child(word.toLowerCase());
+            query.addListenerForSingleValueEvent(new WordListener(this));
+        }
+    }
+
+    public void addQueryResult(WordQueryResult result) {
+        queryResults.add(result);
+
+        if (queryResults.size() == query.length) {
+            WordQueryDialog dialog = WordQueryDialog.newInstance("Words were not found!");
+            dialog.show(dialog.getFragmentManager(), "newstory");
+        }
     }
 }

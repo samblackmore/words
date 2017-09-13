@@ -1,6 +1,6 @@
 package com.sam.words;
 
-public class Word {
+class Word {
     private Boolean approved;
     private String submittedBy;
     private long dateSubmitted;
@@ -8,7 +8,7 @@ public class Word {
     private int votes;
     private boolean explicit;
 
-    public Word() {
+    Word() {
         approved = true;
         submittedBy = "default";
         dateSubmitted = System.currentTimeMillis();
