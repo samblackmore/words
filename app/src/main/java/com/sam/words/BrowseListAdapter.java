@@ -48,8 +48,10 @@ class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
         final WordsView wordsView = (WordsView) v.findViewById(R.id.words_view);
 
         titleView.setTypeface(typefaceBold);
-        titleView.setTextSize((float) SharedPreferencesHelper.getTextSize(parent.getContext()) / 2);
         authorView.setTypeface(typefaceItalic);
+        titleView.setTextColor(parent.getResources().getColor(R.color.black));
+        authorView.setTextColor(parent.getResources().getColor(R.color.black));
+        titleView.setTextSize((float) SharedPreferencesHelper.getTextSize(parent.getContext()) / 2);
 
         return new BrowseStoryHolder(v, likesView, dateView, titleView, authorView, wordsView);
     }

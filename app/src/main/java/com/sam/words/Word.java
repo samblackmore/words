@@ -1,24 +1,33 @@
 package com.sam.words;
 
 class Word {
-    private Boolean approved;
+    private String word;
     private String submittedBy;
     private long dateSubmitted;
-    private long dateApproved;
+    private Long dateApproved;
     private int votes;
-    private boolean explicit;
 
+    // For admin use to upload default words
     Word() {
-        approved = true;
         submittedBy = "default";
         dateSubmitted = System.currentTimeMillis();
         dateApproved = System.currentTimeMillis();
         votes = 0;
-        explicit = false;
     }
 
-    public Boolean getApproved() {
-        return approved;
+    Word(String submittedBy) {
+        this.submittedBy = submittedBy;
+        dateSubmitted = System.currentTimeMillis();
+        dateApproved = null;
+        votes = 0;
+    }
+
+    public String getWord() {
+        return word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
     }
 
     public String getSubmittedBy() {
@@ -29,15 +38,11 @@ class Word {
         return dateSubmitted;
     }
 
-    public long getDateApproved() {
+    public Long getDateApproved() {
         return dateApproved;
     }
 
     public int getVotes() {
         return votes;
-    }
-
-    public boolean isExplicit() {
-        return explicit;
     }
 }

@@ -125,7 +125,7 @@ public class NewStoryFragment extends DialogFragment {
         if (foundWords.size() == query.size()) {
             query.removeAll(foundWords);
             if (query.size() > 0)
-                showError("Couldn't find: " + TextUtils.join(", ", query));
+                showError(query);
             else
                 postStory();
         }
@@ -133,6 +133,11 @@ public class NewStoryFragment extends DialogFragment {
 
     private void showError(String message) {
         SimpleDialog dialog = SimpleDialog.newInstance(message);
-        dialog.show(((BrowseActivity) getActivity()).getSupportFragmentManager(), "newstory");
+        dialog.show(((BrowseActivity) getActivity()).getSupportFragmentManager(), "wordserror");
+    }
+
+    private void showError(LinkedHashSet<String> query) {
+        AddWordsDialog dialog = AddWordsDialog.newInstance(new ArrayList<>(query));
+        dialog.show(((BrowseActivity) getActivity()).getSupportFragmentManager(), "addwords");
     }
 }
