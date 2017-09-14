@@ -28,6 +28,10 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"/>
+
+        <activity
+            android:name=".SignInActivity"
+            android:label="@string/title_activity_sign_in"/>
     </application>
 
 </manifest>

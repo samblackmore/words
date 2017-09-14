@@ -1,6 +1,7 @@
 package com.sam.words;
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -139,6 +140,7 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
     }
 
     private void addNewStory() {
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
@@ -146,7 +148,9 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
             fragment.show(getActivity().getFragmentManager(), "newstory");
         } else {
             showLoading();
-            mAuth.signInAnonymously().addOnCompleteListener(getActivity(), new SignInListener(this));
+            Intent intent = new Intent(getActivity(), SignInActivity.class);
+            getActivity().startActivity(intent);
+            //mAuth.signInAnonymously().addOnCompleteListener(getActivity(), new SignInListener(this));
         }
     }
 
