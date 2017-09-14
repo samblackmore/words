@@ -1,10 +1,9 @@
 package com.sam.words;
 
-import android.app.Fragment;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -15,41 +14,105 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
-public class BrowseActivity extends AppCompatActivity {
+public class BrowseActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
+    private static int RC_SIGN_IN = 100;
+    private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_browse);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        BrowseTabAdapter mBrowseTabAdapter = new BrowseTabAdapter(getSupportFragmentManager());
-
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mBrowseTabAdapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         mAuth = FirebaseAuth.getInstance();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        initLayout();
     }
 
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.sign_in_button:
+                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+                startActivityForResult(signInIntent, RC_SIGN_IN);
+                break;
+
+            case R.id.add_story:
+                DialogFragment fragment = new NewStoryFragment();
+                fragment.show(getFragmentManager(), "newstory");
+                break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+
+            if (result.isSuccess()) {
+                GoogleSignInAccount googleAccount = result.getSignInAccount();
+                firebaseAuthWithGoogle(googleAccount);
+                getFrag().showLoading(true);
+            } else {
+                getFrag().showLoading(false);
+            }
+        }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            getFrag().updateUI(user);
+                        } else {
+                            getFrag().updateUI(null);
+                        }
+                    }
+                });
+    }
+
+    private BrowseTabFragment getFrag( ) {
+        FragmentManager fm = getSupportFragmentManager();
+        return  (BrowseTabFragment) fm.findFragmentById(R.id.container);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -75,15 +138,23 @@ public class BrowseActivity extends AppCompatActivity {
             case R.id.action_sign_out:
                 mAuth.signOut();
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
-
-                FragmentManager fm = getSupportFragmentManager();
-                BrowseTabFragment frag = (BrowseTabFragment) fm.findFragmentById(R.id.container);
-                frag.updateUI(null);
-
-                invalidateOptionsMenu();
+                getFrag().updateUI(null);
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void initLayout() {
+        setContentView(R.layout.activity_browse);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
+        viewPager.setAdapter(new BrowseTabAdapter(getSupportFragmentManager()));
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
     }
 }

@@ -1,7 +1,5 @@
 package com.sam.words;
 
-import android.app.DialogFragment;
-import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
+import com.google.android.gms.common.SignInButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -28,7 +26,7 @@ import java.util.List;
  * A fragment representing one tab in the Browse Activity
  */
 
-public class BrowseTabFragment extends Fragment implements View.OnClickListener {
+public class BrowseTabFragment extends Fragment {
 
     private static final String ARG_TAB_SECTION = "SECTION";
 
@@ -37,6 +35,7 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
     private DatabaseReference ref = database.getReference("stories");
 
     private RecyclerView mRecyclerView;
+    private SignInButton signInButton;
     private Button addStoryButton;
     private ProgressBar progressBar;
 
@@ -57,6 +56,7 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
         View rootView = inflater.inflate(R.layout.fragment_browse_section, container, false);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(rootView.getContext());
 
+        signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
         addStoryButton = (Button) rootView.findViewById(R.id.add_story);
         progressBar = (ProgressBar) rootView.findViewById(R.id.sign_in_progress);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.stories_list);
@@ -76,7 +76,7 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
                 query = ref.orderByChild("dateCreated").limitToLast(10);
                 break;
             case ME:
-                showNewStoryButton();
+                initMyStories();
                 query = (currentUser == null ? null : ref.orderByChild("userId").equalTo(currentUser.getUid()));
                 break;
         }
@@ -87,13 +87,7 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
         return rootView;
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.add_story)
-            addNewStory();
-    }
-
-    private void showNewStoryButton() {
+    private void initMyStories() {
 
         // Show container
         FrameLayout addStoryContainer = (FrameLayout) addStoryButton.getParent().getParent();
@@ -104,53 +98,38 @@ public class BrowseTabFragment extends Fragment implements View.OnClickListener 
         int textColor = getResources().getColor(R.color.white);
         addStoryButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
         addStoryButton.setTextColor(textColor);
-        addStoryButton.setOnClickListener(this);
+        addStoryButton.setOnClickListener((BrowseActivity) getActivity());
+        signInButton.setOnClickListener((BrowseActivity) getActivity());
 
         updateUI(mAuth.getCurrentUser());
     }
 
     public void updateUI(FirebaseUser user) {
 
-        hideLoading();
+        showLoading(false);
 
         // Refresh the options menu
         BrowseActivity activity = (BrowseActivity) getActivity();
         activity.invalidateOptionsMenu();
 
         if (user == null) {
-            addStoryButton.setText(getResources().getString(R.string.sign_in));
+            signInButton.setVisibility(View.VISIBLE);
+            addStoryButton.setVisibility(View.INVISIBLE);
         } else {
-            addStoryButton.setText(getResources().getString(R.string.new_story));
+            signInButton.setVisibility(View.INVISIBLE);
+            addStoryButton.setVisibility(View.VISIBLE);
         }
     }
 
-    private void showLoading() {
-        progressBar.setVisibility(View.VISIBLE);
-        addStoryButton.setText("");
-        addStoryButton.setEnabled(false);
-    }
-
-    private void hideLoading() {
-        progressBar.setVisibility(View.GONE);
-        addStoryButton.setEnabled(true);
-    }
-
-    public void toast(String text) {
-        Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
-    }
-
-    private void addNewStory() {
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        if (currentUser != null) {
-            DialogFragment fragment = new NewStoryFragment();
-            fragment.show(getActivity().getFragmentManager(), "newstory");
+    public void showLoading(boolean show) {
+        if (show) {
+            progressBar.setVisibility(View.VISIBLE);
+            signInButton.setVisibility(View.INVISIBLE);
+            addStoryButton.setVisibility(View.INVISIBLE);
         } else {
-            showLoading();
-            Intent intent = new Intent(getActivity(), SignInActivity.class);
-            getActivity().startActivity(intent);
-            //mAuth.signInAnonymously().addOnCompleteListener(getActivity(), new SignInListener(this));
+            progressBar.setVisibility(View.GONE);
+            signInButton.setVisibility(View.INVISIBLE);
+            addStoryButton.setVisibility(View.VISIBLE);
         }
     }
 
