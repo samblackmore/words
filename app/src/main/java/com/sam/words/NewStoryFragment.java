@@ -34,6 +34,9 @@ public class NewStoryFragment extends DialogFragment {
 
     private LinkedHashSet<String> query;
     private List<String> foundWords;
+    private String title;
+    private String author;
+    private String content;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -56,29 +59,40 @@ public class NewStoryFragment extends DialogFragment {
         d.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String title = ((TextInputEditText) d.findViewById(R.id.new_story_title)).getText().toString();
-                String author = ((TextInputEditText) d.findViewById(R.id.new_story_author)).getText().toString();
-                String content = ((TextInputEditText) d.findViewById(R.id.new_story_content)).getText().toString();
-                postStory(title, author, content);
+                title = ((TextInputEditText) d.findViewById(R.id.new_story_title)).getText().toString();
+                author = ((TextInputEditText) d.findViewById(R.id.new_story_author)).getText().toString();
+                content = ((TextInputEditText) d.findViewById(R.id.new_story_content)).getText().toString();
+
+                String error = null;
+
+                if (title.length() == 0)
+                    error = "Title can't be empty!";
+                if (author.length() == 0)
+                    error = "Author can't be empty!";
+                if (content.length() == 0)
+                    error = "Content can't be empty!";
+
+                if (error != null) {
+                    showError(error);
+                    return;
+                }
+
+                List<String> words = new ArrayList<>();
+                words.addAll(Arrays.asList(title.toLowerCase().split(" ")));
+                words.addAll(Arrays.asList(content.toLowerCase().split(" ")));
+
+                query = new LinkedHashSet<>(words);
+                foundWords = new ArrayList<>();
+
+                for (String word : query)
+                    ref.child(word).addListenerForSingleValueEvent(new WordListener(NewStoryFragment.this));
             }
         });
     }
 
-    private void postStory(String title, String author, String content) {
-
-        String error = null;
-
-        if (title.length() == 0)
-            error = "Title can't be empty!";
-        if (author.length() == 0)
-            error = "Author can't be empty!";
-        if (content.length() == 0)
-            error = "Content can't be empty!";
-
-        if (error != null) {
-            showError(error);
-            return;
-        }
+    private void postStory() {
+        List<Chapter> chapters = new ArrayList<>();
+        chapters.add(new Chapter("Chapter One", content));
 
         FirebaseUser user = auth.getCurrentUser();
 
@@ -87,27 +101,14 @@ public class NewStoryFragment extends DialogFragment {
             return;
         }
 
-        List<String> words = new ArrayList<>();
-        words.addAll(Arrays.asList(title.toLowerCase().split(" ")));
-        words.addAll(Arrays.asList(content.toLowerCase().split(" ")));
+        DatabaseReference storiesRef = database.getReference("stories");
+        DatabaseReference newRef = storiesRef.push();
 
-        query = new LinkedHashSet<>(words);
-        foundWords = new ArrayList<>();
-
-        for (String word : query) {
-            Query query = ref.child(word);
-            query.addListenerForSingleValueEvent(new WordListener(this));
-        }
-
-        /*List<Chapter> chapters = new ArrayList<>();
-        chapters.add(new Chapter("Chapter One", content));
-
-        DatabaseReference ref = database.getReference("stories");
-        DatabaseReference newRef = ref.push();
-
-        newRef.setValue(new Story(newRef.getKey(), user.getUid(), title, author, chapters));*/
+        newRef.setValue(new Story(newRef.getKey(), user.getUid(), title, author, chapters));
+        
+        getDialog().dismiss();
     }
-    
+
     public void foundWord(String word) {
         foundWords.add(word);
 
@@ -115,6 +116,8 @@ public class NewStoryFragment extends DialogFragment {
             query.removeAll(foundWords);
             if (query.size() > 0)
                 showError("Couldn't find: " + TextUtils.join(", ", query));
+            else
+                postStory();
         }
     }
 
