@@ -33,7 +33,7 @@ public class NewStoryFragment extends DialogFragment {
     private FirebaseAuth auth = FirebaseAuth.getInstance();
 
     private LinkedHashSet<String> query;
-    private List<WordQueryResult> queryResults;
+    private List<String> foundWords;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -88,14 +88,14 @@ public class NewStoryFragment extends DialogFragment {
         }
 
         List<String> words = new ArrayList<>();
-        words.addAll(Arrays.asList(title.split(" ")));
-        words.addAll(Arrays.asList(content.split(" ")));
+        words.addAll(Arrays.asList(title.toLowerCase().split(" ")));
+        words.addAll(Arrays.asList(content.toLowerCase().split(" ")));
 
         query = new LinkedHashSet<>(words);
-        queryResults = new ArrayList<>();
+        foundWords = new ArrayList<>();
 
         for (String word : query) {
-            Query query = ref.child(word.toLowerCase());
+            Query query = ref.child(word);
             query.addListenerForSingleValueEvent(new WordListener(this));
         }
 
@@ -107,19 +107,14 @@ public class NewStoryFragment extends DialogFragment {
 
         newRef.setValue(new Story(newRef.getKey(), user.getUid(), title, author, chapters));*/
     }
+    
+    public void foundWord(String word) {
+        foundWords.add(word);
 
-
-    public void addQueryResult(WordQueryResult result) {
-        queryResults.add(result);
-
-        if (queryResults.size() == query.size()) {
-            List<String> notFound = new ArrayList<>();
-            for (WordQueryResult word : queryResults)
-                if (!word.found())
-                    notFound.add(word.word());
-
-            if (notFound.size() > 0)
-                showError("Couldn't find: " + TextUtils.join(", ", notFound));
+        if (foundWords.size() == query.size()) {
+            query.removeAll(foundWords);
+            if (query.size() > 0)
+                showError("Couldn't find: " + TextUtils.join(", ", query));
         }
     }
 

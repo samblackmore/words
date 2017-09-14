@@ -18,7 +18,7 @@ class WordListener implements ValueEventListener {
     public void onDataChange(DataSnapshot dataSnapshot) {
         String word = dataSnapshot.getKey();
         Word wordData = dataSnapshot.getValue(Word.class);
-        frag.addQueryResult(new WordQueryResult(wordData != null, word));
+        frag.foundWord(wordData == null ? null : word);
     }
 
     @Override
