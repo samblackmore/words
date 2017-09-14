@@ -9,6 +9,7 @@ import android.support.design.widget.TextInputEditText;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,8 +44,17 @@ public class NewStoryFragment extends DialogFragment {
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
+        View view = inflater.inflate(R.layout.dialog_new_story, null);
+        TextInputEditText authorView = (TextInputEditText) view.findViewById(R.id.new_story_author);
+
+        FirebaseUser user = auth.getCurrentUser();
+
+        if (user != null)
+            authorView.setText(user.getDisplayName());
+
         return new AlertDialog.Builder(getActivity())
-                .setView(inflater.inflate(R.layout.dialog_new_story, null))
+                .setView(view)
+                .setTitle(getString(R.string.new_story))
                 .setPositiveButton(R.string.add_story, null)
                 .setNegativeButton(R.string.cancel, null)
                 .create();
