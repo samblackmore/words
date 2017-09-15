@@ -46,13 +46,18 @@ public class StoryPageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_story_page, container, false);
-        TextView pageNumberView = (TextView) rootView.findViewById(R.id.page_number);
-        wordsView = (WordsView) rootView.findViewById(R.id.words_view);
 
-        wordsView.setChapters(((StoryActivity) getActivity()).getStory().getChapters());
+        Story story = ((StoryActivity) getActivity()).getStory();
+
+        wordsView = (WordsView) rootView.findViewById(R.id.words_view);
         wordsView.setPageNumber(getArguments().getInt(ARG_PAGE_NUMBER));
+        if (story != null)
+            wordsView.setChapters(story.getChapters());
+
+        TextView pageNumberView = (TextView) rootView.findViewById(R.id.page_number);
         pageNumberView.setText("page " + getArguments().getInt(ARG_PAGE_NUMBER));
         pageNumberView.setTypeface(typeface);
+
         return rootView;
     }
 

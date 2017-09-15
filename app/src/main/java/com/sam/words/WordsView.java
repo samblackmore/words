@@ -141,7 +141,7 @@ public class WordsView extends View {
                     mTextPaint.setTextSize(textSize);
                     int dropCapLinesX = viewX + dWidth + lineSpacing;
 
-                    List<String> lines = lineWrap(mTextPaint, viewWidth - dropCapLinesX, chapterContent.substring(1, chapterContent.length()));
+                    List<String> lines = lineWrap(mTextPaint, viewWidth - dropCapLinesX, chapterContent.substring(chapterContent.length() > 2 && chapterContent.charAt(1) == ' ' ? 2 : 1, chapterContent.length()));
                     firstPage.setDropCapLines(lines.subList(0, Math.min(lines.size(), linesPerDropCap)));
 
                     // Step 4 - Remaining lines
@@ -151,12 +151,16 @@ public class WordsView extends View {
                         String remainingText = TextUtils.join(" ", lines.subList(linesPerDropCap, lines.size()));
                         List<String> remainingLines = lineWrap(mTextPaint, viewWidth, remainingText);
 
-                        int linesLeftOnPage = Math.max(0, (viewHeight - (dHeight + lineSpacing)) / (lineHeight + lineSpacing));
+                        if (remainingLines.size() > 0) {
 
-                        if (remainingLines.size() > 0)
+                            int maxlinesLeftOnPage = Math.max(0, (viewHeight - (dHeight + lineSpacing)) / (lineHeight + lineSpacing));
+                            int linesLeftOnPage = Math.min(remainingLines.size(), maxlinesLeftOnPage);
+
                             firstPage.setLines(remainingLines.subList(0, linesLeftOnPage));
 
-                        leftOverLines = remainingLines.subList(linesLeftOnPage, remainingLines.size() - 1);
+                            if (linesLeftOnPage < remainingLines.size())
+                                leftOverLines = remainingLines.subList(linesLeftOnPage, remainingLines.size());
+                        }
                     }
                 }
 
@@ -169,7 +173,7 @@ public class WordsView extends View {
 
                 while (line < leftOverLines.size() - 1) {
                     Page newPage = new Page(typeface, textSize, lineHeight, lineSeperation);
-                    newPage.setLines(leftOverLines.subList(line, line + Math.min(linesPerPage, leftOverLines.size() - 1 - line)));
+                    newPage.setLines(leftOverLines.subList(line, line + Math.min(linesPerPage, leftOverLines.size() - line)));
                     line += linesPerPage;
                     pages.add(newPage);
                 }
