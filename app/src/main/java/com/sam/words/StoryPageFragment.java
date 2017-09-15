@@ -64,4 +64,8 @@ public class StoryPageFragment extends Fragment {
     public void updateStory(Story story) {
         wordsView.setChapters(story.getChapters());
     }
+
+    public WordsView getWordsView() {
+        return wordsView;
+    }
 }

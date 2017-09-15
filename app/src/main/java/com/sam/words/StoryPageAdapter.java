@@ -10,16 +10,10 @@ import android.support.v4.app.FragmentStatePagerAdapter;
  */
 class StoryPageAdapter extends FragmentStatePagerAdapter {
 
-    private Story mStory;
+    private int pages = 1;
 
-    StoryPageAdapter(FragmentManager fm, Story story) {
+    StoryPageAdapter(FragmentManager fm) {
         super(fm);
-        mStory = story;
-    }
-
-    void setStory(Story story) {
-        mStory = story;
-        notifyDataSetChanged();
     }
 
     @Override
@@ -36,19 +30,11 @@ class StoryPageAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return pages;
     }
 
-    @Override
-    public CharSequence getPageTitle(int position) {
-        switch (position) {
-            case 0:
-                return "SECTION 1";
-            case 1:
-                return "SECTION 2";
-            case 2:
-                return "SECTION 3";
-        }
-        return null;
+    public void setPages(int pages) {
+        this.pages = pages;
+        notifyDataSetChanged();
     }
 }

@@ -18,6 +18,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import java.util.List;
+
 import static com.sam.words.BrowseListAdapter.EXTRA_STORY;
 
 public class StoryActivity extends AppCompatActivity {
@@ -26,6 +28,7 @@ public class StoryActivity extends AppCompatActivity {
     private DatabaseReference ref = database.getReference("stories");
 
     private Story mStory;
+    private StoryPageAdapter mStoryPageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +41,10 @@ public class StoryActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String storyId = intent.getStringExtra(EXTRA_STORY);
 
-        final StoryPageAdapter storyPageAdapter = new StoryPageAdapter(getSupportFragmentManager(), mStory);
+        mStoryPageAdapter = new StoryPageAdapter(getSupportFragmentManager());
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
-        viewPager.setAdapter(storyPageAdapter);
+        viewPager.setAdapter(mStoryPageAdapter);
 
         Query query = ref.child(storyId);
         query.addValueEventListener(new StoryListener(this));
@@ -72,6 +75,9 @@ public class StoryActivity extends AppCompatActivity {
             StoryPageFragment storyPageFragment = (StoryPageFragment) fragment;
             storyPageFragment.updateStory(story);
         }
+
+        List<Page> pages = ((StoryPageFragment) fm.getFragments().get(0)).getWordsView().calculatePages(story.getChapters());
+        mStoryPageAdapter.setPages(pages.size());
     }
 
     public Story getStory() {
