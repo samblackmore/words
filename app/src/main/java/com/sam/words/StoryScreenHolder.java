@@ -3,6 +3,7 @@ package com.sam.words;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 /**
@@ -11,11 +12,13 @@ import android.widget.TextView;
 
 class StoryScreenHolder extends RecyclerView.ViewHolder {
 
+    RelativeLayout itemView;
     WordsView wordsView;
     TextView pageNumberView;
 
-    public StoryScreenHolder(View itemView, WordsView wordsView, TextView pageNumberView) {
+    public StoryScreenHolder(RelativeLayout itemView, WordsView wordsView, TextView pageNumberView) {
         super(itemView);
+        this.itemView = itemView;
         this.wordsView = wordsView;
         this.pageNumberView = pageNumberView;
     }

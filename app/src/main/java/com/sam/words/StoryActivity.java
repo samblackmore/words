@@ -84,8 +84,8 @@ public class StoryActivity extends AppCompatActivity {
         }
 
         if (liveFragment != null) {
-            List<Page> pages = liveFragment.getWordsView().calculatePages(story.getChapters());
-            mStoryPageAdapter.setPages(pages.size());
+            //List<Page> pages = liveFragment.getWordsView().calculatePages(story.getChapters());
+            //mStoryPageAdapter.setPages(pages.size());
         }
     }
 

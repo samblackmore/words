@@ -50,33 +50,20 @@ public class StoryPageFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_browse_section, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_story_page, container, false);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(rootView.getContext());
 
         Story story = ((StoryActivity) getActivity()).getStory();
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.stories_list);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.screen_list);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-        /*
-
-        wordsView = (WordsView) rootView.findViewById(R.id.words_view);
-        wordsView.setPageNumber(getArguments().getInt(ARG_PAGE_NUMBER));
-        if (story != null)
-            wordsView.setChapters(story.getChapters());
-
-        pollView = (TextView) rootView.findViewById(R.id.poll_container);
-
-        TextView pageNumberView = (TextView) rootView.findViewById(R.id.page_number);
-        pageNumberView.setText("page " + getArguments().getInt(ARG_PAGE_NUMBER) + " of " + getArguments().getInt(ARG_PAGE_COUNT));
-        pageNumberView.setTypeface(typeface);*/
 
         return rootView;
     }
 
     public void updateStory(Story story) {
-        RecyclerView.Adapter mAdapter = new StoryScreenAdapter(story);
+        RecyclerView.Adapter mAdapter = new StoryScreenAdapter();
         mRecyclerView.setAdapter(mAdapter);
         //wordsView.setChapters(story.getChapters());
     }
