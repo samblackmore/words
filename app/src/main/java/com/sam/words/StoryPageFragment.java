@@ -16,11 +16,12 @@ import android.widget.TextView;
 public class StoryPageFragment extends Fragment {
 
     // Fragment arguments
-    private static final String ARG_PAGE_NUMBER = "page_number";
+    public static final String ARG_PAGE_NUMBER = "page_number";
     private static final String ARG_PAGE_COUNT = "page_count";
 
     private static Typeface typeface;
     private WordsView wordsView;
+    private TextView pollView;
 
     public StoryPageFragment() {
     }
@@ -55,6 +56,8 @@ public class StoryPageFragment extends Fragment {
         if (story != null)
             wordsView.setChapters(story.getChapters());
 
+        pollView = (TextView) rootView.findViewById(R.id.poll_container);
+
         TextView pageNumberView = (TextView) rootView.findViewById(R.id.page_number);
         pageNumberView.setText("page " + getArguments().getInt(ARG_PAGE_NUMBER) + " of " + getArguments().getInt(ARG_PAGE_COUNT));
         pageNumberView.setTypeface(typeface);
@@ -64,6 +67,11 @@ public class StoryPageFragment extends Fragment {
 
     public void updateStory(Story story) {
         wordsView.setChapters(story.getChapters());
+    }
+
+    public void gotWordsBottom(int y) {
+        pollView.setVisibility(View.VISIBLE);
+        pollView.setY(y);
     }
 
     public WordsView getWordsView() {

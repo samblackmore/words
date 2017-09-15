@@ -1,10 +1,13 @@
 package com.sam.words;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -88,12 +91,24 @@ public class WordsView extends View {
         if (chapters != null) {
             List<Page> pages = calculatePages(chapters);
 
-            if (pageNumber > 0 && pageNumber <= pages.size())
-                pages.get(pageNumber-1).draw(canvas, mTextPaint);
+            if (pageNumber > 0 && pageNumber <= pages.size()) {
+                Page myPage = pages.get(pageNumber - 1);
+                myPage.draw(canvas, mTextPaint);
+                Activity activity = (Activity) getContext();
+                if (activity instanceof StoryActivity) {
+                    List<Fragment> fragments = ((StoryActivity) activity).getSupportFragmentManager().getFragments();
+                    if (fragments != null) {
+                        for (Fragment frag : fragments) {
+                            if (frag.getArguments().getInt(StoryPageFragment.ARG_PAGE_NUMBER) == pageNumber)
+                                ((StoryPageFragment) frag).gotWordsBottom((int) getY() + myPage.getWordsBottom());
+                        }
+                    }
+                }
+            }
         }
 
         // Debug view border
-        //canvas.drawRect(0, 0, getWidth()-1, getHeight()-1, mTextPaint);
+        canvas.drawRect(0, 0, getWidth()-1, getHeight()-1, mTextPaint);
     }
 
     protected List<Page> calculatePages(List<Chapter> chapters) {
