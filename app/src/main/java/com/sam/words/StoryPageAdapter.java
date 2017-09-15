@@ -19,7 +19,7 @@ class StoryPageAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         // Instantiate the fragment for the given page
-        return StoryPageFragment.newInstance(position + 1);
+        return StoryPageFragment.newInstance(position + 1, pages);
     }
 
     @Override

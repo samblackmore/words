@@ -17,7 +17,7 @@ public class StoryPageFragment extends Fragment {
 
     // Fragment arguments
     private static final String ARG_PAGE_NUMBER = "page_number";
-    private static final String ARG_PAGE_CONTENT = "page_content";
+    private static final String ARG_PAGE_COUNT = "page_count";
 
     private static Typeface typeface;
     private WordsView wordsView;
@@ -35,10 +35,11 @@ public class StoryPageFragment extends Fragment {
         );
     }
 
-    public static StoryPageFragment newInstance(int pageNumber) {
+    public static StoryPageFragment newInstance(int pageNumber, int pageCount) {
         StoryPageFragment fragment = new StoryPageFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE_NUMBER, pageNumber);
+        args.putInt(ARG_PAGE_COUNT, pageCount);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,7 +56,7 @@ public class StoryPageFragment extends Fragment {
             wordsView.setChapters(story.getChapters());
 
         TextView pageNumberView = (TextView) rootView.findViewById(R.id.page_number);
-        pageNumberView.setText("page " + getArguments().getInt(ARG_PAGE_NUMBER));
+        pageNumberView.setText("page " + getArguments().getInt(ARG_PAGE_NUMBER) + " of " + getArguments().getInt(ARG_PAGE_COUNT));
         pageNumberView.setTypeface(typeface);
 
         return rootView;

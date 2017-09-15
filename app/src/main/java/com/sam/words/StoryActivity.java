@@ -70,14 +70,16 @@ public class StoryActivity extends AppCompatActivity {
 
     public void setStory(Story story) {
         mStory = story;
-        FragmentManager fm = getSupportFragmentManager();
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
         StoryPageFragment liveFragment = null;
 
-        for (Fragment fragment : fm.getFragments()) {
-            StoryPageFragment storyPageFragment = (StoryPageFragment) fragment;
-            if (storyPageFragment != null) {
-                storyPageFragment.updateStory(story);
-                liveFragment = storyPageFragment;
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                StoryPageFragment storyPageFragment = (StoryPageFragment) fragment;
+                if (storyPageFragment != null) {
+                    storyPageFragment.updateStory(story);
+                    liveFragment = storyPageFragment;
+                }
             }
         }
 
