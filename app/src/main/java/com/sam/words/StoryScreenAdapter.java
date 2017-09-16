@@ -55,6 +55,9 @@ class StoryScreenAdapter extends RecyclerView.Adapter<StoryScreenHolder> {
 
     @Override
     public int getItemCount() {
-        return 2;
+        if (pageNumber == pageCount)
+            return 2;
+        else
+            return 1;
     }
 }

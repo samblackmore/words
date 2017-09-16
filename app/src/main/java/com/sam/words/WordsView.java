@@ -115,7 +115,7 @@ public class WordsView extends View {
         }
 
         // Debug view border
-        canvas.drawRect(0, 0, getWidth()-1, getHeight()-1, mTextPaint);
+        //canvas.drawRect(0, 0, getWidth()-1, getHeight()-1, mTextPaint);
     }
 
     protected List<Page> calculatePages(List<Chapter> chapters) {
