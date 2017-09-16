@@ -10,7 +10,7 @@
     android:background="@color/white"
     >
 
-    <com.sam.words.WordsView
+    <com.sam.words.components.WordsView
         android:id="@+id/words_view"
         android:layout_above="@+id/btn_start"
         android:layout_width="match_parent"

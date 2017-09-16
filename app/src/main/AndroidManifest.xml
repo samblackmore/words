@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".BrowseActivity"
+            android:name=".browse.BrowseActivity"
             android:label="@string/title_activity_browse"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -20,14 +20,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".StoryActivity"
+            android:name=".story.StoryActivity"
             android:label="@string/title_activity_story"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings"/>
         <activity 
-            android:name=".DictionaryActivity"
+            android:name=".dictionary.DictionaryActivity"
             android:label="@string/title_activity_dictionary"/>
     </application>
 

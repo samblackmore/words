@@ -7,9 +7,9 @@
     android:paddingTop="48dp"
     android:paddingBottom="24dp"
     android:background="@color/white"
-    tools:context="com.sam.words.StoryPageFragment">
+    tools:context="com.sam.words.story.StoryPageFragment">
 
-    <com.sam.words.WordsView
+    <com.sam.words.components.WordsView
         android:id="@+id/words_view"
         android:layout_above="@+id/page_number"
         android:layout_width="match_parent"
