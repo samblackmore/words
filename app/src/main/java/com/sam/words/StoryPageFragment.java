@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 /**
  * A page in a story. Contains a single WordsView representing that page.
  */
@@ -22,21 +24,12 @@ public class StoryPageFragment extends Fragment {
     private static final String ARG_PAGE_COUNT = "page_count";
 
     private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
     //private static Typeface typeface;
     //private WordsView wordsView;
     //private TextView pollView;
 
     public StoryPageFragment() {
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        /*typeface = Typeface.createFromAsset(
-                context.getAssets(),
-                "fonts/CrimsonText/CrimsonText-Regular.ttf"
-        );*/
     }
 
     public static StoryPageFragment newInstance(int pageNumber, int pageCount) {
@@ -59,21 +52,26 @@ public class StoryPageFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        updateStory(story);
+
         return rootView;
     }
 
     public void updateStory(Story story) {
-        RecyclerView.Adapter mAdapter = new StoryScreenAdapter();
+        int pageNum = getArguments().getInt(ARG_PAGE_NUMBER);
+        int pageCnt = getArguments().getInt(ARG_PAGE_COUNT);
+
+        mAdapter = new StoryScreenAdapter(story, pageNum, pageCnt);
         mRecyclerView.setAdapter(mAdapter);
-        //wordsView.setChapters(story.getChapters());
+    }
+
+    public void notifyChanges() {
+        if (mAdapter != null)
+        mAdapter.notifyDataSetChanged();
     }
 
     public void gotWordsBottom(int y) {
         //pollView.setVisibility(View.VISIBLE);
         //pollView.setY(y);
     }
-
-    //public WordsView getWordsView() {
-    //    return wordsView;
-    //}
 }

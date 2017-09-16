@@ -1,5 +1,6 @@
 package com.sam.words;
 
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,45 +13,44 @@ import java.util.List;
 
 class StoryScreenAdapter extends RecyclerView.Adapter<StoryScreenHolder> {
 
-    private List<Word> mDataset = new ArrayList<>();
+    private Story story;
+    private int pageNumber;
+    private int pageCount;
 
-    /*StoryScreenAdapter(List<Word> myDataset) {
-        mDataset = myDataset;
-    }*/
+    StoryScreenAdapter(Story story, int pageNumber, int pageCount) {
+        this.story = story;
+        this.pageNumber = pageNumber;
+        this.pageCount = pageCount;
+    }
 
     @Override
     public StoryScreenHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+
+        Typeface typeface = Typeface.createFromAsset(
+                parent.getContext().getAssets(),
+                "fonts/CrimsonText/CrimsonText-Regular.ttf"
+        );
 
         RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.story_page, parent, false);
 
         WordsView wordsView = (WordsView) v.findViewById(R.id.words_view);
         TextView pageNumberView = (TextView) v.findViewById(R.id.page_number);
+        pageNumberView.setTypeface(typeface);
 
         return new StoryScreenHolder(v, wordsView, pageNumberView);
     }
 
     @Override
     public void onBindViewHolder(final StoryScreenHolder holder, int position) {
-        //final Word word = mDataset.get(position);
-
-        /*
-
-        wordsView = (WordsView) rootView.findViewById(R.id.words_view);
-        wordsView.setPageNumber(getArguments().getInt(ARG_PAGE_NUMBER));
-        if (story != null)
-            wordsView.setChapters(story.getChapters());
-
-        pollView = (TextView) rootView.findViewById(R.id.poll_container);
-
-        TextView pageNumberView = (TextView) rootView.findViewById(R.id.page_number);
-        pageNumberView.setText("page " + getArguments().getInt(ARG_PAGE_NUMBER) + " of " + getArguments().getInt(ARG_PAGE_COUNT));
-        pageNumberView.setTypeface(typeface);*/
-
-        if (position == 0)
+        if (position == 0) {
+            if (story != null)
+            holder.wordsView.setChapters(story.getChapters());
+            holder.wordsView.setPageNumber(pageNumber);
+            holder.pageNumberView.setText("page " + pageNumber + " of " + pageCount);
+        } else {
             holder.itemView.setVisibility(View.INVISIBLE);
-
-        holder.pageNumberView.setText(String.valueOf(position));
+        }
     }
 
     @Override

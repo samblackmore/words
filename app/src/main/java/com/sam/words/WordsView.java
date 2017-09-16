@@ -91,19 +91,26 @@ public class WordsView extends View {
         if (chapters != null) {
             List<Page> pages = calculatePages(chapters);
 
-            if (pageNumber > 0 && pageNumber <= pages.size()) {
-                Page myPage = pages.get(pageNumber - 1);
-                myPage.draw(canvas, mTextPaint);
+            if (pageNumber == 1) {
                 Activity activity = (Activity) getContext();
                 if (activity instanceof StoryActivity) {
-                    List<Fragment> fragments = ((StoryActivity) activity).getSupportFragmentManager().getFragments();
+                    StoryActivity storyActivity = (StoryActivity) activity;
+                    storyActivity.gotPages(pages);
+                }
+            }
+
+            if (pageNumber > 0 && pageNumber <= pages.size()) {
+                pages.get(pageNumber - 1).draw(canvas, mTextPaint);
+
+
+                    /*List<Fragment> fragments = storyActivity.getSupportFragmentManager().getFragments();
                     if (fragments != null) {
                         for (Fragment frag : fragments) {
-                            if (frag.getArguments().getInt(StoryPageFragment.ARG_PAGE_NUMBER) == pageNumber)
+                            if (frag != null && frag.getArguments().getInt(StoryPageFragment.ARG_PAGE_NUMBER) == pageNumber)
                                 ((StoryPageFragment) frag).gotWordsBottom((int) getY() + myPage.getWordsBottom());
                         }
-                    }
-                }
+                    }*/
+
             }
         }
 

@@ -71,22 +71,20 @@ public class StoryActivity extends AppCompatActivity {
     public void setStory(Story story) {
         mStory = story;
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        StoryPageFragment liveFragment = null;
 
         if (fragments != null) {
             for (Fragment fragment : fragments) {
                 StoryPageFragment storyPageFragment = (StoryPageFragment) fragment;
                 if (storyPageFragment != null) {
                     storyPageFragment.updateStory(story);
-                    liveFragment = storyPageFragment;
                 }
             }
         }
+    }
 
-        if (liveFragment != null) {
-            //List<Page> pages = liveFragment.getWordsView().calculatePages(story.getChapters());
-            //mStoryPageAdapter.setPages(pages.size());
-        }
+    public void gotPages(List<Page> pages) {
+        if (mStoryPageAdapter.getCount() != pages.size())
+            mStoryPageAdapter.setPages(pages.size());
     }
 
     public Story getStory() {
