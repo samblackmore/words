@@ -1,4 +1,4 @@
-package com.sam.words.browse;
+package com.sam.words.main;
 
 import android.app.DialogFragment;
 import android.content.Intent;
@@ -28,9 +28,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.sam.words.R;
+import com.sam.words.main.newstory.NewStoryFragment;
 import com.sam.words.settings.SettingsActivity;
 
-public class BrowseActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
     private static int RC_SIGN_IN = 100;
     private GoogleApiClient mGoogleApiClient;
@@ -106,9 +107,9 @@ public class BrowseActivity extends AppCompatActivity implements View.OnClickLis
                 });
     }
 
-    private BrowseTabFragment getFrag( ) {
+    private TabFragment getFrag( ) {
         FragmentManager fm = getSupportFragmentManager();
-        return  (BrowseTabFragment) fm.findFragmentById(R.id.container);
+        return  (TabFragment) fm.findFragmentById(R.id.container);
     }
 
     @Override
@@ -154,7 +155,7 @@ public class BrowseActivity extends AppCompatActivity implements View.OnClickLis
         setSupportActionBar(toolbar);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
-        viewPager.setAdapter(new BrowseTabAdapter(getSupportFragmentManager()));
+        viewPager.setAdapter(new TabAdapter(getSupportFragmentManager()));
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);

@@ -5,7 +5,7 @@ import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.sam.words.browse.NewStoryFragment;
+import com.sam.words.main.newstory.NewStoryFragment;
 import com.sam.words.models.Word;
 
 public class WordListener implements ValueEventListener {

@@ -1,4 +1,4 @@
-package com.sam.words.browse;
+package com.sam.words.main;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,9 +8,9 @@ import android.support.v4.app.FragmentPagerAdapter;
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-class BrowseTabAdapter extends FragmentPagerAdapter {
+class TabAdapter extends FragmentPagerAdapter {
 
-    BrowseTabAdapter(FragmentManager fm) {
+    TabAdapter(FragmentManager fm) {
         super(fm);
     }
 
@@ -18,7 +18,7 @@ class BrowseTabAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.
         // Return a StoryPageFragment (defined as a static inner class below).
-        return BrowseTabFragment.newInstance(position + 1);
+        return TabFragment.newInstance(position + 1);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.sam.words.browse;
+package com.sam.words.main.newstory;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -19,15 +19,15 @@ import com.sam.words.models.Word;
 
 import java.util.ArrayList;
 
-public class AddWordsDialog extends DialogFragment {
+public class WordsNotFoundDialog extends DialogFragment {
 
     private static final FirebaseAuth auth = FirebaseAuth.getInstance();
     private static final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private static final DatabaseReference storiesRef = database.getReference("words").child("pending");
     private static final String key = "MESSAGE";
 
-    static AddWordsDialog newInstance(ArrayList<String> wordsToAdd) {
-        AddWordsDialog f = new AddWordsDialog();
+    static WordsNotFoundDialog newInstance(ArrayList<String> wordsToAdd) {
+        WordsNotFoundDialog f = new WordsNotFoundDialog();
         Bundle args = new Bundle();
         args.putStringArrayList(key, wordsToAdd);
         f.setArguments(args);

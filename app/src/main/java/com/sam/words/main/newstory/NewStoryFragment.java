@@ -1,4 +1,4 @@
-package com.sam.words.browse;
+package com.sam.words.main.newstory;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -17,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.sam.words.R;
 import com.sam.words.components.SimpleDialog;
 import com.sam.words.dictionary.WordListener;
+import com.sam.words.main.MainActivity;
 import com.sam.words.models.Chapter;
 import com.sam.words.models.Story;
 
@@ -135,11 +136,11 @@ public class NewStoryFragment extends DialogFragment {
 
     private void showError(String message) {
         SimpleDialog dialog = SimpleDialog.newInstance(message);
-        dialog.show(((BrowseActivity) getActivity()).getSupportFragmentManager(), "wordserror");
+        dialog.show(((MainActivity) getActivity()).getSupportFragmentManager(), "wordserror");
     }
 
     private void showError(LinkedHashSet<String> query) {
-        AddWordsDialog dialog = AddWordsDialog.newInstance(new ArrayList<>(query));
-        dialog.show(((BrowseActivity) getActivity()).getSupportFragmentManager(), "addwords");
+        WordsNotFoundDialog dialog = WordsNotFoundDialog.newInstance(new ArrayList<>(query));
+        dialog.show(((MainActivity) getActivity()).getSupportFragmentManager(), "addwords");
     }
 }

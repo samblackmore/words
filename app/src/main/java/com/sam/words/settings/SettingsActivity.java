@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.sam.words.R;
 import com.sam.words.components.WordsView;
-import com.sam.words.browse.BrowseActivity;
+import com.sam.words.main.MainActivity;
 import com.sam.words.models.Chapter;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                         Toast.LENGTH_LONG)
                         .show();
 
-                Intent intent = new Intent(this, BrowseActivity.class);
+                Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 break;
             case R.id.btn_increase_font_size:

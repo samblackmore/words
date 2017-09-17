@@ -1,4 +1,4 @@
-package com.sam.words.browse;
+package com.sam.words.main;
 
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -28,7 +28,7 @@ import java.util.List;
  * A fragment representing one tab in the Browse Activity
  */
 
-public class BrowseTabFragment extends Fragment {
+public class TabFragment extends Fragment {
 
     private static final String ARG_TAB_SECTION = "SECTION";
 
@@ -41,11 +41,11 @@ public class BrowseTabFragment extends Fragment {
     private Button addStoryButton;
     private ProgressBar progressBar;
 
-    public BrowseTabFragment() {
+    public TabFragment() {
     }
 
-    public static BrowseTabFragment newInstance(int sectionNumber) {
-        BrowseTabFragment fragment = new BrowseTabFragment();
+    public static TabFragment newInstance(int sectionNumber) {
+        TabFragment fragment = new TabFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_TAB_SECTION, sectionNumber);
         fragment.setArguments(args);
@@ -68,7 +68,7 @@ public class BrowseTabFragment extends Fragment {
         Query query = null;
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        BrowseTab section = BrowseTab.getSection(getArguments().getInt(ARG_TAB_SECTION));
+        TabEnum section = TabEnum.getSection(getArguments().getInt(ARG_TAB_SECTION));
 
         switch (section) {
             case TOP:
@@ -84,7 +84,7 @@ public class BrowseTabFragment extends Fragment {
         }
 
         if (query != null)
-            query.addValueEventListener(new BrowseDataListener(this));
+            query.addValueEventListener(new CardListener(this));
 
         return rootView;
     }
@@ -100,8 +100,8 @@ public class BrowseTabFragment extends Fragment {
         int textColor = getResources().getColor(R.color.white);
         addStoryButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
         addStoryButton.setTextColor(textColor);
-        addStoryButton.setOnClickListener((BrowseActivity) getActivity());
-        signInButton.setOnClickListener((BrowseActivity) getActivity());
+        addStoryButton.setOnClickListener((MainActivity) getActivity());
+        signInButton.setOnClickListener((MainActivity) getActivity());
 
         updateUI(mAuth.getCurrentUser());
     }
@@ -111,7 +111,7 @@ public class BrowseTabFragment extends Fragment {
         showLoading(false);
 
         // Refresh the options menu
-        BrowseActivity activity = (BrowseActivity) getActivity();
+        MainActivity activity = (MainActivity) getActivity();
         activity.invalidateOptionsMenu();
 
         if (user == null) {
@@ -137,7 +137,7 @@ public class BrowseTabFragment extends Fragment {
 
     public void setStories(List<Story> stories) {
         Collections.reverse(stories);
-        RecyclerView.Adapter mAdapter = new BrowseListAdapter(stories);
+        RecyclerView.Adapter mAdapter = new CardAdapter(stories);
         mRecyclerView.setAdapter(mAdapter);
     }
 }

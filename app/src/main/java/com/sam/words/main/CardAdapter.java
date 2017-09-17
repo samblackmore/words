@@ -1,4 +1,4 @@
-package com.sam.words.browse;
+package com.sam.words.main;
 
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -23,17 +23,17 @@ import java.util.List;
  * Adapts a list of stories into a list of card views in a Browse fragment
  */
 
-public class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
+public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
     public static final String EXTRA_STORY = "STORY";
     private List<Story> mDataset = new ArrayList<>();
 
-    BrowseListAdapter(List<Story> myDataset) {
+    CardAdapter(List<Story> myDataset) {
         mDataset = myDataset;
     }
 
     @Override
-    public BrowseStoryHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+    public CardHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
 
         Typeface typefaceBold = Typeface.createFromAsset(
                 parent.getContext().getAssets(),
@@ -60,11 +60,11 @@ public class BrowseListAdapter extends RecyclerView.Adapter<BrowseStoryHolder> {
         authorView.setTextColor(parent.getResources().getColor(R.color.black));
         titleView.setTextSize((float) SharedPreferencesHelper.getTextSize(parent.getContext()) / 2);
 
-        return new BrowseStoryHolder(v, likesView, dateView, titleView, authorView, wordsView);
+        return new CardHolder(v, likesView, dateView, titleView, authorView, wordsView);
     }
 
     @Override
-    public void onBindViewHolder(final BrowseStoryHolder holder, int position) {
+    public void onBindViewHolder(final CardHolder holder, int position) {
         final Story story = mDataset.get(position);
         holder.mLikesView.setText(String.valueOf(story.getLikes()));
         holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));

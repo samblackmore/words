@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".browse.BrowseActivity"
+            android:name=".main.MainActivity"
             android:label="@string/title_activity_browse"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

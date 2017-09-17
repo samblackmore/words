@@ -1,4 +1,4 @@
-package com.sam.words.browse;
+package com.sam.words.main;
 
 import android.widget.Toast;
 
@@ -10,11 +10,11 @@ import com.sam.words.models.Story;
 import java.util.ArrayList;
 import java.util.List;
 
-class BrowseDataListener implements ValueEventListener {
+class CardListener implements ValueEventListener {
 
-    private BrowseTabFragment frag;
+    private TabFragment frag;
 
-    BrowseDataListener(BrowseTabFragment frag) {
+    CardListener(TabFragment frag) {
         this.frag = frag;
     }
 

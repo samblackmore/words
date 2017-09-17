@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.sam.words.browse.BrowseListAdapter;
+import com.sam.words.main.CardAdapter;
 import com.sam.words.components.Page;
 import com.sam.words.R;
 import com.sam.words.models.Story;
@@ -36,7 +36,7 @@ public class StoryActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
-        String storyId = intent.getStringExtra(BrowseListAdapter.EXTRA_STORY);
+        String storyId = intent.getStringExtra(CardAdapter.EXTRA_STORY);
 
         mStoryPageAdapter = new StoryPageAdapter(getSupportFragmentManager());
 
