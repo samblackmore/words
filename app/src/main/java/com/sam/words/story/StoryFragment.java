@@ -15,7 +15,7 @@ import com.sam.words.models.Story;
  * A page in a story. Contains a single WordsView representing that page.
  */
 
-public class StoryPageFragment extends Fragment {
+public class StoryFragment extends Fragment {
 
     // Fragment arguments
     public static final String ARG_PAGE_NUMBER = "page_number";
@@ -27,11 +27,11 @@ public class StoryPageFragment extends Fragment {
     //private WordsView wordsView;
     //private TextView pollView;
 
-    public StoryPageFragment() {
+    public StoryFragment() {
     }
 
-    public static StoryPageFragment newInstance(int pageNumber, int pageCount) {
-        StoryPageFragment fragment = new StoryPageFragment();
+    public static StoryFragment newInstance(int pageNumber, int pageCount) {
+        StoryFragment fragment = new StoryFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE_NUMBER, pageNumber);
         args.putInt(ARG_PAGE_COUNT, pageCount);
@@ -59,7 +59,7 @@ public class StoryPageFragment extends Fragment {
         int pageNum = getArguments().getInt(ARG_PAGE_NUMBER);
         int pageCnt = getArguments().getInt(ARG_PAGE_COUNT);
 
-        mAdapter = new StoryScreenAdapter(story, pageNum, pageCnt);
+        mAdapter = new StoryPageAdapter(story, pageNum, pageCnt);
         mRecyclerView.setAdapter(mAdapter);
     }
 

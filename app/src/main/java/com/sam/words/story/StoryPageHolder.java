@@ -10,13 +10,13 @@ import com.sam.words.components.WordsView;
  * Holds the views that make up a story card in a Browse fragment
  */
 
-class StoryScreenHolder extends RecyclerView.ViewHolder {
+class StoryPageHolder extends RecyclerView.ViewHolder {
 
     RelativeLayout itemView;
     WordsView wordsView;
     TextView pageNumberView;
 
-    public StoryScreenHolder(RelativeLayout itemView, WordsView wordsView, TextView pageNumberView) {
+    public StoryPageHolder(RelativeLayout itemView, WordsView wordsView, TextView pageNumberView) {
         super(itemView);
         this.itemView = itemView;
         this.wordsView = wordsView;

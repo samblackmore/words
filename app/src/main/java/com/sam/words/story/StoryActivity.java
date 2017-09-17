@@ -25,7 +25,7 @@ public class StoryActivity extends AppCompatActivity {
     private DatabaseReference ref = database.getReference("stories");
 
     private Story mStory;
-    private StoryPageAdapter mStoryPageAdapter;
+    private StoryAdapter mStoryAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +38,10 @@ public class StoryActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String storyId = intent.getStringExtra(CardAdapter.EXTRA_STORY);
 
-        mStoryPageAdapter = new StoryPageAdapter(getSupportFragmentManager());
+        mStoryAdapter = new StoryAdapter(getSupportFragmentManager());
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
-        viewPager.setAdapter(mStoryPageAdapter);
+        viewPager.setAdapter(mStoryAdapter);
 
         Query query = ref.child(storyId);
         query.addValueEventListener(new StoryListener(this));
@@ -71,17 +71,17 @@ public class StoryActivity extends AppCompatActivity {
 
         if (fragments != null) {
             for (Fragment fragment : fragments) {
-                StoryPageFragment storyPageFragment = (StoryPageFragment) fragment;
-                if (storyPageFragment != null) {
-                    storyPageFragment.updateStory(story);
+                StoryFragment storyFragment = (StoryFragment) fragment;
+                if (storyFragment != null) {
+                    storyFragment.updateStory(story);
                 }
             }
         }
     }
 
     public void gotPages(List<Page> pages) {
-        if (mStoryPageAdapter.getCount() != pages.size())
-            mStoryPageAdapter.setPages(pages.size());
+        if (mStoryAdapter.getCount() != pages.size())
+            mStoryAdapter.setPages(pages.size());
     }
 
     public Story getStory() {
