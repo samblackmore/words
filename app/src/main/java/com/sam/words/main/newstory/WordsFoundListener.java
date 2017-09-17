@@ -1,4 +1,4 @@
-package com.sam.words.dictionary;
+package com.sam.words.main.newstory;
 
 import android.widget.Toast;
 
@@ -8,11 +8,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.sam.words.main.newstory.NewStoryFragment;
 import com.sam.words.models.Word;
 
-public class WordListener implements ValueEventListener {
+class WordsFoundListener implements ValueEventListener {
 
     private NewStoryFragment frag;
 
-    public WordListener(NewStoryFragment frag) {
+    WordsFoundListener(NewStoryFragment frag) {
         this.frag = frag;
     }
 

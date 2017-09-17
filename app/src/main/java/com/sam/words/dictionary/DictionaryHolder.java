@@ -9,7 +9,7 @@ import android.widget.TextView;
  * Holds the views that make up a story card in a Browse fragment
  */
 
-class WordViewHolder extends RecyclerView.ViewHolder {
+class DictionaryHolder extends RecyclerView.ViewHolder {
 
     TextView scoreView;
     ImageView upArrow;
@@ -18,7 +18,7 @@ class WordViewHolder extends RecyclerView.ViewHolder {
     TextView submittedByView;
     TextView timeAgoView;
 
-    public WordViewHolder(View itemView, TextView scoreView, ImageView upArrow, ImageView downArrow, TextView wordView, TextView submittedByView, TextView timeAgoView) {
+    public DictionaryHolder(View itemView, TextView scoreView, ImageView upArrow, ImageView downArrow, TextView wordView, TextView submittedByView, TextView timeAgoView) {
         super(itemView);
         this.scoreView = scoreView;
         this.upArrow = upArrow;

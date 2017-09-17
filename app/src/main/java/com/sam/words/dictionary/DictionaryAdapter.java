@@ -14,16 +14,16 @@ import com.sam.words.utils.TimeAgo;
 import java.util.ArrayList;
 import java.util.List;
 
-class WordListAdapter extends RecyclerView.Adapter<WordViewHolder> {
+class DictionaryAdapter extends RecyclerView.Adapter<DictionaryHolder> {
 
     private List<Word> mDataset = new ArrayList<>();
 
-    WordListAdapter(List<Word> myDataset) {
+    DictionaryAdapter(List<Word> myDataset) {
         mDataset = myDataset;
     }
 
     @Override
-    public WordViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+    public DictionaryHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
 
         RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.word_view, parent, false);
@@ -35,11 +35,11 @@ class WordListAdapter extends RecyclerView.Adapter<WordViewHolder> {
         TextView submittedByView = (TextView) v.findViewById(R.id.word_submitted_by);
         TextView timeAgoView = (TextView) v.findViewById(R.id.time_ago);
 
-        return new WordViewHolder(v, scoreView, upArrow, downArrow, wordView, submittedByView, timeAgoView);
+        return new DictionaryHolder(v, scoreView, upArrow, downArrow, wordView, submittedByView, timeAgoView);
     }
 
     @Override
-    public void onBindViewHolder(final WordViewHolder holder, int position) {
+    public void onBindViewHolder(final DictionaryHolder holder, int position) {
         final Word word = mDataset.get(position);
         holder.scoreView.setText(String.valueOf(word.getVotes()));
         holder.wordView.setText(word.getWord());

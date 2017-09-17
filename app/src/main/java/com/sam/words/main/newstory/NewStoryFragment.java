@@ -16,7 +16,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.sam.words.R;
 import com.sam.words.components.SimpleDialog;
-import com.sam.words.dictionary.WordListener;
 import com.sam.words.main.MainActivity;
 import com.sam.words.models.Chapter;
 import com.sam.words.models.Story;
@@ -98,7 +97,7 @@ public class NewStoryFragment extends DialogFragment {
                 foundWords = new ArrayList<>();
 
                 for (String word : query)
-                    ref.child(word).addListenerForSingleValueEvent(new WordListener(NewStoryFragment.this));
+                    ref.child(word).addListenerForSingleValueEvent(new WordsFoundListener(NewStoryFragment.this));
             }
         });
     }

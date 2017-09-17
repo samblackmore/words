@@ -34,7 +34,7 @@ public class DictionaryActivity extends AppCompatActivity {
     }
 
     public void gotWords(List<Word> words) {
-        RecyclerView.Adapter mAdapter = new WordListAdapter(words);
+        RecyclerView.Adapter mAdapter = new DictionaryAdapter(words);
         mRecyclerView.setAdapter(mAdapter);
     }
 }
