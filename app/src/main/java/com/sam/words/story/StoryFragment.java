@@ -73,8 +73,6 @@ public class StoryFragment extends Fragment {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
-        Toast.makeText(activity, new Date().toString() + "New frag " + pageNum, Toast.LENGTH_SHORT).show();
-
         return rootView;
     }
 

@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,8 +84,10 @@ public class StoryActivity extends AppCompatActivity {
 
         mStoryAdapter = new StoryAdapter(getSupportFragmentManager(), pages);
 
+        ProgressBar loading = (ProgressBar) findViewById(R.id.loading);
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(mStoryAdapter);
+        loading.setVisibility(View.GONE);
 
         //mStoryAdapter.notifyDataSetChanged();
         Toast.makeText(this, "Got story", Toast.LENGTH_SHORT).show();
