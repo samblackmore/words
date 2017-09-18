@@ -8,34 +8,44 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.sam.words.components.WordsView;
 import com.sam.words.main.CardAdapter;
 import com.sam.words.components.Page;
 import com.sam.words.R;
 import com.sam.words.models.Story;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.sam.words.story.StoryFragment.ARG_PAGE_NUMBER;
 
 public class StoryActivity extends AppCompatActivity {
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref = database.getReference("stories");
 
-    private Story mStory;
+    private WordsView rootWordsView;
     private StoryAdapter mStoryAdapter;
+    private List<Page> pages = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story);
 
+        rootWordsView = (WordsView) findViewById(R.id.words_view);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mStoryAdapter = new StoryAdapter(getSupportFragmentManager());
+        mStoryAdapter = new StoryAdapter(getSupportFragmentManager(), pages);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(mStoryAdapter);
@@ -69,21 +79,22 @@ public class StoryActivity extends AppCompatActivity {
      * @param story
      */
     public void gotStory(Story story) {
-        mStory = story;
-        mStoryAdapter.notifyDataSetChanged();
+        pages = rootWordsView.calculatePages(story.getChapters());
+
+        mStoryAdapter = new StoryAdapter(getSupportFragmentManager(), pages);
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
+        viewPager.setAdapter(mStoryAdapter);
+
+        //mStoryAdapter.notifyDataSetChanged();
+        Toast.makeText(this, "Got story", Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * Callback for {@link com.sam.words.components.WordsView} once pages calculated for view dimensions
-     * @param pages
-     */
-    public void gotPages(List<Page> pages) {
-        if (mStoryAdapter.getCount() != pages.size())
-            mStoryAdapter.setPageCount(pages.size());
+    public List<Page> getPages() {
+        return pages;
     }
 
-    public Story getStory() {
-        return mStory;
+    public WordsView getRootWordsView() {
+        return rootWordsView;
     }
-
 }

@@ -9,8 +9,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sam.words.R;
+import com.sam.words.components.Page;
 import com.sam.words.components.WordsView;
-import com.sam.words.models.Story;
+
+import java.util.List;
 
 /**
  * The adapter on each story page which makes the page scrollable or not.
@@ -19,12 +21,12 @@ import com.sam.words.models.Story;
 
 class StoryPageAdapter extends RecyclerView.Adapter<StoryPageHolder> {
 
-    private Story story;
+    private List<Page> pages;
     private int pageNumber;
     private int pageCount;
 
-    StoryPageAdapter(Story story, int pageNumber, int pageCount) {
-        this.story = story;
+    StoryPageAdapter(List<Page> pages, int pageNumber, int pageCount) {
+        this.pages = pages;
         this.pageNumber = pageNumber;
         this.pageCount = pageCount;
     }
@@ -50,8 +52,8 @@ class StoryPageAdapter extends RecyclerView.Adapter<StoryPageHolder> {
     @Override
     public void onBindViewHolder(final StoryPageHolder holder, int position) {
         if (position == 0) {
-            if (story != null)
-            holder.wordsView.setChapters(story.getChapters());
+            if (pages != null)
+            holder.wordsView.setPage(pages.get(pageNumber - 1));
             holder.wordsView.setPageNumber(pageNumber);
             holder.pageNumberView.setText("page " + pageNumber + " of " + pageCount);
         } else {

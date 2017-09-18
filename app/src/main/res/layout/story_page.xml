@@ -19,15 +19,6 @@
         />
 
     <TextView
-        android:id="@+id/poll_container"
-        android:visibility="invisible"
-        android:background="@color/black"
-        android:textColor="@color/white"
-        android:text="This is where the votes will go"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <TextView
         android:id="@+id/page_number"
         android:text="Page 1 of 1"
         android:textAlignment="center"

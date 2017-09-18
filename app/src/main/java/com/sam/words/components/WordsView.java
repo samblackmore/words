@@ -6,22 +6,25 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.sam.words.models.Chapter;
 import com.sam.words.story.StoryActivity;
+import com.sam.words.story.StoryFragment;
 import com.sam.words.utils.SharedPreferencesHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sam.words.story.StoryFragment.ARG_PAGE_NUMBER;
+
 public class WordsView extends View {
 
     private Paint mTextPaint;
     private Typeface typeface;
-    private List<Chapter> chapters;
     private Page page;
     private int pageNumber = 1;
     private int textSize;
@@ -90,29 +93,15 @@ public class WordsView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (chapters != null) {
-            List<Page> pages = calculatePages(chapters);
+        Activity activity = (Activity) getContext();
 
-            if (pageNumber == 1) {
-                Activity activity = (Activity) getContext();
-                if (activity instanceof StoryActivity) {
-                    StoryActivity storyActivity = (StoryActivity) activity;
-                    storyActivity.gotPages(pages);
-                }
-            }
+        if (activity instanceof StoryActivity) {
+            StoryActivity storyActivity = (StoryActivity) activity;
 
-            if (pageNumber > 0 && pageNumber <= pages.size()) {
-                pages.get(pageNumber - 1).draw(canvas, mTextPaint);
-
-
-                    /*List<Fragment> fragments = storyActivity.getSupportFragmentManager().getFragments();
-                    if (fragments != null) {
-                        for (Fragment frag : fragments) {
-                            if (frag != null && frag.getArguments().getInt(StoryPageFragment.ARG_PAGE_NUMBER) == pageNumber)
-                                ((StoryPageFragment) frag).gotWordsBottom((int) getY() + myPage.getWordsBottom());
-                        }
-                    }*/
-
+            List<Page> pages = storyActivity.getPages();
+            if (pages != null && pages.size() > 0) {
+                Page page = pages.get(pageNumber - 1);
+                page.draw(canvas, mTextPaint);
             }
         }
 
@@ -120,7 +109,7 @@ public class WordsView extends View {
         //canvas.drawRect(0, 0, getWidth()-1, getHeight()-1, mTextPaint);
     }
 
-    protected List<Page> calculatePages(List<Chapter> chapters) {
+    public List<Page> calculatePages(List<Chapter> chapters) {
 
         List<Page> pages = new ArrayList<>();
 
@@ -301,8 +290,8 @@ public class WordsView extends View {
         textSize -= amount;
     }
 
-    public void setChapters(List<Chapter> chapters) {
-        this.chapters = chapters;
+    public void setPage(Page page) {
+        this.page = page;
     }
 
     public void setPageNumber(int pageNumber) {
