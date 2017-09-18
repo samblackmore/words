@@ -25,7 +25,7 @@ public class WordsView extends View {
 
     private Paint mTextPaint;
     private Typeface typeface;
-    private List<Chapter> chapters;
+    private Page page;
     private int pageNumber = 1;
     private int textSize;
     private float lineSeperation = 1.7f;
@@ -92,20 +92,16 @@ public class WordsView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
         Activity activity = (Activity) getContext();
 
-        if (chapters != null) {
-            List<Page> pages = calculatePages(chapters);
-            Page page = pages.get(pageNumber - 1);
+        if (activity instanceof StoryActivity) {
+            StoryActivity storyActivity = (StoryActivity) activity;
 
-            if (pageNumber > 0 && pageNumber <= pages.size())
+            List<Page> pages = storyActivity.getPages();
+            if (pages != null && pages.size() > 0) {
+                Page page = pages.get(pageNumber - 1);
                 page.draw(canvas, mTextPaint);
-
-            if (activity instanceof StoryActivity) {
-                StoryActivity storyActivity = (StoryActivity) activity;
-
-                if (pageNumber == 1)
-                    storyActivity.gotPages(pages);
             }
         }
 
@@ -113,7 +109,7 @@ public class WordsView extends View {
         //canvas.drawRect(0, 0, getWidth()-1, getHeight()-1, mTextPaint);
     }
 
-    protected List<Page> calculatePages(List<Chapter> chapters) {
+    public List<Page> calculatePages(List<Chapter> chapters) {
 
         List<Page> pages = new ArrayList<>();
 
@@ -294,8 +290,8 @@ public class WordsView extends View {
         textSize -= amount;
     }
 
-    public void setChapters(List<Chapter> chapters) {
-        this.chapters = chapters;
+    public void setPage(Page page) {
+        this.page = page;
     }
 
     public void setPageNumber(int pageNumber) {

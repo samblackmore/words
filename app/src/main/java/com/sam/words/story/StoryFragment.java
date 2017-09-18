@@ -8,13 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sam.words.R;
 import com.sam.words.components.Page;
+import com.sam.words.components.WordsView;
 import com.sam.words.models.Story;
 
 import org.w3c.dom.Text;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,7 +31,7 @@ public class StoryFragment extends Fragment {
     private static final String ARG_PAGE_COUNT = "page_count";
 
     private RecyclerView mRecyclerView;
-    //private TextView pollView;
+    private TextView pollContainer;
 
     public StoryFragment() {
     }
@@ -49,21 +52,28 @@ public class StoryFragment extends Fragment {
         int pageCnt = getArguments().getInt(ARG_PAGE_COUNT);
 
         View rootView = inflater.inflate(R.layout.fragment_story_page, container, false);
-        TextView pollContainer = (TextView) rootView.findViewById(R.id.poll_container);
+
+        pollContainer = (TextView) rootView.findViewById(R.id.poll_container);
+
+        if (pageCnt == pageNum) {
+
+            List<Page> pages = activity.getPages();
+
+            if (pages != null) {
+                pollContainer.setVisibility(View.VISIBLE);
+                pollContainer.setY(pages.get(pageNum - 1).getWordsBottom() + activity.getRootWordsView().getY());
+            }
+        }
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(rootView.getContext());
-        RecyclerView.Adapter mAdapter = new StoryPageAdapter(activity.getStory(), pageNum, pageCnt);
+        RecyclerView.Adapter mAdapter = new StoryPageAdapter(activity.getPages(), pageNum, pageCnt);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.screen_list);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
-        if (pageNum == pageCnt) {
-            List<Page> pages = activity.getPages();
-            pollContainer.setVisibility(View.VISIBLE);
-            pollContainer.setY(pages.get(pages.size() - 1).getWordsBottom());
-        }
+        Toast.makeText(activity, new Date().toString() + "New frag " + pageNum, Toast.LENGTH_SHORT).show();
 
         return rootView;
     }

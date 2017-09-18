@@ -7,39 +7,13 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context="com.sam.words.story.StoryActivity">
-    
+
+    <include layout="@layout/story_page"/>
+
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <!--EditText
-        android:id="@+id/input"
-        android:inputType="textMultiLine"
-        android:hint="Add your 3 words"
-        android:lines="3"
-        android:minLines="1"
-        android:maxLines="3"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_gravity="bottom"
-        android:scrollbars="vertical"
-    />
-
-    <Button
-        android:id="@+id/submit"
-        android:text="Submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"/>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_menu_edit" /-->
 
 </android.support.design.widget.CoordinatorLayout>
