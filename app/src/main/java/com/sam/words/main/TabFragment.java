@@ -84,7 +84,7 @@ public class TabFragment extends Fragment {
         }
 
         if (query != null)
-            query.addValueEventListener(new CardListener(this));
+            query.addListenerForSingleValueEvent(new CardListener(this));
 
         return rootView;
     }
