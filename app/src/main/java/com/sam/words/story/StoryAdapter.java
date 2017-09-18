@@ -10,7 +10,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
  */
 class StoryAdapter extends FragmentStatePagerAdapter {
 
-    private int pages = 1;
+    private int pageCount = 1;
 
     StoryAdapter(FragmentManager fm) {
         super(fm);
@@ -18,23 +18,21 @@ class StoryAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        // Instantiate the fragment for the given page
-        return StoryFragment.newInstance(position + 1, pages);
+        return StoryFragment.newInstance(position + 1, pageCount);
     }
 
     @Override
     public int getItemPosition(Object object) {
-        // Causes adapter to reload all Fragments when notifyDataSetChanged is called
         return POSITION_NONE;
     }
 
     @Override
     public int getCount() {
-        return pages;
+        return pageCount;
     }
 
-    public void setPages(int pages) {
-        this.pages = pages;
+    void setPageCount(int pageCount) {
+        this.pageCount = pageCount;
         notifyDataSetChanged();
     }
 }

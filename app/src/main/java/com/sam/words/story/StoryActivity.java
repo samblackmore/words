@@ -35,13 +35,12 @@ public class StoryActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Intent intent = getIntent();
-        String storyId = intent.getStringExtra(CardAdapter.EXTRA_STORY);
-
         mStoryAdapter = new StoryAdapter(getSupportFragmentManager());
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(mStoryAdapter);
+
+        String storyId = getIntent().getStringExtra(CardAdapter.EXTRA_STORY);
 
         Query query = ref.child(storyId);
         query.addValueEventListener(new StoryListener(this));
@@ -65,23 +64,22 @@ public class StoryActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void setStory(Story story) {
+    /**
+     * Callback for {@link StoryListener} once current story retrieved from Firebase
+     * @param story
+     */
+    public void gotStory(Story story) {
         mStory = story;
-        List<Fragment> fragments = getSupportFragmentManager().getFragments();
-
-        if (fragments != null) {
-            for (Fragment fragment : fragments) {
-                StoryFragment storyFragment = (StoryFragment) fragment;
-                if (storyFragment != null) {
-                    storyFragment.updateStory(story);
-                }
-            }
-        }
+        mStoryAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Callback for {@link com.sam.words.components.WordsView} once pages calculated for view dimensions
+     * @param pages
+     */
     public void gotPages(List<Page> pages) {
         if (mStoryAdapter.getCount() != pages.size())
-            mStoryAdapter.setPages(pages.size());
+            mStoryAdapter.setPageCount(pages.size());
     }
 
     public Story getStory() {

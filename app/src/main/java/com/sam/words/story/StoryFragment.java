@@ -23,8 +23,6 @@ public class StoryFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-    //private static Typeface typeface;
-    //private WordsView wordsView;
     //private TextView pollView;
 
     public StoryFragment() {
@@ -44,20 +42,20 @@ public class StoryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_story_page, container, false);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(rootView.getContext());
 
-        Story story = ((StoryActivity) getActivity()).getStory();
-
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.screen_list);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        updateStory(story);
+        updateStory();
 
         return rootView;
     }
 
-    public void updateStory(Story story) {
+    public void updateStory() {
         int pageNum = getArguments().getInt(ARG_PAGE_NUMBER);
         int pageCnt = getArguments().getInt(ARG_PAGE_COUNT);
+
+        Story story = ((StoryActivity) getActivity()).getStory();
 
         mAdapter = new StoryPageAdapter(story, pageNum, pageCnt);
         mRecyclerView.setAdapter(mAdapter);
