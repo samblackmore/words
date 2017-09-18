@@ -4,6 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to a page in a story
@@ -29,6 +31,15 @@ class StoryAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return pageCount;
+    }
+
+    @Override
+    public void finishUpdate(ViewGroup container) {
+        try{
+            super.finishUpdate(container);
+        } catch (NullPointerException nullPointerException){
+            //
+        }
     }
 
     void setPageCount(int pageCount) {
