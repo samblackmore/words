@@ -19,6 +19,8 @@ import com.sam.words.models.Story;
 
 import java.util.List;
 
+import static com.sam.words.story.StoryFragment.ARG_PAGE_NUMBER;
+
 public class StoryActivity extends AppCompatActivity {
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -26,6 +28,7 @@ public class StoryActivity extends AppCompatActivity {
 
     private Story mStory;
     private StoryAdapter mStoryAdapter;
+    private List<Page> pages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +81,8 @@ public class StoryActivity extends AppCompatActivity {
      * @param pages
      */
     public void gotPages(List<Page> pages) {
+        this.pages = pages;
+
         if (mStoryAdapter.getCount() != pages.size())
             mStoryAdapter.setPageCount(pages.size());
     }
@@ -86,4 +91,7 @@ public class StoryActivity extends AppCompatActivity {
         return mStory;
     }
 
+    public List<Page> getPages() {
+        return pages;
+    }
 }

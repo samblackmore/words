@@ -6,23 +6,26 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.sam.words.models.Chapter;
 import com.sam.words.story.StoryActivity;
+import com.sam.words.story.StoryFragment;
 import com.sam.words.utils.SharedPreferencesHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.sam.words.story.StoryFragment.ARG_PAGE_NUMBER;
 
 public class WordsView extends View {
 
     private Paint mTextPaint;
     private Typeface typeface;
     private List<Chapter> chapters;
-    private Page page;
     private int pageNumber = 1;
     private int textSize;
     private float lineSeperation = 1.7f;
@@ -89,30 +92,20 @@ public class WordsView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        Activity activity = (Activity) getContext();
 
         if (chapters != null) {
             List<Page> pages = calculatePages(chapters);
+            Page page = pages.get(pageNumber - 1);
 
-            if (pageNumber == 1) {
-                Activity activity = (Activity) getContext();
-                if (activity instanceof StoryActivity) {
-                    StoryActivity storyActivity = (StoryActivity) activity;
+            if (pageNumber > 0 && pageNumber <= pages.size())
+                page.draw(canvas, mTextPaint);
+
+            if (activity instanceof StoryActivity) {
+                StoryActivity storyActivity = (StoryActivity) activity;
+
+                if (pageNumber == 1)
                     storyActivity.gotPages(pages);
-                }
-            }
-
-            if (pageNumber > 0 && pageNumber <= pages.size()) {
-                pages.get(pageNumber - 1).draw(canvas, mTextPaint);
-
-
-                    /*List<Fragment> fragments = storyActivity.getSupportFragmentManager().getFragments();
-                    if (fragments != null) {
-                        for (Fragment frag : fragments) {
-                            if (frag != null && frag.getArguments().getInt(StoryPageFragment.ARG_PAGE_NUMBER) == pageNumber)
-                                ((StoryPageFragment) frag).gotWordsBottom((int) getY() + myPage.getWordsBottom());
-                        }
-                    }*/
-
             }
         }
 
