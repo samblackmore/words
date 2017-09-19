@@ -3,32 +3,32 @@ package com.sam.words.story;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.sam.words.R;
-import com.sam.words.components.Page;
 import com.sam.words.components.WordsView;
+import com.sam.words.models.Post;
 import com.sam.words.models.Story;
-
-import org.w3c.dom.Text;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * A page in a story. Contains a single WordsView representing that page.
  */
 
 public class StoryFragment extends Fragment {
+
+    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private RecyclerView mRecyclerView;
 
     // Fragment arguments
     public static final String ARG_PAGE_NUMBER = "page_number";
@@ -50,7 +50,7 @@ public class StoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         StoryActivity activity = ((StoryActivity) getActivity());
-        Story story = activity.getStory();
+        final Story story = activity.getStory();
 
         int pageNum = getArguments().getInt(ARG_PAGE_NUMBER);
         int pageCnt = getArguments().getInt(ARG_PAGE_COUNT);
@@ -62,12 +62,30 @@ public class StoryFragment extends Fragment {
             // Poll page
             rootView = inflater.inflate(R.layout.story_poll, container, false);
 
-            TextView titleView = (TextView) rootView.findViewById(R.id.poll_title);
-            TextView authorView = (TextView) rootView.findViewById(R.id.poll_author);
+            TextView pollDescription = (TextView) rootView.findViewById(R.id.poll_description);
+            final EditText pollInput = (EditText) rootView.findViewById(R.id.poll_input);
+            Button pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
 
-            if (story != null) {
-                titleView.setText(activity.getStory().getTitle());
-                authorView.setText(activity.getStory().getAuthorName());
+            final FirebaseUser user = auth.getCurrentUser();
+
+            if (user != null && story != null) {
+                pollDescription.setText("Contribute to " + story.getTitle() + " by " + story.getAuthorName());
+
+                pollSubmit.setEnabled(true);
+                pollSubmit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        String post = pollInput.getText().toString();
+
+                        database.getReference("stories")
+                                .child(story.getStoryId())
+                                .child("vote")
+                                .child(user.getUid())
+                                .child(post)
+                                .setValue(new Post(story.getStoryId(), user.getUid(), user.getDisplayName()));
+                    }
+                });
             }
 
         } else {

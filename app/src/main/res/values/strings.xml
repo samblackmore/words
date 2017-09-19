@@ -27,4 +27,7 @@
     <string name="new_story_content_hint">Once upon a time</string>
     <string name="sign_out">Sign out</string>
     <string name="new_story_title">New story</string>
+    <string name="poll_title">Now it\'s your turn!</string>
+    <string name="your_3_words">Your 3 words...</string>
+    <string name="submit">Submit</string>
 </resources>

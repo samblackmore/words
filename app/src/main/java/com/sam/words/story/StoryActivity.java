@@ -2,8 +2,6 @@ package com.sam.words.story;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -87,14 +85,12 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
         this.story = story;
         pages = rootWordsView.calculatePages(story.getChapters());
 
-        mStoryAdapter = new StoryAdapter(getSupportFragmentManager(), pages);
-
         ProgressBar loading = (ProgressBar) findViewById(R.id.loading);
-        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
-        viewPager.setAdapter(mStoryAdapter);
         loading.setVisibility(View.GONE);
 
-        //mStoryAdapter.notifyDataSetChanged();
+        mStoryAdapter.update(pages);
+        mStoryAdapter.notifyDataSetChanged();
+
         Toast.makeText(this, "Got story", Toast.LENGTH_SHORT).show();
     }
 

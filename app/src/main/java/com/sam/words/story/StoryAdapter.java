@@ -16,7 +16,7 @@ import java.util.List;
  */
 class StoryAdapter extends FragmentStatePagerAdapter {
 
-    private final List<Page> pages;
+    private List<Page> pages;
 
     StoryAdapter(FragmentManager fm, List<Page> pages) {
         super(fm);
@@ -36,5 +36,9 @@ class StoryAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return pages.size() + 1;
+    }
+
+    public void update(List<Page> pages) {
+        this.pages = pages;
     }
 }

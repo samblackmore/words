@@ -10,16 +10,29 @@
 
     <TextView
         android:id="@+id/poll_title"
-        android:text="Title"
+        android:text="@string/poll_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
 
     <TextView
-        android:id="@+id/poll_author"
-        android:text="author"
+        android:id="@+id/poll_description"
+        android:text="Title by Author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
+
+    <EditText
+        android:id="@+id/poll_input"
+        android:hint="@string/your_3_words"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/poll_submit"
+        android:text="@string/submit"
+        android:enabled="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
