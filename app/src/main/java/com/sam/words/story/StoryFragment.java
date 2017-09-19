@@ -3,6 +3,7 @@ package com.sam.words.story;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +14,14 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.sam.words.R;
 import com.sam.words.components.WordsView;
 import com.sam.words.models.Post;
 import com.sam.words.models.Story;
+
+import java.util.List;
 
 /**
  * A page in a story. Contains a single WordsView representing that page.
@@ -65,6 +68,16 @@ public class StoryFragment extends Fragment {
             TextView pollDescription = (TextView) rootView.findViewById(R.id.poll_description);
             final EditText pollInput = (EditText) rootView.findViewById(R.id.poll_input);
             Button pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
+            
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+            mRecyclerView = (RecyclerView) rootView.findViewById(R.id.votes_list);
+            mRecyclerView.setHasFixedSize(true);
+            mRecyclerView.setLayoutManager(mLayoutManager);
+
+            if (story != null) {
+                Query query = database.getReference("stories").child(story.getStoryId()).child("vote");
+                query.addValueEventListener(new VoteListener(this));
+            }
 
             final FirebaseUser user = auth.getCurrentUser();
 
@@ -81,7 +94,6 @@ public class StoryFragment extends Fragment {
                         database.getReference("stories")
                                 .child(story.getStoryId())
                                 .child("vote")
-                                .child(user.getUid())
                                 .child(post)
                                 .setValue(new Post(story.getStoryId(), user.getUid(), user.getDisplayName()));
                     }
@@ -108,5 +120,10 @@ public class StoryFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    public void gotVotes(List<Post> votes) {
+        RecyclerView.Adapter mAdapter = new VoteAdapter(votes);
+        mRecyclerView.setAdapter(mAdapter);
     }
 }

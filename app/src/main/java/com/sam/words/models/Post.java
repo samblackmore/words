@@ -1,7 +1,5 @@
 package com.sam.words.models;
 
-import java.util.List;
-
 /**
  * A POJO to store and retrieve from the backend
  */
@@ -11,6 +9,7 @@ public class Post {
     private String storyId;
     private String userId;
     private String authorName;
+    private String message;
     private long dateCreated;
     private long dateUpdated;
     private int votes = 0;
@@ -55,5 +54,13 @@ public class Post {
 
     public int getLikes() {
         return likes;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
