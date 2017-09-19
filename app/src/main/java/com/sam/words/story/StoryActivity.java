@@ -106,19 +106,8 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
         return story;
     }
 
-    public WordsView getRootWordsView() {
-        return rootWordsView;
-    }
-
     @Override
     public void onClick(View v) {
         viewPager.setCurrentItem(mStoryAdapter.getCount() - 1);
-
-        FragmentManager fm = getSupportFragmentManager();
-        for (Fragment frag : fm.getFragments()) {
-            StoryFragment f = (StoryFragment) frag;
-            if (f != null)
-                f.scrollDown();
-        }
     }
 }

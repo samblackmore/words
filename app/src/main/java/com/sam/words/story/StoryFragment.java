@@ -1,5 +1,6 @@
 package com.sam.words.story;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,8 +34,6 @@ public class StoryFragment extends Fragment {
     public static final String ARG_PAGE_NUMBER = "page_number";
     public static final String ARG_PAGE_COUNT = "page_count";
 
-    private RecyclerView mRecyclerView;
-
     public StoryFragment() {
     }
 
@@ -47,26 +48,47 @@ public class StoryFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         StoryActivity activity = ((StoryActivity) getActivity());
+        Story story = activity.getStory();
+
         int pageNum = getArguments().getInt(ARG_PAGE_NUMBER);
         int pageCnt = getArguments().getInt(ARG_PAGE_COUNT);
 
-        View rootView = inflater.inflate(R.layout.fragment_story_page, container, false);
+        View rootView;
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(rootView.getContext());
-        RecyclerView.Adapter mAdapter = new StoryPageAdapter(activity.getStory(), activity.getPages(), pageNum, pageCnt);
+        if (pageNum == pageCnt + 1) {
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.screen_list);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setAdapter(mAdapter);
+            // Poll page
+            rootView = inflater.inflate(R.layout.story_poll, container, false);
+
+            TextView titleView = (TextView) rootView.findViewById(R.id.poll_title);
+            TextView authorView = (TextView) rootView.findViewById(R.id.poll_author);
+
+            if (story != null) {
+                titleView.setText(activity.getStory().getTitle());
+                authorView.setText(activity.getStory().getAuthorName());
+            }
+
+        } else {
+
+            // Story page
+            Typeface typeface = Typeface.createFromAsset(getContext().getAssets(),
+                    "fonts/CrimsonText/CrimsonText-Regular.ttf");
+
+            rootView = inflater.inflate(R.layout.fragment_story_page, container, false);
+
+            WordsView wordsView = (WordsView) rootView.findViewById(R.id.words_view);
+            TextView pageNumberView = (TextView) rootView.findViewById(R.id.page_number);
+
+            if (activity.getPages() != null)
+                wordsView.setPage(activity.getPages().get(pageNum - 1));
+            wordsView.setPageNumber(pageNum);
+
+            pageNumberView.setTypeface(typeface);
+            pageNumberView.setText("page " + pageNum + " of " + pageCnt);
+        }
 
         return rootView;
-    }
-
-    public void scrollDown() {
-        StoryActivity activity = ((StoryActivity) getActivity());
-        WordsView v = activity.getRootWordsView();
-        mRecyclerView.smoothScrollBy(0, (int) v.getY() + v.getBottom(), new AccelerateDecelerateInterpolator());
     }
 }

@@ -35,6 +35,6 @@ class StoryAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return pages.size();
+        return pages.size() + 1;
     }
 }
