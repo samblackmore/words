@@ -1,8 +1,6 @@
 package com.sam.words.story;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,22 +8,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.sam.words.R;
+import com.sam.words.components.Page;
 import com.sam.words.components.WordsView;
 import com.sam.words.main.CardAdapter;
-import com.sam.words.components.Page;
-import com.sam.words.R;
 import com.sam.words.models.Story;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.sam.words.story.StoryFragment.ARG_PAGE_NUMBER;
 
 public class StoryActivity extends AppCompatActivity {
 
@@ -35,6 +30,7 @@ public class StoryActivity extends AppCompatActivity {
     private WordsView rootWordsView;
     private StoryAdapter mStoryAdapter;
     private List<Page> pages = new ArrayList<>();
+    private Story story;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +76,7 @@ public class StoryActivity extends AppCompatActivity {
      * @param story
      */
     public void gotStory(Story story) {
+        this.story = story;
         pages = rootWordsView.calculatePages(story.getChapters());
 
         mStoryAdapter = new StoryAdapter(getSupportFragmentManager(), pages);
@@ -97,7 +94,7 @@ public class StoryActivity extends AppCompatActivity {
         return pages;
     }
 
-    public WordsView getRootWordsView() {
-        return rootWordsView;
+    public Story getStory() {
+        return story;
     }
 }

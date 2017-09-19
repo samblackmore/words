@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.sam.words.R;
 import com.sam.words.components.Page;
 import com.sam.words.components.WordsView;
+import com.sam.words.models.Story;
 
 import java.util.List;
 
@@ -24,11 +25,13 @@ class StoryPageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int PAGE = 0;
     private final int POLL = 1;
+    private Story story;
     private List<Page> pages;
     private int pageNumber;
     private int pageCount;
 
-    StoryPageAdapter(List<Page> pages, int pageNumber, int pageCount) {
+    StoryPageAdapter(Story story, List<Page> pages, int pageNumber, int pageCount) {
+        this.story = story;
         this.pages = pages;
         this.pageNumber = pageNumber;
         this.pageCount = pageCount;
@@ -83,6 +86,8 @@ class StoryPageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             case POLL:
                 StoryPollHolder pollHolder = (StoryPollHolder) holder;
+                pollHolder.titleView.setText(story.getTitle());
+                pollHolder.authorView.setText(story.getAuthorName());
                 break;
         }
     }

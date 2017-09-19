@@ -53,7 +53,7 @@ public class StoryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_story_page, container, false);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(rootView.getContext());
-        RecyclerView.Adapter mAdapter = new StoryPageAdapter(activity.getPages(), pageNum, pageCnt);
+        RecyclerView.Adapter mAdapter = new StoryPageAdapter(activity.getStory(), activity.getPages(), pageNum, pageCnt);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.screen_list);
         mRecyclerView.setHasFixedSize(true);
