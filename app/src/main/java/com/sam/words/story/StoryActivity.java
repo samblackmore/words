@@ -1,6 +1,9 @@
 package com.sam.words.story;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +25,8 @@ import com.sam.words.models.Story;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StoryActivity extends AppCompatActivity {
+
+public class StoryActivity extends AppCompatActivity implements View.OnClickListener{
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref = database.getReference("stories");
@@ -31,6 +35,7 @@ public class StoryActivity extends AppCompatActivity {
     private StoryAdapter mStoryAdapter;
     private List<Page> pages = new ArrayList<>();
     private Story story;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +49,11 @@ public class StoryActivity extends AppCompatActivity {
 
         mStoryAdapter = new StoryAdapter(getSupportFragmentManager(), pages);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
+        viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(mStoryAdapter);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(this);
 
         String storyId = getIntent().getStringExtra(CardAdapter.EXTRA_STORY);
 
@@ -96,5 +104,21 @@ public class StoryActivity extends AppCompatActivity {
 
     public Story getStory() {
         return story;
+    }
+
+    public WordsView getRootWordsView() {
+        return rootWordsView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        viewPager.setCurrentItem(mStoryAdapter.getCount() - 1);
+
+        FragmentManager fm = getSupportFragmentManager();
+        for (Fragment frag : fm.getFragments()) {
+            StoryFragment f = (StoryFragment) frag;
+            if (f != null)
+                f.scrollDown();
+        }
     }
 }

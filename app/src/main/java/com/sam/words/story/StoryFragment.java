@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +29,7 @@ public class StoryFragment extends Fragment {
 
     // Fragment arguments
     public static final String ARG_PAGE_NUMBER = "page_number";
-    private static final String ARG_PAGE_COUNT = "page_count";
+    public static final String ARG_PAGE_COUNT = "page_count";
 
     private RecyclerView mRecyclerView;
 
@@ -61,5 +62,11 @@ public class StoryFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
+    }
+
+    public void scrollDown() {
+        StoryActivity activity = ((StoryActivity) getActivity());
+        WordsView v = activity.getRootWordsView();
+        mRecyclerView.smoothScrollBy(0, (int) v.getY() + v.getBottom(), new AccelerateDecelerateInterpolator());
     }
 }
