@@ -31,7 +31,6 @@ public class StoryFragment extends Fragment {
     private static final String ARG_PAGE_COUNT = "page_count";
 
     private RecyclerView mRecyclerView;
-    private TextView pollContainer;
 
     public StoryFragment() {
     }
@@ -53,18 +52,6 @@ public class StoryFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_story_page, container, false);
 
-        pollContainer = (TextView) rootView.findViewById(R.id.poll_container);
-
-        if (pageCnt == pageNum) {
-
-            List<Page> pages = activity.getPages();
-
-            if (pages != null) {
-                pollContainer.setVisibility(View.VISIBLE);
-                pollContainer.setY(pages.get(pageNum - 1).getWordsBottom() + activity.getRootWordsView().getY());
-            }
-        }
-
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(rootView.getContext());
         RecyclerView.Adapter mAdapter = new StoryPageAdapter(activity.getPages(), pageNum, pageCnt);
 
@@ -74,10 +61,5 @@ public class StoryFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
-    }
-
-    public void gotWordsBottom(int y) {
-        //pollView.setVisibility(View.VISIBLE);
-        //pollView.setY(y);
     }
 }

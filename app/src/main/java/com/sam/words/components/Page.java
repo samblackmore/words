@@ -52,11 +52,6 @@ public class Page {
         }
     }
 
-    public int getWordsBottom() {
-        int lineCount = (lines == null ? 0 : lines.size()) + (dropCapLines == null ? 0 : dropCapLines.size());
-        return (lineCount * lineHeight) + ((lineCount - 1) * lineSpacing);
-    }
-
     void draw(Canvas canvas, Paint paint) {
 
         paint.setTypeface(typeface);
