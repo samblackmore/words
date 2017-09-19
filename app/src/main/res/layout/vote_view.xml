@@ -17,17 +17,6 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"/>
 
-    <ImageView
-        android:id="@+id/up_arrow"
-        android:src="@android:drawable/arrow_up_float"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/score"
-        android:layout_toEndOf="@+id/score"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"/>
-
     <TextView
         android:id="@+id/word"
         android:text="Banana"

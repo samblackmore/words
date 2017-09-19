@@ -2,6 +2,7 @@ package com.sam.words.story;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.sam.words.R;
@@ -32,6 +34,7 @@ public class StoryFragment extends Fragment {
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private RecyclerView mRecyclerView;
+    private TextView timer;
 
     // Fragment arguments
     public static final String ARG_PAGE_NUMBER = "page_number";
@@ -68,6 +71,7 @@ public class StoryFragment extends Fragment {
             TextView pollDescription = (TextView) rootView.findViewById(R.id.poll_description);
             final EditText pollInput = (EditText) rootView.findViewById(R.id.poll_input);
             Button pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
+            timer = (TextView) rootView.findViewById(R.id.timer);
             
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
             mRecyclerView = (RecyclerView) rootView.findViewById(R.id.votes_list);
@@ -75,8 +79,10 @@ public class StoryFragment extends Fragment {
             mRecyclerView.setLayoutManager(mLayoutManager);
 
             if (story != null) {
-                Query query = database.getReference("stories").child(story.getStoryId()).child("vote");
-                query.addValueEventListener(new VoteListener(this));
+                DatabaseReference ref = database.getReference("stories").child(story.getStoryId());
+
+                ref.child("vote").addValueEventListener(new VoteListener(this));
+                ref.child("voteEnds").addValueEventListener(new VoteEndListener(this));
             }
 
             final FirebaseUser user = auth.getCurrentUser();
@@ -125,5 +131,30 @@ public class StoryFragment extends Fragment {
     public void gotVotes(List<Post> votes) {
         RecyclerView.Adapter mAdapter = new VoteAdapter(votes);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    public void gotTimer(Integer timeout) {
+
+        if (timeout == null) {
+            timer.setText("Timer not set");
+            return;
+        }
+
+        long time = System.currentTimeMillis();
+
+        if (time < timeout) {
+            new CountDownTimer(timeout - time, 1000) {
+
+                public void onTick(long millisUntilFinished) {
+                    timer.setText("seconds remaining: " + millisUntilFinished / 1000);
+                }
+
+                public void onFinish() {
+                    timer.setText("done!");
+                }
+            }.start();
+        } else {
+
+        }
     }
 }
