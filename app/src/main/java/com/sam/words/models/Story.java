@@ -75,4 +75,12 @@ public class Story {
     public List<Vote> getVotes() {
         return votes;
     }
+
+    public int getWordCount() {
+        int count = 0;
+        for (Chapter chapter : chapters) {
+            count += chapter.getTitle().length() + chapter.getContent().length();
+        }
+        return count;
+    }
 }

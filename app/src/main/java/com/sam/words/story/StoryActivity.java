@@ -33,6 +33,7 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
     private StoryAdapter mStoryAdapter;
     private List<Page> pages = new ArrayList<>();
     private Story story;
+    private int wordCount = 0;
     private ViewPager viewPager;
 
     @Override
@@ -83,15 +84,21 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
      */
     public void gotStory(Story story) {
         this.story = story;
-        pages = rootWordsView.calculatePages(story.getChapters());
 
         ProgressBar loading = (ProgressBar) findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
 
-        mStoryAdapter.update(pages);
-        mStoryAdapter.notifyDataSetChanged();
+        if (wordCount != story.getWordCount()) {
 
-        Toast.makeText(this, "Got story", Toast.LENGTH_SHORT).show();
+            pages = rootWordsView.calculatePages(story.getChapters());
+
+            mStoryAdapter.update(pages);
+            mStoryAdapter.notifyDataSetChanged();
+
+            wordCount = story.getWordCount();
+
+            Toast.makeText(this, "New word count " + wordCount, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public List<Page> getPages() {
