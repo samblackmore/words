@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 getFrag().showLoading(true);
             } else {
                 getFrag().showLoading(false);
+                Toast.makeText(this, result.getStatus().toString(), Toast.LENGTH_SHORT).show();
             }
         }
     }

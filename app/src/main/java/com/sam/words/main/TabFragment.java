@@ -130,8 +130,13 @@ public class TabFragment extends Fragment {
             addStoryButton.setVisibility(View.INVISIBLE);
         } else {
             progressBar.setVisibility(View.GONE);
-            signInButton.setVisibility(View.INVISIBLE);
-            addStoryButton.setVisibility(View.VISIBLE);
+            if (mAuth.getCurrentUser() == null) {
+                signInButton.setVisibility(View.VISIBLE);
+                addStoryButton.setVisibility(View.INVISIBLE);
+            } else {
+                signInButton.setVisibility(View.INVISIBLE);
+                addStoryButton.setVisibility(View.VISIBLE);
+            }
         }
     }
 
