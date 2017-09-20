@@ -40,10 +40,12 @@ class VoteAdapter extends RecyclerView.Adapter<VoteHolder> {
     @Override
     public void onBindViewHolder(final VoteHolder holder, int position) {
         final Post post = mDataset.get(position);
-        holder.scoreView.setText(String.valueOf(post.getVotes()));
-        holder.postView.setText(post.getMessage());
-        holder.submittedByView.setText(post.getAuthorName());
-        holder.timeAgoView.setText(TimeAgo.timeAgo(post.getDateCreated()));
+        if (post != null) {
+            holder.scoreView.setText(String.valueOf(post.getVotes()));
+            holder.postView.setText(post.getMessage());
+            holder.submittedByView.setText(post.getAuthorName());
+            holder.timeAgoView.setText(TimeAgo.timeAgo(post.getDateCreated()));
+        }
     }
 
     @Override

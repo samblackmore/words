@@ -1,5 +1,6 @@
 package com.sam.words.story;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -35,7 +36,9 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private StoryActivity activity;
     private RecyclerView mRecyclerView;
+    private TextView pollTitle;
     private EditText pollInput;
     private TextView timer;
     private Story story;
@@ -60,7 +63,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        StoryActivity activity = ((StoryActivity) getActivity());
+        activity = ((StoryActivity) getActivity());
         story = activity.getStory();
 
         int pageNum = getArguments().getInt(ARG_PAGE_NUMBER);
@@ -75,6 +78,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
             TextView pollDescription = (TextView) rootView.findViewById(R.id.poll_description);
             Button pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
+            pollTitle = (TextView) rootView.findViewById(R.id.poll_title);
             pollInput = (EditText) rootView.findViewById(R.id.poll_input);
             timer = (TextView) rootView.findViewById(R.id.timer);
             
@@ -122,8 +126,9 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
     public void gotVote(Vote vote) {
         if (vote != null && currentVote != null && !vote.getId().equals(currentVote.getId()))
-            Toast.makeText(getContext(), "New voting round!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "New voting round!", Toast.LENGTH_SHORT).show();
         currentVote = vote;
+        pollTitle.setText("Poll " + vote.getId());
         if (vote != null) {
             gotPosts(vote.getPosts());
             gotTimer(vote.getTimeEnding());
@@ -131,67 +136,75 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     }
 
     public void gotPosts(List<Post> posts) {
-        Toast.makeText(getContext(), "Got posts!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, "Got posts!", Toast.LENGTH_SHORT).show();
+
         RecyclerView.Adapter mAdapter = new VoteAdapter(posts);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     public void gotTimer(Long timeout) {
+        long time = System.currentTimeMillis();
 
         if (timeout == null) {
             timer.setText("Timer not set");
             return;
         }
 
-        long time = System.currentTimeMillis();
-
         if (time < timeout) {
-            new CountDownTimer(timeout - time, 1000) {
-
-                public void onTick(long millisUntilFinished) {
-                    timer.setText("seconds remaining: " + millisUntilFinished / 1000);
-                }
-
-                public void onFinish() {
-                    timer.setText("done!");
-                }
-            }.start();
+            makeTimer(timeout - time).start();
         } else {
-            timer.setText("Timer expired");
-            database.getReference("stories")
-                    .child(story.getStoryId())
-                    .child("votes")
-                    .child(currentVote.getId())
-                    .child("finished")
-                    .setValue(true);
+            timerFinished();
         }
+    }
+
+    private CountDownTimer makeTimer(long millisInFuture) {
+        return new CountDownTimer(millisInFuture, 1000) {
+            public void onTick(long millisUntilFinished) {
+                timer.setText("Seconds remaining: " + millisUntilFinished / 1000);
+            }
+            public void onFinish() {
+                timerFinished();
+            }
+        };
+    }
+
+    private void timerFinished() {
+        timer.setText("Voting finished!");
+        database.getReference("stories")
+                .child(story.getStoryId())
+                .child("votes")
+                .child(currentVote.getId())
+                .child("finished")
+                .setValue(true);
     }
 
     @Override
     public void onClick(View v) {
-
-        FirebaseUser user = auth.getCurrentUser();
-
         switch (v.getId()) {
             case R.id.poll_submit:
 
+                FirebaseUser user = auth.getCurrentUser();
+
+                if (user == null) {
+                    Toast.makeText(getActivity(), "Not signed in!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if (currentVote != null) {
                     String post = pollInput.getText().toString();
+                    Post newPost = new Post(story.getStoryId(), user.getUid(), user.getDisplayName(), post);
 
-                    database.getReference("stories")
+                    DatabaseReference ref = database.getReference("stories")
                             .child(story.getStoryId())
                             .child("votes")
-                            .child(currentVote.getId())
-                            .child("timeEnding")
-                            .setValue(System.currentTimeMillis());
+                            .child(currentVote.getId());
 
-                    database.getReference("stories")
-                            .child(story.getStoryId())
-                            .child("votes")
-                            .child(currentVote.getId())
-                            .child("posts")
+                    ref.child("timeEnding")
+                            .setValue(System.currentTimeMillis() + 5 * 60 * 1000);
+
+                    ref.child("posts")
                             .child(String.valueOf(currentVote.getPosts().size()))
-                            .setValue(new Post(story.getStoryId(), user.getUid(), user.getDisplayName(), post));
+                            .setValue(newPost);
                 }
 
                 break;

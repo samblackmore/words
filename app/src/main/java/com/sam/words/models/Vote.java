@@ -13,8 +13,6 @@ public class Vote {
 
     public Vote() {
         timeCreated = System.currentTimeMillis();
-
-        posts.add(new Post("123", "456", "Bobn", "Herro"));
     }
 
     public long getTimeCreated() {
