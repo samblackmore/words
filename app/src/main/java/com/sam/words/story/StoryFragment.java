@@ -204,9 +204,12 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
                     ref.child("timeEnding")
                             .setValue(System.currentTimeMillis() + 5 * 60 * 1000);
 
-                    ref.child("posts")
-                            .child(String.valueOf(currentVote.getPosts().size()))
-                            .setValue(newPost);
+                    DatabaseReference newPostPath = ref.child("posts")
+                            .child(String.valueOf(currentVote.getPosts().size()));
+
+                    newPost.setPath(newPostPath.toString());
+
+                    newPostPath.setValue(newPost);
                 }
 
                 break;

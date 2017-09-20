@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 class VoteHolder extends RecyclerView.ViewHolder {
 
+    View itemView;
     TextView scoreView;
     ImageView upArrow;
     TextView postView;
@@ -19,6 +20,7 @@ class VoteHolder extends RecyclerView.ViewHolder {
 
     public VoteHolder(View itemView, TextView scoreView, ImageView upArrow, TextView postView, TextView submittedByView, TextView timeAgoView) {
         super(itemView);
+        this.itemView = itemView;
         this.scoreView = scoreView;
         this.upArrow = upArrow;
         this.postView = postView;
