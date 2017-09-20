@@ -43,7 +43,7 @@
         <TextView
             android:id="@+id/time_ago"
             android:text="2h ago"
-            android:textColor="@color/grayDk"
+            android:textColor="@color/gray"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/word_submitted_by"

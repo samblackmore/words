@@ -162,7 +162,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     private CountDownTimer makeTimer(long millisInFuture) {
         return new CountDownTimer(millisInFuture, 1000) {
             public void onTick(long millisUntilFinished) {
-                timerText.setText("Seconds remaining: " + millisUntilFinished / 1000);
+                timerText.setText("Voting ends in " + millisUntilFinished / 1000 + "s");
             }
             public void onFinish() {
                 timerFinished();

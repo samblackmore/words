@@ -56,7 +56,7 @@ class VoteAdapter extends RecyclerView.Adapter<VoteHolder> {
             holder.scoreView.setText(String.valueOf(post.getVoteCount()));
             holder.postView.setText(post.getMessage());
             holder.submittedByView.setText(post.getAuthorName());
-            holder.timeAgoView.setText(TimeAgo.timeAgo(post.getDateCreated()));
+            holder.timeAgoView.setText(TimeAgo.timeAgo(post.getDateCreated()) + " ago");
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
