@@ -1,6 +1,5 @@
 package com.sam.words.story;
 
-import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -19,7 +18,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.sam.words.R;
 import com.sam.words.components.WordsView;
 import com.sam.words.models.Post;
@@ -40,7 +38,8 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     private RecyclerView mRecyclerView;
     private TextView pollTitle;
     private EditText pollInput;
-    private TextView timer;
+    private TextView timerText;
+    private CountDownTimer timer;
     private Story story;
     private Vote currentVote;
 
@@ -81,7 +80,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
             Button pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
             pollTitle = (TextView) rootView.findViewById(R.id.poll_title);
             pollInput = (EditText) rootView.findViewById(R.id.poll_input);
-            timer = (TextView) rootView.findViewById(R.id.timer);
+            timerText = (TextView) rootView.findViewById(R.id.timer);
             
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
             mRecyclerView = (RecyclerView) rootView.findViewById(R.id.votes_list);
@@ -115,7 +114,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
             WordsView wordsView = (WordsView) rootView.findViewById(R.id.words_view);
             TextView pageNumberView = (TextView) rootView.findViewById(R.id.page_number);
 
-            if (activity.getPages() != null)
+            if (activity.getPages() != null && activity.getPages().size() > 0)
                 wordsView.setPage(activity.getPages().get(pageNum - 1));
             wordsView.setPageNumber(pageNum);
 
@@ -148,12 +147,13 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
         long time = System.currentTimeMillis();
 
         if (timeout == null) {
-            timer.setText("Timer not set");
+            timerText.setText("Timer not set");
             return;
         }
 
         if (time < timeout) {
-            makeTimer(timeout - time).start();
+            if (timer != null) timer.cancel();
+            timer = makeTimer(timeout - time).start();
         } else {
             timerFinished();
         }
@@ -162,7 +162,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     private CountDownTimer makeTimer(long millisInFuture) {
         return new CountDownTimer(millisInFuture, 1000) {
             public void onTick(long millisUntilFinished) {
-                timer.setText("Seconds remaining: " + millisUntilFinished / 1000);
+                timerText.setText("Seconds remaining: " + millisUntilFinished / 1000);
             }
             public void onFinish() {
                 timerFinished();
@@ -171,7 +171,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     }
 
     private void timerFinished() {
-        timer.setText("Voting finished!");
+        timerText.setText("Voting finished!");
         database.getReference("stories")
                 .child(story.getStoryId())
                 .child("votes")
