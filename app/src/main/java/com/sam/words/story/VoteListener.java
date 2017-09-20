@@ -5,7 +5,7 @@ import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.sam.words.models.Post;
+import com.sam.words.models.Vote;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,15 +20,19 @@ class VoteListener implements ValueEventListener {
 
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
-        List<Post> votes = new ArrayList<>();
+
+        List<Vote> votes = new ArrayList<>();
 
         for (DataSnapshot child : dataSnapshot.getChildren()) {
-            Post post = child.getValue(Post.class);
-            post.setMessage(child.getKey());
-            votes.add(post);
+            Vote vote = child.getValue(Vote.class);
+            vote.setId(child.getKey());
+            votes.add(vote);
         }
 
-        frag.gotVotes(votes);
+        if (votes.size() > 0) {
+            Vote currentVote = votes.get(votes.size() - 1);
+            frag.gotVote(currentVote);
+        }
     }
 
     @Override

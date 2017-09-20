@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,6 +23,7 @@ import com.sam.words.R;
 import com.sam.words.components.WordsView;
 import com.sam.words.models.Post;
 import com.sam.words.models.Story;
+import com.sam.words.models.Vote;
 
 import java.util.List;
 
@@ -29,12 +31,15 @@ import java.util.List;
  * A page in a story. Contains a single WordsView representing that page.
  */
 
-public class StoryFragment extends Fragment {
+public class StoryFragment extends Fragment implements View.OnClickListener{
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private RecyclerView mRecyclerView;
+    private EditText pollInput;
     private TextView timer;
+    private Story story;
+    private Vote currentVote;
 
     // Fragment arguments
     public static final String ARG_PAGE_NUMBER = "page_number";
@@ -56,7 +61,7 @@ public class StoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         StoryActivity activity = ((StoryActivity) getActivity());
-        final Story story = activity.getStory();
+        story = activity.getStory();
 
         int pageNum = getArguments().getInt(ARG_PAGE_NUMBER);
         int pageCnt = getArguments().getInt(ARG_PAGE_COUNT);
@@ -69,8 +74,8 @@ public class StoryFragment extends Fragment {
             rootView = inflater.inflate(R.layout.story_poll, container, false);
 
             TextView pollDescription = (TextView) rootView.findViewById(R.id.poll_description);
-            final EditText pollInput = (EditText) rootView.findViewById(R.id.poll_input);
             Button pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
+            pollInput = (EditText) rootView.findViewById(R.id.poll_input);
             timer = (TextView) rootView.findViewById(R.id.timer);
             
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -81,29 +86,17 @@ public class StoryFragment extends Fragment {
             if (story != null) {
                 DatabaseReference ref = database.getReference("stories").child(story.getStoryId());
 
-                ref.child("vote").addValueEventListener(new VoteListener(this));
+                ref.child("votes").limitToLast(1).addValueEventListener(new VoteListener(this));
                 ref.child("voteEnds").addValueEventListener(new VoteEndListener(this));
             }
 
-            final FirebaseUser user = auth.getCurrentUser();
+            FirebaseUser user = auth.getCurrentUser();
 
             if (user != null && story != null) {
                 pollDescription.setText("Contribute to " + story.getTitle() + " by " + story.getAuthorName());
 
                 pollSubmit.setEnabled(true);
-                pollSubmit.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        String post = pollInput.getText().toString();
-
-                        database.getReference("stories")
-                                .child(story.getStoryId())
-                                .child("vote")
-                                .child(post)
-                                .setValue(new Post(story.getStoryId(), user.getUid(), user.getDisplayName()));
-                    }
-                });
+                pollSubmit.setOnClickListener(this);
             }
 
         } else {
@@ -128,8 +121,17 @@ public class StoryFragment extends Fragment {
         return rootView;
     }
 
-    public void gotVotes(List<Post> votes) {
-        RecyclerView.Adapter mAdapter = new VoteAdapter(votes);
+    public void gotVote(Vote vote) {
+        if (vote != null && currentVote != null && !vote.getId().equals(currentVote.getId()))
+            Toast.makeText(getContext(), "New voting round!", Toast.LENGTH_SHORT).show();
+        currentVote = vote;
+        if (vote != null)
+            gotPosts(vote.getPosts());
+    }
+
+    public void gotPosts(List<Post> posts) {
+        Toast.makeText(getContext(), "Got posts!", Toast.LENGTH_SHORT).show();
+        RecyclerView.Adapter mAdapter = new VoteAdapter(posts);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -155,6 +157,30 @@ public class StoryFragment extends Fragment {
             }.start();
         } else {
 
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        FirebaseUser user = auth.getCurrentUser();
+
+        switch (v.getId()) {
+            case R.id.poll_submit:
+
+                if (currentVote != null) {
+                    String post = pollInput.getText().toString();
+
+                    database.getReference("stories")
+                            .child(story.getStoryId())
+                            .child("votes")
+                            .child(currentVote.getId())
+                            .child("posts")
+                            .child(String.valueOf(currentVote.getPosts().size()))
+                            .setValue(new Post(story.getStoryId(), user.getUid(), user.getDisplayName(), post));
+                }
+
+                break;
         }
     }
 }

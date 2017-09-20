@@ -2,6 +2,7 @@ package com.sam.words.models;
 
 import com.sam.words.models.Chapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ public class Story {
     private long dateCreated;
     private long dateUpdated;
     private int likes = 0;
+    private List<Vote> votes;
 
     public Story() {
         // Default constructor required for calls to DataSnapshot.getValue(Story.class)
@@ -32,6 +34,10 @@ public class Story {
 
         dateCreated = System.currentTimeMillis();
         dateUpdated = System.currentTimeMillis();
+
+        Vote vote = new Vote();
+        votes = new ArrayList<>();
+        votes.add(vote);
     }
 
     public String getStoryId() {
@@ -64,5 +70,9 @@ public class Story {
 
     public int getLikes() {
         return likes;
+    }
+
+    public List<Vote> getVotes() {
+        return votes;
     }
 }

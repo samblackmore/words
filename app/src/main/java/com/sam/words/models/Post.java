@@ -19,10 +19,11 @@ public class Post {
         // Default constructor required for calls to DataSnapshot.getValue(Vote.class)
     }
 
-    public Post(String storyId, String userId, String authorName) {
+    public Post(String storyId, String userId, String authorName, String message) {
         this.storyId = storyId;
         this.userId = userId;
         this.authorName = authorName;
+        this.message = message;
 
         dateCreated = System.currentTimeMillis();
         dateUpdated = System.currentTimeMillis();

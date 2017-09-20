@@ -116,7 +116,9 @@ public class NewStoryFragment extends DialogFragment {
         DatabaseReference storiesRef = database.getReference("stories");
         DatabaseReference newRef = storiesRef.push();
 
-        newRef.setValue(new Story(newRef.getKey(), user.getUid(), title, author, chapters));
+        Story tmp = new Story(newRef.getKey(), user.getUid(), title, author, chapters);
+
+        newRef.setValue(tmp);
         
         getDialog().dismiss();
     }
@@ -125,10 +127,10 @@ public class NewStoryFragment extends DialogFragment {
         foundWords.add(word);
 
         if (foundWords.size() == query.size()) {
-            query.removeAll(foundWords);
+            /*query.removeAll(foundWords);
             if (query.size() > 0)
                 showError(query);
-            else
+            else*/
                 postStory();
         }
     }
