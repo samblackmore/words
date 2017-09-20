@@ -75,6 +75,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
             // Poll page
             rootView = inflater.inflate(R.layout.story_poll, container, false);
+            rootView.setVisibility(View.INVISIBLE);
 
             TextView pollDescription = (TextView) rootView.findViewById(R.id.poll_description);
             Button pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
@@ -88,6 +89,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
             mRecyclerView.setLayoutManager(mLayoutManager);
 
             if (story != null) {
+                rootView.setVisibility(View.VISIBLE);
                 DatabaseReference ref = database.getReference("stories").child(story.getStoryId());
 
                 ref.child("votes").limitToLast(1).addValueEventListener(new VoteListener(this));
