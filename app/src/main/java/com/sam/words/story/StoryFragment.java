@@ -87,7 +87,6 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
                 DatabaseReference ref = database.getReference("stories").child(story.getStoryId());
 
                 ref.child("votes").limitToLast(1).addValueEventListener(new VoteListener(this));
-                ref.child("voteEnds").addValueEventListener(new VoteEndListener(this));
             }
 
             FirebaseUser user = auth.getCurrentUser();
@@ -125,8 +124,10 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
         if (vote != null && currentVote != null && !vote.getId().equals(currentVote.getId()))
             Toast.makeText(getContext(), "New voting round!", Toast.LENGTH_SHORT).show();
         currentVote = vote;
-        if (vote != null)
+        if (vote != null) {
             gotPosts(vote.getPosts());
+            gotTimer(vote.getTimeEnding());
+        }
     }
 
     public void gotPosts(List<Post> posts) {
@@ -135,7 +136,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    public void gotTimer(Integer timeout) {
+    public void gotTimer(Long timeout) {
 
         if (timeout == null) {
             timer.setText("Timer not set");
@@ -156,7 +157,13 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
                 }
             }.start();
         } else {
-
+            timer.setText("Timer expired");
+            database.getReference("stories")
+                    .child(story.getStoryId())
+                    .child("votes")
+                    .child(currentVote.getId())
+                    .child("finished")
+                    .setValue(true);
         }
     }
 
@@ -170,6 +177,13 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
                 if (currentVote != null) {
                     String post = pollInput.getText().toString();
+
+                    database.getReference("stories")
+                            .child(story.getStoryId())
+                            .child("votes")
+                            .child(currentVote.getId())
+                            .child("timeEnding")
+                            .setValue(System.currentTimeMillis());
 
                     database.getReference("stories")
                             .child(story.getStoryId())

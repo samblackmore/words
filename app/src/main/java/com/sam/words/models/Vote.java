@@ -8,6 +8,7 @@ public class Vote {
     private String id;
     private long timeCreated;
     private Long timeEnding = null;
+    private boolean finished = false;
     private List<Post> posts = new ArrayList<>();
 
     public Vote() {
@@ -34,5 +35,13 @@ public class Vote {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }
