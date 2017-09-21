@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.sam.words.R;
+import com.sam.words.models.Post;
 import com.sam.words.models.Story;
 
 import java.util.Collections;
@@ -36,7 +37,7 @@ public class TabFragment extends Fragment {
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref = database.getReference("stories");
 
-    private RecyclerView mRecyclerView;
+    private CardAdapter mCardAdapter;
     private SignInButton signInButton;
     private Button addStoryButton;
     private ProgressBar progressBar;
@@ -61,9 +62,13 @@ public class TabFragment extends Fragment {
         signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
         addStoryButton = (Button) rootView.findViewById(R.id.add_story);
         progressBar = (ProgressBar) rootView.findViewById(R.id.sign_in_progress);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.stories_list);
+
+        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.stories_list);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mCardAdapter = new CardAdapter();
+        mRecyclerView.setAdapter(mCardAdapter);
 
         Query query = null;
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -84,7 +89,7 @@ public class TabFragment extends Fragment {
         }
 
         if (query != null)
-            query.addListenerForSingleValueEvent(new CardListener(this));
+            query.addListenerForSingleValueEvent(new CardStoryListener(this));
 
         return rootView;
     }
@@ -140,9 +145,13 @@ public class TabFragment extends Fragment {
         }
     }
 
-    public void setStories(List<Story> stories) {
+    public void gotStories(List<Story> stories) {
         Collections.reverse(stories);
-        RecyclerView.Adapter mAdapter = new CardAdapter(stories);
-        mRecyclerView.setAdapter(mAdapter);
+        mCardAdapter.gotStories(stories);
+    }
+
+    public void gotPosts(List<Post> posts) {
+        Collections.reverse(posts);
+        mCardAdapter.gotPosts(posts);
     }
 }

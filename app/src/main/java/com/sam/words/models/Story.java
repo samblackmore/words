@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 public class Story {
 
+    private String id;
     private String title;
     private String userId;
     private String authorAlias;
@@ -29,6 +30,14 @@ public class Story {
 
         dateCreated = System.currentTimeMillis();
         dateUpdated = System.currentTimeMillis();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {

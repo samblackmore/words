@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.sam.words.R;
+import com.sam.words.models.Post;
 import com.sam.words.utils.SharedPreferencesHelper;
 import com.sam.words.story.StoryActivity;
 import com.sam.words.components.WordsView;
@@ -26,11 +28,20 @@ import java.util.List;
 
 public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
-    public static final String EXTRA_STORY = "STORY";
-    private List<Story> mDataset = new ArrayList<>();
+    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-    CardAdapter(List<Story> myDataset) {
-        mDataset = myDataset;
+    public static final String EXTRA_STORY = "STORY";
+    private List<Story> stories = new ArrayList<>();
+    private List<Post> posts = new ArrayList<>();
+
+    public void gotStories(List<Story> stories) {
+        this.stories = stories;
+        notifyDataSetChanged();
+    }
+
+    public void gotPosts(List<Post> posts) {
+        this.posts = posts;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -66,13 +77,15 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
     @Override
     public void onBindViewHolder(final CardHolder holder, int position) {
-        final Story story = mDataset.get(position);
+        final Story story = stories.get(position);
         holder.mLikesView.setText(String.valueOf(story.getLikeCount()));
         holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
 
         holder.mTitleView.setText(TextUtil.capitalize(story.getTitle()));
         holder.mAuthorView.setText(story.getAuthorAlias());
-        holder.mWordsView.setPreview(story.getPreview());
+
+        String storyId = stories.get(position).getId();
+        database.getReference("posts").child(storyId).child("0").child("posts").addListenerForSingleValueEvent(new CardPostListener(holder));
 
         holder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +99,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        return stories.size();
     }
 }

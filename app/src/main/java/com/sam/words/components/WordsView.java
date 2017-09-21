@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.sam.words.models.Chapter;
+import com.sam.words.models.Post;
 import com.sam.words.story.StoryActivity;
 import com.sam.words.utils.SharedPreferencesHelper;
 
@@ -101,7 +102,8 @@ public class WordsView extends View {
                 page = pages.get(pageNumber - 1);
 
         } else {
-            page = calculatePages(preview).get(0);
+            if (preview != null)
+                page = calculatePages(preview).get(0);
         }
 
         if (page != null)
@@ -129,7 +131,12 @@ public class WordsView extends View {
         for (Chapter chapter : chapters) {
 
             Page firstPage = new Page(typeface, textSize, lineHeight, lineSeperation);
-            String chapterContent = "please replace me";
+            StringBuilder builder = new StringBuilder();
+            for (Post post : chapter.getPosts()) {
+                builder.append(post.getMessage());
+                builder.append(" ");
+            }
+            String chapterContent = builder.toString();
             List<String> leftOverLines = new ArrayList<>();
 
             // Step 1 - Chapter title
@@ -305,9 +312,26 @@ public class WordsView extends View {
         return textSize;
     }
 
-    public void setPreview(String string) {
-        Chapter chapter = new Chapter(0, "preview");
+    public void setPreview(List<Post> posts) {
+        Chapter dummyChapter = new Chapter(0, null);
+        dummyChapter.setPosts(posts);
+
         preview = new ArrayList<>();
-        preview.add(chapter);
+        preview.add(dummyChapter);
+
+        invalidate();
+    }
+
+    public void setPreview(String message) {
+        Chapter dummyChapter = new Chapter(0, null);
+        List<Post> dummyPosts = new ArrayList<>();
+
+        dummyPosts.add(new Post(null, null, null, message));
+        dummyChapter.setPosts(dummyPosts);
+
+        preview = new ArrayList<>();
+        preview.add(dummyChapter);
+
+        invalidate();
     }
 }

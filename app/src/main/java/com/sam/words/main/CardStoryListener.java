@@ -10,11 +10,11 @@ import com.sam.words.models.Story;
 import java.util.ArrayList;
 import java.util.List;
 
-class CardListener implements ValueEventListener {
+class CardStoryListener implements ValueEventListener {
 
     private TabFragment frag;
 
-    CardListener(TabFragment frag) {
+    CardStoryListener(TabFragment frag) {
         this.frag = frag;
     }
 
@@ -24,10 +24,13 @@ class CardListener implements ValueEventListener {
 
         for (DataSnapshot child : dataSnapshot.getChildren()) {
             Story story = child.getValue(Story.class);
-            stories.add(story);
+            if (story != null) {
+                story.setId(child.getKey());
+                stories.add(story);
+            }
         }
 
-        frag.setStories(stories);
+        frag.gotStories(stories);
     }
 
     @Override
