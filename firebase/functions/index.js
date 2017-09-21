@@ -18,24 +18,21 @@ exports.finishUpdated = functions.database.ref('/stories/{storyId}/votes/{voteId
 
     const chooseWinnerPromise = voteRef.child('posts').once('value').then(snapshot => {
 
-      var winnerPromises = [];
-
       var highestScore = -1;
-      var winningPostId = -1;
+      var winningPost;
 
       snapshot.forEach(function(childSnapshot) {
-        const postId = parseInt(childSnapshot.key)
-        const postScore = parseInt(childSnapshot.child('voteCount').val())
-        const postMessage = childSnapshot.child('message').val()
+        const post = childSnapshot.val()
 
-        if (postScore > highestScore) {
-          highestScore = postScore
-          winningPostId = postId
+        if (post.voteCount > highestScore) {
+          highestScore = post.voteCount
+          winningPost = post
         }
       })
 
-      const setWinnerPromise = voteRef.child('winner').set(winningPostId);
-      const addToStoryPromise = storyRef.child('chapters').limitToLast(1).once('value').then(chaptersSnapshot => {
+      return storyRef.child('chapters').limitToLast(1).once('value').then(chaptersSnapshot => {
+
+        var addToStoryPromises = []
 
         var latestChapterId = -1
 
@@ -43,7 +40,25 @@ exports.finishUpdated = functions.database.ref('/stories/{storyId}/votes/{voteId
           latestChapterId = chapterSnapshot.key
         })
 
-        return storyRef.child('chapters').child(latestChapterId).child('content').TRANSACTION
+        const chapterRef = storyRef.child('chapters').child(latestChapterId)
+
+        const addPostPromise = chapterRef.child('posts').push().set(winningPost)
+        const addMessagePromise = chapterRef.child('content').transaction(function(content) {
+
+
+          console.log('transaction old content:', content)
+          console.log('transaction append:', winningPost.message)
+
+          if (content) {
+            content += winningPost.message
+          }
+          return content;
+        })
+
+        addToStoryPromises.push(addPostPromise)
+        addToStoryPromises.push(addMessagePromise)
+
+        return Promise.all(addToStoryPromises)
       })
     })
 
