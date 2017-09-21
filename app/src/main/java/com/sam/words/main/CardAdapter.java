@@ -14,6 +14,7 @@ import com.sam.words.utils.SharedPreferencesHelper;
 import com.sam.words.story.StoryActivity;
 import com.sam.words.components.WordsView;
 import com.sam.words.models.Story;
+import com.sam.words.utils.TextUtil;
 import com.sam.words.utils.TimeAgo;
 
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         holder.mLikesView.setText(String.valueOf(story.getLikeCount()));
         holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
 
-        holder.mTitleView.setText(story.getTitle());
+        holder.mTitleView.setText(TextUtil.capitalize(story.getTitle()));
         holder.mAuthorView.setText(story.getAuthorAlias());
         //holder.mWordsView.setChapters(story.getChapters());
 

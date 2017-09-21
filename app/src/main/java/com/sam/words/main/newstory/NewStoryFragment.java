@@ -17,8 +17,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.sam.words.R;
 import com.sam.words.components.SimpleDialog;
 import com.sam.words.main.MainActivity;
-import com.sam.words.models.Chapter;
 import com.sam.words.models.Story;
+import com.sam.words.utils.TextUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +47,17 @@ public class NewStoryFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         View view = inflater.inflate(R.layout.dialog_new_story, null);
+        final TextInputEditText titleView = (TextInputEditText) view.findViewById(R.id.new_story_title);
         TextInputEditText authorView = (TextInputEditText) view.findViewById(R.id.new_story_author);
+
+        titleView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    titleView.setText(TextUtil.capitalize(titleView.getText().toString()));
+                }
+            }
+        });
 
         FirebaseUser user = auth.getCurrentUser();
 
@@ -111,7 +121,7 @@ public class NewStoryFragment extends DialogFragment {
         }
 
         DatabaseReference storiesRef = database.getReference("stories");
-        storiesRef.child(title).setValue(new Story(title, user.getUid(), author, content));
+        storiesRef.child(title.toLowerCase()).setValue(new Story(title, user.getUid(), author, content));
         
         getDialog().dismiss();
     }
