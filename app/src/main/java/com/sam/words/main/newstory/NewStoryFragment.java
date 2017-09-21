@@ -103,9 +103,6 @@ public class NewStoryFragment extends DialogFragment {
     }
 
     private void postStory() {
-        List<Chapter> chapters = new ArrayList<>();
-        chapters.add(new Chapter("Chapter One", content));
-
         FirebaseUser user = auth.getCurrentUser();
 
         if (user == null) {
@@ -114,11 +111,7 @@ public class NewStoryFragment extends DialogFragment {
         }
 
         DatabaseReference storiesRef = database.getReference("stories");
-        DatabaseReference newRef = storiesRef.push();
-
-        Story tmp = new Story(newRef.getKey(), user.getUid(), title, author, chapters);
-
-        newRef.setValue(tmp);
+        storiesRef.child(title).setValue(new Story(title, user.getUid(), author, content));
         
         getDialog().dismiss();
     }

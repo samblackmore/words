@@ -92,15 +92,15 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
             if (story != null) {
                 rootView.setVisibility(View.VISIBLE);
-                DatabaseReference ref = database.getReference("stories").child(story.getStoryId());
+                //DatabaseReference ref = database.getReference("stories").child(story.getStoryId());
 
-                ref.child("votes").limitToLast(1).addValueEventListener(new VoteListener(this));
+                //ref.child("votes").limitToLast(1).addValueEventListener(new VoteListener(this));
             }
 
             FirebaseUser user = auth.getCurrentUser();
 
             if (user != null && story != null) {
-                pollDescription.setText("Contribute to " + story.getTitle() + " by " + story.getAuthorName());
+                //pollDescription.setText("Contribute to " + story.getTitle() + " by " + story.getAuthorAlias());
 
                 pollSubmit.setEnabled(true);
                 pollSubmit.setOnClickListener(this);
@@ -176,7 +176,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     private void timerFinished() {
         timerText.setText("Voting finished!");
         database.getReference("stories")
-                .child(story.getStoryId())
+                //.child(story.getStoryId())
                 .child("votes")
                 .child(currentVote.getId())
                 .child("finished")
@@ -197,10 +197,10 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
                 if (currentVote != null) {
                     String post = pollInput.getText().toString();
-                    Post newPost = new Post(story.getStoryId(), user.getUid(), user.getDisplayName(), post);
+                    //Post newPost = new Post(story.getStoryId(), user.getUid(), user.getDisplayName(), post);
 
                     DatabaseReference ref = database.getReference("stories")
-                            .child(story.getStoryId())
+                            //.child(story.getStoryId())
                             .child("votes")
                             .child(currentVote.getId());
 
@@ -210,9 +210,9 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
                     DatabaseReference newPostPath = ref.child("posts")
                             .child(String.valueOf(currentVote.getPosts().size()));
 
-                    newPost.setPath(newPostPath.toString());
+                    //newPost.setPath(newPostPath.toString());
 
-                    newPostPath.setValue(newPost);
+                    //newPostPath.setValue(newPost);
                 }
 
                 break;

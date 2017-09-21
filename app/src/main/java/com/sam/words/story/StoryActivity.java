@@ -88,7 +88,7 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
         ProgressBar loading = (ProgressBar) findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
 
-        if (wordCount != story.getWordCount()) {
+        /*if (wordCount != story.getWordCount()) {
 
             pages = rootWordsView.calculatePages(story.getChapters());
 
@@ -98,7 +98,7 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
             wordCount = story.getWordCount();
 
             Toast.makeText(this, "New word count " + wordCount, Toast.LENGTH_SHORT).show();
-        }
+        }*/
     }
 
     public List<Page> getPages() {

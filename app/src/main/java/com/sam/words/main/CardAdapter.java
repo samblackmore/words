@@ -66,18 +66,18 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
     @Override
     public void onBindViewHolder(final CardHolder holder, int position) {
         final Story story = mDataset.get(position);
-        holder.mLikesView.setText(String.valueOf(story.getLikes()));
+        holder.mLikesView.setText(String.valueOf(story.getLikeCount()));
         holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
 
         holder.mTitleView.setText(story.getTitle());
-        holder.mAuthorView.setText(story.getAuthorName());
+        holder.mAuthorView.setText(story.getAuthorAlias());
         //holder.mWordsView.setChapters(story.getChapters());
 
         holder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(holder.mCardView.getContext(), StoryActivity.class);
-                intent.putExtra(EXTRA_STORY, story.getStoryId());
+                intent.putExtra(EXTRA_STORY, story.getTitle());
                 holder.mCardView.getContext().startActivity(intent);
             }
         });
