@@ -6,20 +6,16 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.sam.words.models.Chapter;
 import com.sam.words.story.StoryActivity;
-import com.sam.words.story.StoryFragment;
 import com.sam.words.utils.SharedPreferencesHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.sam.words.story.StoryFragment.ARG_PAGE_NUMBER;
 
 public class WordsView extends View {
 
@@ -133,7 +129,7 @@ public class WordsView extends View {
         for (Chapter chapter : chapters) {
 
             Page firstPage = new Page(typeface, textSize, lineHeight, lineSeperation);
-            String chapterContent = chapter.getContent();
+            String chapterContent = "please replace me";
             List<String> leftOverLines = new ArrayList<>();
 
             // Step 1 - Chapter title
@@ -310,7 +306,7 @@ public class WordsView extends View {
     }
 
     public void setPreview(String string) {
-        Chapter chapter = new Chapter("preview", string);
+        Chapter chapter = new Chapter(0, "preview");
         preview = new ArrayList<>();
         preview.add(chapter);
     }

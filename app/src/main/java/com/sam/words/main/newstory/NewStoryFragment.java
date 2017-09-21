@@ -17,6 +17,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.sam.words.R;
 import com.sam.words.components.SimpleDialog;
 import com.sam.words.main.MainActivity;
+import com.sam.words.models.Chapter;
+import com.sam.words.models.Post;
 import com.sam.words.models.Story;
 import com.sam.words.utils.TextUtil;
 
@@ -120,8 +122,17 @@ public class NewStoryFragment extends DialogFragment {
             return;
         }
 
-        DatabaseReference storiesRef = database.getReference("stories");
-        storiesRef.child(title.toLowerCase()).setValue(new Story(title, user.getUid(), author, content));
+        DatabaseReference newStoryRef = database.getReference("stories").push();
+        String newStoryId = newStoryRef.getKey();
+        DatabaseReference newChapterRef = database.getReference("posts").child(newStoryId).child("0");
+
+        Post newPost = new Post(newStoryId, user.getUid(), user.getDisplayName(), content);
+        Story newStory = new Story(title, user.getUid(), author, content);
+        Chapter newChapter = new Chapter(0, "Chapter One");
+        
+        newStoryRef.setValue(newStory);
+        newChapterRef.setValue(newChapter);
+        newChapterRef.child("posts").push().setValue(newPost);
         
         getDialog().dismiss();
     }

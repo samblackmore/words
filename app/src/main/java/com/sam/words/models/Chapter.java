@@ -6,23 +6,23 @@ package com.sam.words.models;
  */
 
 public class Chapter {
+    private int number;
     private String title;
-    private String content;
 
     public Chapter() {
         // Default constructor required for calls to DataSnapshot.getValue(Chapter.class)
     }
 
-    public Chapter(String title, String content) {
+    public Chapter(int number, String title) {
+        this.number = number;
         this.title = title;
-        this.content = content;
+    }
+
+    public int getNumber() {
+        return number;
     }
 
     public String getTitle() {
         return title;
-    }
-
-    public String getContent() {
-        return content;
     }
 }
