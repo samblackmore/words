@@ -32,6 +32,9 @@ import java.util.List;
 
 public class StoryFragment extends Fragment implements View.OnClickListener{
 
+    //private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
+    private final int COUNTDOWN_LENGTH = 30 * 1000;
+
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private StoryActivity activity;
@@ -202,7 +205,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
                             .child(currentVote.getId());
 
                     ref.child("timeEnding")
-                            .setValue(System.currentTimeMillis() + 5 * 60 * 1000);
+                            .setValue(System.currentTimeMillis() + COUNTDOWN_LENGTH);
 
                     DatabaseReference newPostPath = ref.child("posts")
                             .child(String.valueOf(currentVote.getPosts().size()));
