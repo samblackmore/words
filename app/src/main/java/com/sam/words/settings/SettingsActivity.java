@@ -58,10 +58,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             case R.id.btn_increase_font_size:
                 wordsView.increaseTextSize(10);
                 wordsView.invalidate();
+                Toast.makeText(this, String.valueOf(wordsView.getTextSize()), Toast.LENGTH_SHORT).show();
                 break;
             case R.id.btn_decrease_font_size:
                 wordsView.decreaseTextSize(10);
                 wordsView.invalidate();
+                Toast.makeText(this, String.valueOf(wordsView.getTextSize()), Toast.LENGTH_SHORT).show();
                 break;
         }
     }

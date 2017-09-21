@@ -265,10 +265,6 @@ public class WordsView extends View {
 
         while (Math.abs(targetLineHeight - lineHeight) > 2) {
 
-            paint.setTextSize(newSize);
-            paint.getTextBounds("A", 0, 1, bounds);
-            lineHeight = bounds.height();
-
             if (lineHeight < targetLineHeight) {
                 if (!goingUp) {
                     goingUp = true;
@@ -283,6 +279,11 @@ public class WordsView extends View {
                 }
                 newSize -= stepSize;
             }
+
+            paint.setTextSize(newSize);
+            paint.getTextBounds("A", 0, 1, bounds);
+            lineHeight = bounds.height();
+
         }
         paint.setTextSize(savedTextSize);
         return newSize;
