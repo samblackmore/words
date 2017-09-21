@@ -37,9 +37,11 @@ public class TabFragment extends Fragment {
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref = database.getReference("stories");
 
+    private RecyclerView mRecyclerView;
     private CardAdapter mCardAdapter;
     private SignInButton signInButton;
     private Button addStoryButton;
+    private ProgressBar signInProgressBar;
     private ProgressBar progressBar;
 
     public TabFragment() {
@@ -61,9 +63,10 @@ public class TabFragment extends Fragment {
 
         signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
         addStoryButton = (Button) rootView.findViewById(R.id.add_story);
-        progressBar = (ProgressBar) rootView.findViewById(R.id.sign_in_progress);
+        signInProgressBar = (ProgressBar) rootView.findViewById(R.id.sign_in_progress);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.loading);
 
-        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.stories_list);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.stories_list);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
@@ -130,11 +133,11 @@ public class TabFragment extends Fragment {
 
     public void showLoading(boolean show) {
         if (show) {
-            progressBar.setVisibility(View.VISIBLE);
+            signInProgressBar.setVisibility(View.VISIBLE);
             signInButton.setVisibility(View.INVISIBLE);
             addStoryButton.setVisibility(View.INVISIBLE);
         } else {
-            progressBar.setVisibility(View.GONE);
+            signInProgressBar.setVisibility(View.GONE);
             if (mAuth.getCurrentUser() == null) {
                 signInButton.setVisibility(View.VISIBLE);
                 addStoryButton.setVisibility(View.INVISIBLE);
@@ -146,6 +149,8 @@ public class TabFragment extends Fragment {
     }
 
     public void gotStories(List<Story> stories) {
+        progressBar.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
         Collections.reverse(stories);
         mCardAdapter.gotStories(stories);
     }

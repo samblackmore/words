@@ -60,11 +60,15 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         CardView v = (CardView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_view, parent, false);
 
+        v.setAlpha(0);
+        v.animate().alpha(1.0f);
+
         TextView likesView = (TextView) v.findViewById(R.id.story_likes);
         TextView dateView = (TextView) v.findViewById(R.id.story_date);
         TextView titleView = (TextView) v.findViewById(R.id.story_title);
         TextView authorView = (TextView) v.findViewById(R.id.story_author);
         final WordsView wordsView = (WordsView) v.findViewById(R.id.words_view);
+        wordsView.setAlpha(0);
 
         titleView.setTypeface(typefaceBold);
         authorView.setTypeface(typefaceItalic);

@@ -28,6 +28,7 @@ class CardPostListener implements ValueEventListener {
         }
 
         holder.mWordsView.setPreview(posts);
+        holder.mWordsView.animate().alpha(1.0f);
     }
 
     @Override
