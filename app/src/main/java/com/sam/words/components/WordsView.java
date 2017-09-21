@@ -25,6 +25,7 @@ public class WordsView extends View {
 
     private Paint mTextPaint;
     private Typeface typeface;
+    private List<Chapter> preview;
     private Page page;
     private int pageNumber = 1;
     private int textSize;
@@ -93,17 +94,22 @@ public class WordsView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        Page page = null;
         Activity activity = (Activity) getContext();
 
         if (activity instanceof StoryActivity) {
             StoryActivity storyActivity = (StoryActivity) activity;
-
             List<Page> pages = storyActivity.getPages();
-            if (pages != null && pages.size() > 0) {
-                Page page = pages.get(pageNumber - 1);
-                page.draw(canvas, mTextPaint);
-            }
+
+            if (pages != null && pages.size() > 0)
+                page = pages.get(pageNumber - 1);
+
+        } else {
+            page = calculatePages(preview).get(0);
         }
+
+        if (page != null)
+            page.draw(canvas, mTextPaint);
 
         // Debug view border
         //canvas.drawRect(0, 0, getWidth()-1, getHeight()-1, mTextPaint);
@@ -300,5 +306,11 @@ public class WordsView extends View {
 
     public int getTextSize() {
         return textSize;
+    }
+
+    public void setPreview(String string) {
+        Chapter chapter = new Chapter("preview", string);
+        preview = new ArrayList<>();
+        preview.add(chapter);
     }
 }

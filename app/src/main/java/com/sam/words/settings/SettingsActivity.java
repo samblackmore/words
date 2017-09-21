@@ -21,12 +21,6 @@ import java.util.List;
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
 
     WordsView wordsView;
-    static Chapter chapter = new Chapter("Chapter", "Hello there this is some test text");
-    static List<Chapter> chapters = new ArrayList<>();
-
-    static {
-        chapters.add(chapter);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +32,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         setupButton(R.id.btn_start, R.color.colorAccent, R.color.white);
 
         wordsView = (WordsView) findViewById(R.id.words_view);
-        //wordsView.setChapters(chapters);
+        wordsView.setPreview(getString(R.string.text_size_preview_text));
     }
 
     @Override

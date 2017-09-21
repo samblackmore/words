@@ -72,7 +72,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
         holder.mTitleView.setText(TextUtil.capitalize(story.getTitle()));
         holder.mAuthorView.setText(story.getAuthorAlias());
-        //holder.mWordsView.setChapters(story.getChapters());
+        holder.mWordsView.setPreview(story.getPreview());
 
         holder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override

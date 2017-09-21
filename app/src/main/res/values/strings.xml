@@ -30,4 +30,6 @@
     <string name="poll_title">Now it\'s your turn!</string>
     <string name="your_3_words">Your 3 words...</string>
     <string name="submit">Submit</string>
+
+    <string name="text_size_preview_text">The quick brown fox jumped over the lazy dog. THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG!</string>
 </resources>
