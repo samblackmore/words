@@ -22,7 +22,8 @@ import com.sam.words.R;
 import com.sam.words.components.WordsView;
 import com.sam.words.models.Post;
 import com.sam.words.models.Story;
-import com.sam.words.models.Vote;
+import com.sam.words.models.Poll;
+import com.sam.words.utils.TimeAgo;
 
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     private TextView timerText;
     private CountDownTimer timer;
     private Story story;
-    private Vote currentVote;
+    private Poll currentPoll;
 
     // Fragment arguments
     public static final String ARG_PAGE_NUMBER = "page_number";
@@ -92,15 +93,14 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
             if (story != null) {
                 rootView.setVisibility(View.VISIBLE);
-                //DatabaseReference ref = database.getReference("stories").child(story.getStoryId());
-
-                //ref.child("votes").limitToLast(1).addValueEventListener(new VoteListener(this));
+                database.getReference("poll").child(story.getId()).limitToLast(1)
+                        .addValueEventListener(new PollListener(this));
             }
 
             FirebaseUser user = auth.getCurrentUser();
 
             if (user != null && story != null) {
-                //pollDescription.setText("Contribute to " + story.getTitle() + " by " + story.getAuthorAlias());
+                pollDescription.setText("Contribute to " + story.getTitle() + " by " + story.getAuthorAlias());
 
                 pollSubmit.setEnabled(true);
                 pollSubmit.setOnClickListener(this);
@@ -128,14 +128,17 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
         return rootView;
     }
 
-    public void gotVote(Vote vote) {
-        if (vote != null && currentVote != null && !vote.getId().equals(currentVote.getId()))
-            Toast.makeText(activity, "New voting round!", Toast.LENGTH_SHORT).show();
-        currentVote = vote;
-        pollTitle.setText("Poll " + vote.getId());
-        if (vote != null) {
-            gotPosts(vote.getPosts());
-            gotTimer(vote.getTimeEnding());
+    public void gotPoll(Poll poll) {
+        if (poll != null) {
+            if (currentPoll != null && !poll.getId().equals(currentPoll.getId()))
+                Toast.makeText(activity, "New voting round!", Toast.LENGTH_SHORT).show();
+
+            pollTitle.setText("Poll created " + TimeAgo.timeAgo(poll.getTimeCreated()) + " ago");
+
+            gotPosts(poll.getPosts());
+            gotTimer(poll.getTimeEnding());
+
+            currentPoll = poll;
         }
     }
 
@@ -175,10 +178,8 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
     private void timerFinished() {
         timerText.setText("Voting finished!");
-        database.getReference("stories")
-                //.child(story.getStoryId())
-                .child("votes")
-                .child(currentVote.getId())
+        database.getReference("poll")
+                .child(currentPoll.getId())
                 .child("finished")
                 .setValue(true);
     }
@@ -195,24 +196,18 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
                     return;
                 }
 
-                if (currentVote != null) {
-                    String post = pollInput.getText().toString();
-                    //Post newPost = new Post(story.getStoryId(), user.getUid(), user.getDisplayName(), post);
+                if (currentPoll != null) {
+                    String message = pollInput.getText().toString();
+                    Post newPost = new Post(story.getId(), user.getUid(), user.getDisplayName(), message);
 
-                    DatabaseReference ref = database.getReference("stories")
-                            //.child(story.getStoryId())
-                            .child("votes")
-                            .child(currentVote.getId());
+                    DatabaseReference ref = database.getReference("poll")
+                            .child(story.getId())
+                            .child(currentPoll.getId());
+
+                    ref.child("posts").push().setValue(newPost);
 
                     ref.child("timeEnding")
                             .setValue(System.currentTimeMillis() + COUNTDOWN_LENGTH);
-
-                    DatabaseReference newPostPath = ref.child("posts")
-                            .child(String.valueOf(currentVote.getPosts().size()));
-
-                    //newPost.setPath(newPostPath.toString());
-
-                    //newPostPath.setValue(newPost);
                 }
 
                 break;

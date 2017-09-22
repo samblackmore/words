@@ -18,7 +18,10 @@ class StoryListener implements ValueEventListener {
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
         Story story = dataSnapshot.getValue(Story.class);
-        activity.gotStory(story);
+        if (story != null) {
+            story.setId(dataSnapshot.getKey());
+            activity.gotStory(story);
+        }
     }
 
     @Override

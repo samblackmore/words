@@ -3,7 +3,7 @@ package com.sam.words.models;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Vote {
+public class Poll {
 
     private String id;
     private long timeCreated;
@@ -11,7 +11,7 @@ public class Vote {
     private boolean finished = false;
     private List<Post> posts = new ArrayList<>();
 
-    public Vote() {
+    public Poll() {
         timeCreated = System.currentTimeMillis();
     }
 
