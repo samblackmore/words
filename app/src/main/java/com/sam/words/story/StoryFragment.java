@@ -93,8 +93,9 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
             if (story != null) {
                 rootView.setVisibility(View.VISIBLE);
-                database.getReference("poll").child(story.getId()).limitToLast(1)
-                        .addValueEventListener(new PollListener(this));
+                DatabaseReference pollRef = database.getReference("poll").child(story.getId());
+                pollRef.child("pollCount").addValueEventListener(new PollCountListener(this));
+                pollRef.child("polls").limitToLast(1).addValueEventListener(new PollListener(this));
             }
 
             FirebaseUser user = auth.getCurrentUser();
@@ -128,17 +129,16 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
         return rootView;
     }
 
+    public void gotPollCount(Long count) {
+        pollTitle.setText("Poll " + count);
+        Toast.makeText(activity, "New voting round: " + count, Toast.LENGTH_SHORT).show();
+    }
+
     public void gotPoll(Poll poll) {
         if (poll != null) {
-            if (currentPoll != null && !poll.getId().equals(currentPoll.getId()))
-                Toast.makeText(activity, "New voting round!", Toast.LENGTH_SHORT).show();
-
-            pollTitle.setText("Poll created " + TimeAgo.timeAgo(poll.getTimeCreated()) + " ago");
-
+            currentPoll = poll;
             gotPosts(poll.getPosts());
             gotTimer(poll.getTimeEnding());
-
-            currentPoll = poll;
         }
     }
 
