@@ -32,6 +32,9 @@ import java.util.List;
 
 public class StoryFragment extends Fragment implements View.OnClickListener{
 
+    // FIXME - get real chapter id
+    private int chapterId = 0;
+
     //private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
     private final int COUNTDOWN_LENGTH = 30 * 1000;
 
@@ -92,7 +95,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
             if (story != null) {
                 rootView.setVisibility(View.VISIBLE);
-                database.getReference("poll").child(story.getId()).limitToLast(1)
+                database.getReference("poll").child(story.getId()).child(String.valueOf(chapterId)).limitToLast(1)
                         .addValueEventListener(new PollListener(this));
             }
 
@@ -177,7 +180,13 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
     private void timerFinished() {
         timerText.setText("Voting finished!");
+
+        // To know timer finished, we first need to have retrieved end time from poll
+        // We can only get poll after getting story therefore story cannot be null
+
         database.getReference("poll")
+                .child(story.getId())
+                .child(String.valueOf(chapterId))
                 .child(String.valueOf(currentPoll.getRound()))
                 .child("finished")
                 .setValue(true);
@@ -201,6 +210,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
                     DatabaseReference pollRef = database.getReference("poll")
                             .child(story.getId())
+                            .child(String.valueOf(chapterId))
                             .child(String.valueOf(currentPoll.getRound()));
 
                     DatabaseReference newPostRef = pollRef.child("posts").push();

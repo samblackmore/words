@@ -4,19 +4,21 @@ const functions = require('firebase-functions');
 
 // Listen for vote finish becoming true then create next vote
 
-exports.finishUpdated = functions.database.ref('/stories/{storyId}/votes/{voteId}/finished')
+exports.finishUpdated = functions.database.ref('/poll/{storyId}/{chapterId}/{pollId}/finished')
 .onUpdate(event => {
 
   var promises = [];
 
-  const voteId = parseInt(event.params.voteId);
-  const voteRef = event.data.ref.parent;
-  const storyRef = voteRef.parent.parent;
+  const pollId = event.params.pollId;
+  const chapterId = event.params.chapterId
+  const storyId = event.params.storyId;
+  const pollRef = event.data.ref.parent;
+  const postsRef = event.data.ref.root.child('posts')
   const finished = event.data.val();
 
   if (finished) {
 
-    const chooseWinnerPromise = voteRef.child('posts').once('value').then(snapshot => {
+    const chooseWinnerPromise = pollRef.child('posts').once('value').then(snapshot => {
 
       var highestScore = -1;
       var winningPost;
@@ -28,41 +30,24 @@ exports.finishUpdated = functions.database.ref('/stories/{storyId}/votes/{voteId
           highestScore = post.voteCount
           winningPost = post
         }
+
+        console.log('post', post)
+        console.log('winning', winningPost)
       })
 
-      return storyRef.child('chapters').limitToLast(1).once('value').then(chaptersSnapshot => {
+      console.log('winner', winningPost)
 
-        var addToStoryPromises = []
+      console.log('postsRed', postsRef)
+      console.log('storyId', storyId)
+      console.log('chapterId', chapterId)
 
-        var latestChapterId = -1
-
-        chaptersSnapshot.forEach(function(chapterSnapshot) {
-          latestChapterId = chapterSnapshot.key
-        })
-
-        const chapterRef = storyRef.child('chapters').child(latestChapterId)
-
-        const addPostPromise = chapterRef.child('posts').push().set(winningPost)
-        const addMessagePromise = chapterRef.child('content').transaction(function(content) {
-
-
-          console.log('transaction old content:', content)
-          console.log('transaction append:', winningPost.message)
-
-          if (content) {
-            content += winningPost.message
-          }
-          return content;
-        })
-
-        addToStoryPromises.push(addPostPromise)
-        addToStoryPromises.push(addMessagePromise)
-
-        return Promise.all(addToStoryPromises)
-      })
+      postsRef.child(storyId).child(chapterId).child('posts').push().set(winningPost)
     })
 
-    const newVotePromise = voteRef.parent.child(voteId + 1).set({
+    const newRound = parseInt(pollId) + 1
+
+    const newVotePromise = pollRef.parent.child(newRound).set({
+      round: newRound,
       finished: false,
       timeCreated: new Date().getTime()
     });

@@ -98,8 +98,11 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
 
             pages = rootWordsView.calculatePages(chapters);
 
-            mStoryAdapter.update(pages);
-            mStoryAdapter.notifyDataSetChanged();
+            if (mStoryAdapter != null)
+                mStoryAdapter.update(pages);
+            if (mStoryAdapter != null)
+                mStoryAdapter.notifyDataSetChanged();
+
 
             postCount = newPostCount;
 

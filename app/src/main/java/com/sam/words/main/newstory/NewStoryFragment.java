@@ -123,15 +123,20 @@ public class NewStoryFragment extends DialogFragment {
             return;
         }
 
+        int chapter = 0;
+        int pollRound = 0;
+        String chapterId = String.valueOf(chapter);
+        String pollRoundId = String.valueOf(pollRound);
+
         DatabaseReference newStoryRef = database.getReference("stories").push();
         String newStoryId = newStoryRef.getKey();
-        DatabaseReference newChapterRef = database.getReference("posts").child(newStoryId).child("0");
-        DatabaseReference pollRef = database.getReference("poll").child(newStoryId).child("0");
+        DatabaseReference newChapterRef = database.getReference("posts").child(newStoryId).child(chapterId);
+        DatabaseReference pollRef = database.getReference("poll").child(newStoryId).child(chapterId).child(pollRoundId);
 
-        Poll newPoll = new Poll(0);
+        Poll newPoll = new Poll(pollRound);
         Post newPost = new Post(newStoryId, user.getUid(), user.getDisplayName(), content);
         Story newStory = new Story(title, user.getUid(), author, content);
-        Chapter newChapter = new Chapter(0, "Chapter One");
+        Chapter newChapter = new Chapter(chapter, "Chapter One");
 
         pollRef.setValue(newPoll);
         newStoryRef.setValue(newStory);
