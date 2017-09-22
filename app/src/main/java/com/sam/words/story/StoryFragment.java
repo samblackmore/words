@@ -97,9 +97,9 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
                 authorView.setTypeface(typefaceItalic);
                 byView.setTypeface(typefaceItalic);
                 titleView.setTextColor(getResources().getColor(R.color.grayDk));
-                authorView.setTextColor(getResources().getColor(R.color.grayDk));
+                authorView.setTextColor(getResources().getColor(R.color.gray));
                 byView.setTextColor(getResources().getColor(R.color.grayDk));
-                titleView.setTextSize((float) SharedPreferencesHelper.getTextSize(getContext()));
+                titleView.setTextSize((float) SharedPreferencesHelper.getTextSize(getContext()) / 2);
                 authorView.setTextSize((float) SharedPreferencesHelper.getTextSize(getContext()) / 2);
                 byView.setTextSize((float) SharedPreferencesHelper.getTextSize(getContext()) / 4);
 
