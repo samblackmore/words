@@ -40,7 +40,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private StoryActivity activity;
     private RecyclerView mRecyclerView;
-    private TextView pollTitle;
+    private TextView pollDescription;
     private EditText pollInput;
     private TextView timerText;
     private CountDownTimer timer;
@@ -80,9 +80,9 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
             rootView = inflater.inflate(R.layout.story_poll, container, false);
             rootView.setVisibility(View.INVISIBLE);
 
-            TextView pollDescription = (TextView) rootView.findViewById(R.id.poll_description);
+            pollDescription = (TextView) rootView.findViewById(R.id.poll_description);
             Button pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
-            pollTitle = (TextView) rootView.findViewById(R.id.poll_title);
+            TextView pollTitle = (TextView) rootView.findViewById(R.id.poll_title);
             pollInput = (EditText) rootView.findViewById(R.id.poll_input);
             timerText = (TextView) rootView.findViewById(R.id.timer);
             
@@ -101,7 +101,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
             FirebaseUser user = auth.getCurrentUser();
 
             if (user != null && story != null) {
-                pollDescription.setText("Contribute to " + story.getTitle() + " by " + story.getAuthorAlias());
+                pollTitle.setText("Contribute to \"" + story.getTitle() + "\" by " + story.getAuthorAlias());
 
                 pollSubmit.setEnabled(true);
                 pollSubmit.setOnClickListener(this);
@@ -130,7 +130,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     }
 
     public void gotPollCount(Long count) {
-        pollTitle.setText("Round " + count);
+        pollDescription.setText("Round " + count);
         Toast.makeText(activity, "New voting round: " + count, Toast.LENGTH_SHORT).show();
     }
 
@@ -143,7 +143,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     }
 
     public void gotPosts(List<Post> posts) {
-        Toast.makeText(activity, "Got posts!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, "Refreshed posts", Toast.LENGTH_SHORT).show();
 
         RecyclerView.Adapter mAdapter = new VoteAdapter(posts);
         mRecyclerView.setAdapter(mAdapter);
@@ -200,14 +200,16 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
                     String message = pollInput.getText().toString();
                     Post newPost = new Post(story.getId(), user.getUid(), user.getDisplayName(), message);
 
-                    DatabaseReference ref = database.getReference("poll")
+                    DatabaseReference pollRef = database.getReference("poll")
                             .child(story.getId())
                             .child("polls")
                             .child(currentPoll.getId());
 
-                    ref.child("posts").push().setValue(newPost);
+                    DatabaseReference newPostRef = pollRef.child("posts").push();
+                    newPost.setPath(newPostRef.toString());
+                    newPostRef.setValue(newPost);
 
-                    ref.child("timeEnding")
+                    pollRef.child("timeEnding")
                             .setValue(System.currentTimeMillis() + COUNTDOWN_LENGTH);
                 }
 
