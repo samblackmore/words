@@ -1,6 +1,9 @@
 package com.sam.words.models;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A list of chapters lets us know how to divide up pages since each new chapter should start
@@ -33,7 +36,16 @@ public class Chapter {
         return posts;
     }
 
-    public void setPosts(List<Post> posts) {
+    // For Firebase
+    public void setPosts(HashMap<String, Post> map) {
+        List<Post> posts = new ArrayList<>();
+        for (Map.Entry<String, Post> mapEntry : map.entrySet()) {
+            posts.add(mapEntry.getValue());
+        }
+        this.posts = posts;
+    }
+
+    public void setPostsList(List<Post> posts) {
         this.posts = posts;
     }
 }

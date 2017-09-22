@@ -18,6 +18,8 @@ import com.sam.words.R;
 import com.sam.words.components.Page;
 import com.sam.words.components.WordsView;
 import com.sam.words.main.CardAdapter;
+import com.sam.words.models.Chapter;
+import com.sam.words.models.Post;
 import com.sam.words.models.Story;
 
 import java.util.ArrayList;
@@ -27,13 +29,12 @@ import java.util.List;
 public class StoryActivity extends AppCompatActivity implements View.OnClickListener{
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference ref = database.getReference("stories");
 
     private WordsView rootWordsView;
     private StoryAdapter mStoryAdapter;
     private List<Page> pages = new ArrayList<>();
     private Story story;
-    private int wordCount = 0;
+    private int postCount = 0;
     private ViewPager viewPager;
 
     @Override
@@ -56,8 +57,11 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
 
         String storyId = getIntent().getStringExtra(CardAdapter.EXTRA_STORY);
 
-        Query query = ref.child(storyId);
-        query.addValueEventListener(new StoryListener(this));
+        database.getReference("stories").child(storyId)
+                .addValueEventListener(new StoryListener(this));
+
+        database.getReference("posts").child(storyId)
+                .addValueEventListener(new ChaptersListener(this));
     }
     
     @Override
@@ -80,29 +84,35 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
 
     /**
      * Callback for {@link StoryListener} once current story retrieved from Firebase
-     * @param story
      */
-    public void gotStory(Story story) {
-        this.story = story;
+    public void gotChapters(List<Chapter> chapters) {
 
         ProgressBar loading = (ProgressBar) findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
 
-        /*if (wordCount != story.getWordCount()) {
+        int newPostCount = 0;
+        for (Chapter chapter : chapters)
+            newPostCount += chapter.getPosts().size();
 
-            pages = rootWordsView.calculatePages(story.getChapters());
+        if (newPostCount != postCount) {
+
+            pages = rootWordsView.calculatePages(chapters);
 
             mStoryAdapter.update(pages);
             mStoryAdapter.notifyDataSetChanged();
 
-            wordCount = story.getWordCount();
+            postCount = newPostCount;
 
-            Toast.makeText(this, "New word count " + wordCount, Toast.LENGTH_SHORT).show();
-        }*/
+            Toast.makeText(this, "New post count " + newPostCount, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public List<Page> getPages() {
         return pages;
+    }
+
+    public void gotStory(Story story) {
+        this.story = story;
     }
 
     public Story getStory() {

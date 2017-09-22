@@ -314,7 +314,7 @@ public class WordsView extends View {
 
     public void setPreview(List<Post> posts) {
         Chapter dummyChapter = new Chapter(0, null);
-        dummyChapter.setPosts(posts);
+        dummyChapter.setPostsList(posts);
 
         preview = new ArrayList<>();
         preview.add(dummyChapter);
@@ -327,7 +327,7 @@ public class WordsView extends View {
         List<Post> dummyPosts = new ArrayList<>();
 
         dummyPosts.add(new Post(null, null, null, message));
-        dummyChapter.setPosts(dummyPosts);
+        dummyChapter.setPostsList(dummyPosts);
 
         preview = new ArrayList<>();
         preview.add(dummyChapter);

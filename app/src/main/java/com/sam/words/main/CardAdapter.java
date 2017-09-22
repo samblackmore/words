@@ -95,7 +95,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(holder.mCardView.getContext(), StoryActivity.class);
-                intent.putExtra(EXTRA_STORY, story.getTitle());
+                intent.putExtra(EXTRA_STORY, story.getId());
                 holder.mCardView.getContext().startActivity(intent);
             }
         });
