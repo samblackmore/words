@@ -193,7 +193,7 @@ public class WordsView extends View {
                 int line = 0;
                 int linesPerPage = viewHeight / (lineHeight + lineSpacing);
 
-                while (line < leftOverLines.size() - 1) {
+                while (linesPerPage > 0 && line < leftOverLines.size() - 1) {
                     Page newPage = new Page(typeface, textSize, lineHeight, lineSeperation);
                     newPage.setLines(leftOverLines.subList(line, line + Math.min(linesPerPage, leftOverLines.size() - line)));
                     line += linesPerPage;
