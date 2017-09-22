@@ -1,4 +1,4 @@
-package com.sam.words;
+package com.sam.words.utils;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;

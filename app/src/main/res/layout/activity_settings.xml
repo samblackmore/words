@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btn_start"
+        android:background="@color/white"
+        android:padding="24dp"
+        android:layout_marginBottom="24dp">
+        <com.sam.words.components.WordsView
+            android:id="@+id/words_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btn_decrease_font_size"
+        android:text="@string/setting_text_size_smaller"
+        android:textAlignment="center"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <Button
+        android:id="@+id/btn_increase_font_size"
+        android:text="@string/setting_text_size_bigger"
+        android:textAlignment="center"
+        android:layout_toRightOf="@+id/btn_decrease_font_size"
+        android:layout_toEndOf="@+id/btn_decrease_font_size"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <Button
+        android:id="@+id/btn_start"
+        android:text="@string/setting_text_size_save"
+        android:textAlignment="center"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+</RelativeLayout>

@@ -2,13 +2,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sam.words.BrowseTabFragment$PlaceholderFragment">
+    tools:context="com.sam.words.main.TabFragment">
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <FrameLayout
+        android:id="@+id/add_story_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grayLt"
+        android:visibility="gone">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+            <Button
+                android:id="@+id/add_story"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/new_story"
+                android:textAlignment="center"
+                android:layout_margin="12dp"
+                android:padding="24dp"/>
+        </FrameLayout>
+        <ProgressBar
+            android:visibility="gone"
+            android:id="@+id/sign_in_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+    </FrameLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/stories_list"
-        android:scrollbars="none"
+        android:visibility="invisible"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_below="@+id/add_story_container"
         />
 
 </RelativeLayout>

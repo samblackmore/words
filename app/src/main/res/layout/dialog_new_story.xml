@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/new_story_title_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="24dp">
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/new_story_title"
+            android:maxLength="50"
+            android:inputType="textCapWords"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:hint="@string/new_story_title_hint" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/new_story_author_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/new_story_title_container"
+        android:paddingTop="24dp">
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/new_story_author"
+            android:maxLength="30"
+            android:inputType="textCapWords"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:hint="@string/new_story_author_hint" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/new_story_content_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/new_story_author_container"
+        android:paddingTop="24dp">
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/new_story_content"
+            android:inputType="textCapSentences"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:hint="@string/new_story_content_hint" />
+    </android.support.design.widget.TextInputLayout>
+
+</RelativeLayout>

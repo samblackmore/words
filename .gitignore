@@ -2,8 +2,10 @@
 .gradle
 /local.properties
 /.idea/workspace.xml
+/.idea/codeStyleSettings.xml
 /.idea/libraries
 .DS_Store
 /build
 /captures
 .externalNativeBuild
+/firebase/functions/node_modules

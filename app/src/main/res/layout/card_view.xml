@@ -5,14 +5,11 @@
     android:layout_gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="48dp"
     android:layout_marginLeft="24dp"
-    android:layout_marginTop="24dp"
     android:layout_marginRight="24dp"
-    card_view:contentPaddingTop="24dp"
-    card_view:contentPaddingLeft="24dp"
-    card_view:contentPaddingRight="24dp"
-    card_view:contentPaddingBottom="24dp"
+    android:layout_marginTop="24dp"
+    android:layout_marginBottom="12dp"
+    card_view:contentPadding="24dp"
     card_view:cardCornerRadius="2dp"
     card_view:cardElevation="4dp"
     >
@@ -59,11 +56,9 @@
             android:layout_below="@id/story_title"
             />
 
-        <com.sam.words.WordsView
+        <com.sam.words.components.WordsView
             android:id="@+id/words_view"
             android:layout_marginTop="48dp"
-            android:paddingLeft="@dimen/story_horizontal_padding"
-            android:paddingTop="@dimen/story_vertical_padding"
             android:layout_below="@+id/story_author"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
