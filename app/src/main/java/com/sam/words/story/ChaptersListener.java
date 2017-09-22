@@ -25,6 +25,16 @@ class ChaptersListener implements ValueEventListener {
 
         for (DataSnapshot child : dataSnapshot.getChildren()) {
             Chapter chapter = child.getValue(Chapter.class);
+            DataSnapshot posts = child.child("posts");
+
+            List<Post> postList = new ArrayList<>();
+
+            for (DataSnapshot post : posts.getChildren()) {
+                Post p = post.getValue(Post.class);
+                postList.add(p);
+            }
+
+            chapter.setPostsList(postList);
             chapters.add(chapter);
         }
 
