@@ -23,6 +23,7 @@ import com.sam.words.components.WordsView;
 import com.sam.words.models.Post;
 import com.sam.words.models.Story;
 import com.sam.words.models.Poll;
+import com.sam.words.utils.SharedPreferencesHelper;
 
 import java.util.List;
 
@@ -74,9 +75,36 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
         int pageNum = getArguments().getInt(ARG_PAGE_NUMBER);
         int pageCnt = getArguments().getInt(ARG_PAGE_COUNT);
 
+        Typeface typeface = Typeface.createFromAsset(getContext().getAssets(),
+                "fonts/CrimsonText/CrimsonText-Regular.ttf");
+
+        Typeface typefaceItalic = Typeface.createFromAsset(getContext().getAssets(),
+                "fonts/CrimsonText/CrimsonText-Italic.ttf");
+
         View rootView;
 
-        if (pageNum == pageCnt + 1) {
+        if (pageNum == 0) {
+
+            // Title page
+            rootView = inflater.inflate(R.layout.story_title, container, false);
+            TextView titleView = (TextView) rootView.findViewById(R.id.story_title);
+            TextView authorView = (TextView) rootView.findViewById(R.id.story_author);
+            TextView byView = (TextView) rootView.findViewById(R.id.story_by);
+            if (story != null) {
+                titleView.setText(story.getTitle().toUpperCase());
+                authorView.setText(story.getAuthorAlias());
+                titleView.setTypeface(typeface);
+                authorView.setTypeface(typefaceItalic);
+                byView.setTypeface(typefaceItalic);
+                titleView.setTextColor(getResources().getColor(R.color.grayDk));
+                authorView.setTextColor(getResources().getColor(R.color.grayDk));
+                byView.setTextColor(getResources().getColor(R.color.grayDk));
+                titleView.setTextSize((float) SharedPreferencesHelper.getTextSize(getContext()));
+                authorView.setTextSize((float) SharedPreferencesHelper.getTextSize(getContext()) / 2);
+                byView.setTextSize((float) SharedPreferencesHelper.getTextSize(getContext()) / 4);
+
+            }
+        } else if (pageNum == pageCnt + 1) {
 
             // Poll page
             rootView = inflater.inflate(R.layout.story_poll, container, false);
@@ -111,9 +139,6 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
         } else {
 
             // Story page
-            Typeface typeface = Typeface.createFromAsset(getContext().getAssets(),
-                    "fonts/CrimsonText/CrimsonText-Regular.ttf");
-
             rootView = inflater.inflate(R.layout.fragment_story_page, container, false);
 
             WordsView wordsView = (WordsView) rootView.findViewById(R.id.words_view);

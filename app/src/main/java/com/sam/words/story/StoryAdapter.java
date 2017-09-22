@@ -25,7 +25,7 @@ class StoryAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return StoryFragment.newInstance(position + 1, pages.size());
+        return StoryFragment.newInstance(position, pages.size());
     }
 
     @Override
@@ -35,7 +35,7 @@ class StoryAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return pages.size() + 1;
+        return pages.size() + 2;
     }
 
     public void update(List<Page> pages) {
