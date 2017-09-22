@@ -23,7 +23,6 @@ import com.sam.words.components.WordsView;
 import com.sam.words.models.Post;
 import com.sam.words.models.Story;
 import com.sam.words.models.Poll;
-import com.sam.words.utils.TimeAgo;
 
 import java.util.List;
 
@@ -93,9 +92,8 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
             if (story != null) {
                 rootView.setVisibility(View.VISIBLE);
-                DatabaseReference pollRef = database.getReference("poll").child(story.getId());
-                pollRef.child("pollCount").addValueEventListener(new PollCountListener(this));
-                pollRef.child("polls").limitToLast(1).addValueEventListener(new PollListener(this));
+                database.getReference("poll").child(story.getId()).limitToLast(1)
+                        .addValueEventListener(new PollListener(this));
             }
 
             FirebaseUser user = auth.getCurrentUser();
@@ -129,13 +127,14 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
         return rootView;
     }
 
-    public void gotPollCount(Long count) {
-        pollDescription.setText("Round " + count);
-        Toast.makeText(activity, "New voting round: " + count, Toast.LENGTH_SHORT).show();
-    }
-
     public void gotPoll(Poll poll) {
         if (poll != null) {
+
+            if (currentPoll != null && currentPoll.getRound() != poll.getRound())
+                Toast.makeText(activity, "New voting round: " + poll.getRound(), Toast.LENGTH_SHORT).show();
+
+            pollDescription.setText("Round " + poll.getRound());
+
             currentPoll = poll;
             gotPosts(poll.getPosts());
             gotTimer(poll.getTimeEnding());
@@ -179,7 +178,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     private void timerFinished() {
         timerText.setText("Voting finished!");
         database.getReference("poll")
-                .child(currentPoll.getId())
+                .child(String.valueOf(currentPoll.getRound()))
                 .child("finished")
                 .setValue(true);
     }
@@ -202,8 +201,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
                     DatabaseReference pollRef = database.getReference("poll")
                             .child(story.getId())
-                            .child("polls")
-                            .child(currentPoll.getId());
+                            .child(String.valueOf(currentPoll.getRound()));
 
                     DatabaseReference newPostRef = pollRef.child("posts").push();
                     newPost.setPath(newPostRef.toString());

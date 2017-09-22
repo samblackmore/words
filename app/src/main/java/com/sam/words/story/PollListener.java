@@ -26,7 +26,6 @@ class PollListener implements ValueEventListener {
         for (DataSnapshot child : dataSnapshot.getChildren()) {
             Poll poll = child.getValue(Poll.class);
             if (poll != null) {
-                poll.setId(child.getKey());
                 polls.add(poll);
             }
         }

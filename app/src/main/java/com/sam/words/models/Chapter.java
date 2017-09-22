@@ -11,7 +11,7 @@ import java.util.Map;
  */
 
 public class Chapter {
-    private int number;
+    private int chapter;
     private String title;
     private List<Post> posts;
 
@@ -19,13 +19,13 @@ public class Chapter {
         // Default constructor required for calls to DataSnapshot.getValue(Chapter.class)
     }
 
-    public Chapter(int number, String title) {
-        this.number = number;
+    public Chapter(int chapter, String title) {
+        this.chapter = chapter;
         this.title = title;
     }
 
-    public int getNumber() {
-        return number;
+    public int getChapter() {
+        return chapter;
     }
 
     public String getTitle() {

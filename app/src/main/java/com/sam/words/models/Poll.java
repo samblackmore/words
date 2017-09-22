@@ -7,13 +7,18 @@ import java.util.Map;
 
 public class Poll {
 
-    private String id;
+    private int round;
     private long timeCreated;
     private Long timeEnding = null;
     private boolean finished = false;
     private List<Post> posts = new ArrayList<>();
 
     public Poll() {
+        // For firebase
+    }
+
+    public Poll(int round) {
+        this.round = round;
         timeCreated = System.currentTimeMillis();
     }
 
@@ -29,12 +34,12 @@ public class Poll {
         return posts;
     }
 
-    public String getId() {
-        return id;
+    public int getRound() {
+        return round;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setRound(int round) {
+        this.round = round;
     }
 
     public boolean isFinished() {
