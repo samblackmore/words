@@ -1,7 +1,9 @@
 package com.sam.words.models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Poll {
 
@@ -41,5 +43,13 @@ public class Poll {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    public void setPosts(HashMap<String, Post> map) {
+        List<Post> posts = new ArrayList<>();
+        for (Map.Entry<String, Post> mapEntry : map.entrySet()) {
+            posts.add(mapEntry.getValue());
+        }
+        this.posts = posts;
     }
 }

@@ -130,7 +130,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     }
 
     public void gotPollCount(Long count) {
-        pollTitle.setText("Poll " + count);
+        pollTitle.setText("Round " + count);
         Toast.makeText(activity, "New voting round: " + count, Toast.LENGTH_SHORT).show();
     }
 
@@ -202,6 +202,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
                     DatabaseReference ref = database.getReference("poll")
                             .child(story.getId())
+                            .child("polls")
                             .child(currentPoll.getId());
 
                     ref.child("posts").push().setValue(newPost);
