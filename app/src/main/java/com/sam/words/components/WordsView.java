@@ -16,6 +16,7 @@ import com.sam.words.story.StoryActivity;
 import com.sam.words.utils.SharedPreferencesHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class WordsView extends View {
@@ -26,7 +27,7 @@ public class WordsView extends View {
     private Page page;
     private int pageNumber = 1;
     private int textSize;
-    private float lineSeperation = 1.7f;
+    private float lineSeperation = 1.9f;
     private int linesPerDropCap = 3;
 
     public WordsView(Context context, AttributeSet attrs) {
@@ -238,24 +239,31 @@ public class WordsView extends View {
      */
     private List<String> lineWrap(Paint paint, int widthAvailable, String string) {
 
-        List<String> list = new ArrayList<>();
-        String[] words = string.split(" ");
-        String line = words[0];
+        String[] lines = string.split("\n");
+        List<String> wrappedLines = new ArrayList<>();
 
-        // For each next word, see if we can add it to the line
-        for (int i = 1; i < words.length; i++) {
-            String nextWord = words[i];
-            String lineWithNextWord = line + " " + nextWord;
-            float testWidth = paint.measureText(lineWithNextWord, 0, lineWithNextWord.length());
-            // If proposed line is too long
-            if (widthAvailable - testWidth <= 0) {
-                list.add(line);
-                line = nextWord;
+        for (String line : lines) {
+
+            String[] words = line.replaceAll(" +", " ").replaceAll(" \\.", ".").replaceAll(" ,", ",").replaceAll("\t", "    ").split(" ");
+            String lineWrap = words[0];
+
+            // For each next word, see if we can add it to the line
+            for (int i = 1; i < words.length; i++) {
+                String nextWord = words[i];
+                String lineWithNextWord = lineWrap + " " + nextWord;
+                float testWidth = paint.measureText(lineWithNextWord, 0, lineWithNextWord.length());
+                // If proposed line is too long
+                if (widthAvailable - testWidth <= 0) {
+                    wrappedLines.add(lineWrap);
+                    lineWrap = nextWord;
+                }
+                else lineWrap = lineWithNextWord;
             }
-            else line = lineWithNextWord;
+            wrappedLines.add(lineWrap);
+
         }
-        list.add(line);
-        return list;
+
+        return wrappedLines;
     }
 
     private int getFontSizeToMatchLineHeight(Paint paint, int targetLineHeight) {
