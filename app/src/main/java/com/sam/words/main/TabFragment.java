@@ -21,6 +21,7 @@ import com.google.firebase.database.Query;
 import com.sam.words.R;
 import com.sam.words.models.Post;
 import com.sam.words.models.Story;
+import com.sam.words.story.GoogleSignInFragment;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +30,7 @@ import java.util.List;
  * A fragment representing one tab in the Browse Activity
  */
 
-public class TabFragment extends Fragment {
+public class TabFragment extends Fragment implements GoogleSignInFragment{
 
     private static final String ARG_TAB_SECTION = "SECTION";
 

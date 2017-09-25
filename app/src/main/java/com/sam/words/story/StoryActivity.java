@@ -21,12 +21,13 @@ import com.sam.words.main.CardAdapter;
 import com.sam.words.models.Chapter;
 import com.sam.words.models.Post;
 import com.sam.words.models.Story;
+import com.sam.words.utils.GoogleSignInActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class StoryActivity extends AppCompatActivity implements View.OnClickListener{
+public class StoryActivity extends GoogleSignInActivity implements View.OnClickListener{
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -38,7 +39,7 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
     private ViewPager viewPager;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story);
 
@@ -124,6 +125,12 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        viewPager.setCurrentItem(mStoryAdapter.getCount() - 1);
+        super.onClick(v);
+
+        switch (v.getId()) {
+            case R.id.fab:
+                viewPager.setCurrentItem(mStoryAdapter.getCount() - 1);
+                break;
+        }
     }
 }
