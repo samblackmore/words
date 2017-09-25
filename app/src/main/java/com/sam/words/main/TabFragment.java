@@ -134,10 +134,12 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
 
     public void showLoading(boolean show) {
         if (show) {
+            progressBar.setVisibility(View.VISIBLE);
             signInProgressBar.setVisibility(View.VISIBLE);
             signInButton.setVisibility(View.INVISIBLE);
             addStoryButton.setVisibility(View.INVISIBLE);
         } else {
+            progressBar.setVisibility(View.GONE);
             signInProgressBar.setVisibility(View.GONE);
             if (mAuth.getCurrentUser() == null) {
                 signInButton.setVisibility(View.VISIBLE);
