@@ -61,6 +61,10 @@ public class Story {
         return dateUpdated;
     }
 
+    public HashMap<String, Boolean> getLikes() {
+        return likes;
+    }
+
     public int getLikeCount() {
         return likeCount;
     }

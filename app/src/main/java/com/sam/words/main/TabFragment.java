@@ -93,7 +93,7 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
         }
 
         if (query != null)
-            query.addListenerForSingleValueEvent(new CardStoryListener(this));
+            query.addValueEventListener(new CardStoryListener(this));
 
         return rootView;
     }

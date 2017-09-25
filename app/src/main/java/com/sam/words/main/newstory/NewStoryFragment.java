@@ -137,6 +137,7 @@ public class NewStoryFragment extends DialogFragment {
         Poll newPoll = new Poll(pollRound);
         Post newPost = new Post(newStoryId, userId, user.getDisplayName(), content);
         Story newStory = new Story(title, userId, author);
+        newStory.addLike(userId);
         Chapter firstChapter = new Chapter(chapter, "Chapter One");
         newStory.addChapter(firstChapter);
 
