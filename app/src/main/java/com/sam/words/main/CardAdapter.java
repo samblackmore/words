@@ -89,7 +89,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         holder.mAuthorView.setText(story.getAuthorAlias());
 
         String storyId = stories.get(position).getId();
-        database.getReference("posts").child(storyId).child("0").child("posts").addListenerForSingleValueEvent(new CardPostListener(holder));
+        database.getReference("posts").child(storyId).child("0").addListenerForSingleValueEvent(new CardPostListener(holder));
 
         holder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -28,6 +28,7 @@ import com.sam.words.models.Story;
 import com.sam.words.models.Poll;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A page in a story. Contains a single WordsView representing that page.
@@ -186,7 +187,16 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     private CountDownTimer makeTimer(long millisInFuture) {
         return new CountDownTimer(millisInFuture, 1000) {
             public void onTick(long millisUntilFinished) {
-                timerText.setText("Voting ends in " + millisUntilFinished / 1000 + "s");
+                long duration = millisUntilFinished / 1000;
+
+
+                //StringBuilder builder = new StringBuilder();
+
+
+                //builder.pre
+
+                String timeString = String.format(Locale.US, "%02d:%02d:%02d", duration / 3600, (duration % 3600) / 60, (duration % 60));
+                timerText.setText("Voting ends in " + timeString + "s");
             }
             public void onFinish() {
                 timerFinished();

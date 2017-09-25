@@ -25,8 +25,10 @@ import com.sam.words.utils.TextUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * New story popup
@@ -126,22 +128,26 @@ public class NewStoryFragment extends DialogFragment {
         int chapter = 0;
         int pollRound = 0;
         String chapterId = String.valueOf(chapter);
-        String pollRoundId = String.valueOf(pollRound);
+        String newPollId = String.valueOf(pollRound);
 
-        DatabaseReference newStoryRef = database.getReference("stories").push();
-        String newStoryId = newStoryRef.getKey();
-        DatabaseReference newChapterRef = database.getReference("posts").child(newStoryId).child(chapterId);
-        DatabaseReference pollRef = database.getReference("poll").child(newStoryId).child(chapterId).child(pollRoundId);
+        String userId = user.getUid();
+        String newStoryId = database.getReference("stories").push().getKey();
+        String newPostId = database.getReference("posts").child(newStoryId).child(chapterId).push().getKey();
 
         Poll newPoll = new Poll(pollRound);
-        Post newPost = new Post(newStoryId, user.getUid(), user.getDisplayName(), content);
-        Story newStory = new Story(title, user.getUid(), author, content);
-        Chapter newChapter = new Chapter(chapter, "Chapter One");
+        Post newPost = new Post(newStoryId, userId, user.getDisplayName(), content);
+        Story newStory = new Story(title, userId, author);
+        Chapter firstChapter = new Chapter(chapter, "Chapter One");
+        newStory.addChapter(firstChapter);
 
-        pollRef.setValue(newPoll);
-        newStoryRef.setValue(newStory);
-        newChapterRef.setValue(newChapter);
-        newChapterRef.child("posts").push().setValue(newPost);
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/stories/" + newStoryId, newStory);
+        childUpdates.put("/posts/" + newStoryId + "/" + chapterId + "/" + newPostId, newPost);
+        childUpdates.put("/poll/" + newStoryId + "/" + chapterId + "/" + newPollId, newPoll);
+        childUpdates.put("/users/" + userId + "/stories/" + newStoryId, true);
+        childUpdates.put("/users/" + userId + "/posts/" + newPostId, true);
+
+        database.getReference().updateChildren(childUpdates);
         
         getDialog().dismiss();
     }
