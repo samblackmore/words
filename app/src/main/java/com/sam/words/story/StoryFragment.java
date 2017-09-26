@@ -180,6 +180,8 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             currentPoll = poll;
             gotPosts(poll.getPosts());
             gotTimer(poll.getTimeEnding());
+
+            updateUI(auth.getCurrentUser());
         }
     }
 
@@ -298,10 +300,20 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     }
 
     @Override
-    public void updateUI(FirebaseUser firebaseUser) {
+    public void updateUI(FirebaseUser user) {
         showLoading(false);
-        submitContainer.setVisibility(firebaseUser == null ? View.GONE : View.VISIBLE);
-        signInButton.setVisibility(firebaseUser == null ? View.VISIBLE : View.GONE);
+        submitContainer.setVisibility(user == null ? View.GONE : View.VISIBLE);
+        signInButton.setVisibility(user == null ? View.VISIBLE : View.GONE);
+
+        if (user != null && currentPoll != null) {
+            for (Post post : currentPoll.getPosts()) {
+                if (post.getUserId().equals(user.getUid())) {
+                    submitContainer.setVisibility(View.GONE);
+                    pollTitle.setVisibility(View.VISIBLE);
+                    pollTitle.setText(R.string.submitted);
+                }
+            }
+        }
     }
 
     @Override
