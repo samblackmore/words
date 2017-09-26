@@ -16,8 +16,8 @@ public class Page {
     private int textSize;
     private int lineHeight;
     private int lineSpacing;
-    private String chapterTitle;
-    private DropCap dropCap;
+    private TextBox chapterTitle;
+    private TextBox dropCap;
     private List<String> dropCapLines;
     private List<String> lines;
 
@@ -29,11 +29,11 @@ public class Page {
         lineSpacing = (int) ((lineHeight * lineSeparation) - lineHeight);
     }
 
-    void setChapterTitle(String chapterTitle) {
+    void setChapterTitle(TextBox chapterTitle) {
         this.chapterTitle = chapterTitle;
     }
 
-    void setDropCap(DropCap dropCap) {
+    void setDropCap(TextBox dropCap) {
         this.dropCap = dropCap;
     }
 
@@ -56,13 +56,18 @@ public class Page {
 
         paint.setTypeface(typeface);
 
+        if (chapterTitle != null) {
+            paint.setTextSize(chapterTitle.getTextSize());
+            canvas.drawText(chapterTitle.toString(), 0, chapterTitle.getHeight(), paint);
+        }
+
         if (dropCap != null) {
             paint.setTextSize(dropCap.getTextSize());
-            canvas.drawText(dropCap.toString(), 0, dropCap.getHeight(), paint);
+            canvas.drawText(dropCap.toString(), 0, dropCap.getHeight() + chapterTitle.getHeight(), paint);
 
             if (dropCapLines != null) {
                 paint.setTextSize(textSize);
-                drawLines(canvas, paint, dropCap.getWidth() + lineSpacing, 0, dropCapLines);
+                drawLines(canvas, paint, dropCap.getWidth() + lineSpacing, chapterTitle.getHeight(), dropCapLines);
             }
 
             if (lines != null) {

@@ -1,17 +1,17 @@
 package com.sam.words.components;
 
 /**
- * The big first letter at the beginning of a chapter
+ * Container for some text with dimensions
  */
 
-public class DropCap {
-    private char dropCap;
+class TextBox {
+    private String text;
     private int width;
     private int height;
     private int textSize;
 
-    public DropCap(char dropCap, int width, int height, int textSize) {
-        this.dropCap = dropCap;
+    TextBox(String text, int width, int height, int textSize) {
+        this.text = text;
         this.width = width;
         this.height = height;
         this.textSize = textSize;
@@ -19,7 +19,7 @@ public class DropCap {
 
     @Override
     public String toString() {
-        return String.valueOf(dropCap);
+        return text;
     }
 
     public int getWidth() {

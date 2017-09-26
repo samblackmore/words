@@ -10,13 +10,11 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.sam.words.models.Chapter;
 import com.sam.words.models.Post;
 import com.sam.words.story.StoryActivity;
 import com.sam.words.utils.SharedPreferencesHelper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class WordsView extends View {
@@ -132,7 +130,9 @@ public class WordsView extends View {
         int lineHeight = getTextHeight(mTextPaint, "I");
         int lineSpacing = (int) ((lineHeight * lineSeperation) - lineHeight);
 
-        for (List<Post> chapterPosts : postsByChapter) {
+        for (int chapter = 0; chapter < postsByChapter.size(); chapter++) {
+
+            List<Post> chapterPosts = postsByChapter.get(chapter);
 
             Page firstPage = new Page(typeface, textSize, lineHeight, lineSeperation);
             StringBuilder builder = new StringBuilder();
@@ -145,20 +145,25 @@ public class WordsView extends View {
 
             // Step 1 - Chapter title
 
-            // TODO - Title layout
-            firstPage.setChapterTitle(null);
+            String title = "Chapter " + chapter;
+            int tHeight = lineHeight * 2;
+            int tTextSize = getFontSizeToMatchLineHeight(mTextPaint, tHeight);
+            mTextPaint.setTextSize(tTextSize);
+            int tWidth = getTextWidth(mTextPaint, title);
+
+            firstPage.setChapterTitle(new TextBox(title, tWidth, tHeight*2, tTextSize));
 
             // Step 2 - Drop cap
 
             if (chapterContent != null && chapterContent.length() > 0) {
 
-                char dChar = chapterContent.charAt(0);
+                String dChar = String.valueOf(chapterContent.charAt(0));
                 int dHeight = (linesPerDropCap * lineHeight) + ((linesPerDropCap - 1) * lineSpacing);
                 int dTextSize = getFontSizeToMatchLineHeight(mTextPaint, dHeight);
                 mTextPaint.setTextSize(dTextSize);
                 int dWidth = getTextWidth(mTextPaint, String.valueOf(dChar));
 
-                firstPage.setDropCap(new DropCap(dChar, dWidth, dHeight, dTextSize));
+                firstPage.setDropCap(new TextBox(dChar, dWidth, dHeight, dTextSize));
 
                 // Step 3 - Lines around drop cap
 
