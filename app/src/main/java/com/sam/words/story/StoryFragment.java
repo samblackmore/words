@@ -128,24 +128,8 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
             timerText = (TextView) rootView.findViewById(R.id.timer);
             signInButton.setOnClickListener(activity);
-
-            pollInput.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    boolean isValid = s.length() > 0 && s.toString().replaceAll(" +", " ").split(" ").length == 3;
-                    pollSubmit.setEnabled(isValid);
-                }
-            });
+            pollSubmit.setOnClickListener(this);
+            pollInput.addTextChangedListener(new PostValidation(pollSubmit));
 
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
             mRecyclerView = (RecyclerView) rootView.findViewById(R.id.votes_list);
@@ -163,14 +147,6 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             if (user != null) {
                 submitContainer.setVisibility(View.VISIBLE);
                 signInButton.setVisibility(View.GONE);
-            }
-
-            if (user != null && story != null) {
-                TextView pollTitle = (TextView) rootView.findViewById(R.id.poll_title);
-
-                pollTitle.setText("Contribute to \"" + story.getTitle() + "\" by " + story.getAuthorAlias());
-                
-                pollSubmit.setOnClickListener(this);
             }
 
         } else {
@@ -273,6 +249,11 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
                 if (user == null) {
                     Toast.makeText(getActivity(), "Not signed in!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (story == null) {
+                    Toast.makeText(getActivity(), "Story not loaded!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
