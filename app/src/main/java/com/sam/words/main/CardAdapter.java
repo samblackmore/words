@@ -43,12 +43,16 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
     private List<Story> stories = new ArrayList<>();
     private List<Post> posts = new ArrayList<>();
 
-    public void gotStories(List<Story> stories) {
+    void refresh() {
+        notifyDataSetChanged();
+    }
+
+    void gotStories(List<Story> stories) {
         this.stories = stories;
         notifyDataSetChanged();
     }
 
-    public void gotPosts(List<Post> posts) {
+    void gotPosts(List<Post> posts) {
         this.posts = posts;
         notifyDataSetChanged();
     }

@@ -130,6 +130,8 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
             signInButton.setVisibility(View.INVISIBLE);
             addStoryButton.setVisibility(View.VISIBLE);
         }
+
+        mCardAdapter.refresh();
     }
 
     public void showLoading(boolean show) {
