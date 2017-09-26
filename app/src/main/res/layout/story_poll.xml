@@ -27,20 +27,20 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
 
+        <TextView
+            android:id="@+id/poll_title"
+            android:visibility="gone"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
         <LinearLayout
             android:id="@+id/submit_container"
             android:visibility="gone"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/poll_title"
-                android:text="@string/poll_title"
-                android:textAlignment="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
 
             <EditText
                 android:id="@+id/poll_input"
@@ -69,16 +69,17 @@
         android:padding="24dp">
 
         <TextView
-            android:id="@+id/poll_description"
-            android:text="Title by Author"
+            android:id="@+id/poll_round"
+            android:text="round"
+            android:textStyle="bold"
             android:textAlignment="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
 
         <TextView
-            android:id="@+id/timer"
-            android:text="Voting ends in 03:05"
+            android:id="@+id/poll_timer"
+            android:text="timer"
             android:textAlignment="center"
             android:layout_margin="6dp"
             android:layout_width="match_parent"

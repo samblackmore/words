@@ -6,8 +6,6 @@ import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +50,8 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     private SignInButton signInButton;
     private ProgressBar signInProgress;
     private LinearLayout submitContainer;
-    private TextView pollDescription;
+    private TextView pollTitle;
+    private TextView pollRound;
     private EditText pollInput;
     private TextView timerText;
     private Button pollSubmit;
@@ -123,10 +122,11 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             submitContainer = (LinearLayout) rootView.findViewById(R.id.submit_container);
             signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
             signInProgress = (ProgressBar) rootView.findViewById(R.id.sign_in_progress);
-            pollDescription = (TextView) rootView.findViewById(R.id.poll_description);
+            pollTitle = (TextView) rootView.findViewById(R.id.poll_title);
+            pollRound = (TextView) rootView.findViewById(R.id.poll_round);
             pollInput = (EditText) rootView.findViewById(R.id.poll_input);
             pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
-            timerText = (TextView) rootView.findViewById(R.id.timer);
+            timerText = (TextView) rootView.findViewById(R.id.poll_timer);
             signInButton.setOnClickListener(activity);
             pollSubmit.setOnClickListener(this);
             pollInput.addTextChangedListener(new PostValidation(pollSubmit));
@@ -174,7 +174,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             if (currentPoll != null && currentPoll.getRound() != poll.getRound())
                 Toast.makeText(activity, "New voting round: " + poll.getRound(), Toast.LENGTH_SHORT).show();
 
-            pollDescription.setText("Round " + poll.getRound());
+            pollRound.setText("Round " + poll.getRound());
 
             currentPoll = poll;
             gotPosts(poll.getPosts());
@@ -272,6 +272,11 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
                     pollRef.child("timeEnding")
                             .setValue(System.currentTimeMillis() + COUNTDOWN_LENGTH);
+
+                    submitContainer.setVisibility(View.GONE);
+                    pollTitle.setVisibility(View.VISIBLE);
+                    pollTitle.setText(R.string.submitted);
+                    pollInput.setText("");
                 }
 
                 break;
@@ -289,15 +294,15 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     public void showLoading(boolean show) {
         if (show) {
             signInProgress.setVisibility(View.VISIBLE);
-            signInButton.setVisibility(View.INVISIBLE);
-            submitContainer.setVisibility(View.INVISIBLE);
+            signInButton.setVisibility(View.GONE);
+            submitContainer.setVisibility(View.GONE);
         } else {
             signInProgress.setVisibility(View.GONE);
             if (auth.getCurrentUser() == null) {
                 signInButton.setVisibility(View.VISIBLE);
-                submitContainer.setVisibility(View.INVISIBLE);
+                submitContainer.setVisibility(View.GONE);
             } else {
-                signInButton.setVisibility(View.INVISIBLE);
+                signInButton.setVisibility(View.GONE);
                 submitContainer.setVisibility(View.VISIBLE);
             }
         }
