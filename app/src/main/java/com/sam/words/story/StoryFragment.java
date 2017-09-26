@@ -41,7 +41,8 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     private int chapterId = 0;
 
     //private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
-    private final int COUNTDOWN_LENGTH = 30 * 1000;
+    private final int COUNTDOWN_LENGTH = 24 * 60 * 60 * 1000;
+    //private final int COUNTDOWN_LENGTH = 30 * 1000;
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -209,15 +210,28 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
         return new CountDownTimer(millisInFuture, 1000) {
             public void onTick(long millisUntilFinished) {
                 long duration = millisUntilFinished / 1000;
+                long hours = duration / 3600;
+                long minutes = (duration % 3600) / 60;
+                long seconds = (duration % 60);
 
+                StringBuilder builder = new StringBuilder();
 
-                //StringBuilder builder = new StringBuilder();
+                if (hours > 0) {
+                    builder.append(String.format(Locale.US, "%02dh", hours));
+                    builder.append(" ");
+                }
 
+                if (minutes > 0) {
+                    builder.append(String.format(Locale.US, "%02dm", minutes));
+                    builder.append(" ");
+                }
 
-                //builder.pre
+                if (seconds > 0) {
+                    builder.append(String.format(Locale.US, "%02ds", seconds));
+                    builder.append(" ");
+                }
 
-                String timeString = String.format(Locale.US, "%02d:%02d:%02d", duration / 3600, (duration % 3600) / 60, (duration % 60));
-                timerText.setText("Voting ends in " + timeString + "s");
+                timerText.setText("Voting ends in " + builder.toString());
             }
             public void onFinish() {
                 timerFinished();
