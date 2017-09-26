@@ -11,34 +11,32 @@ import com.sam.words.models.Post;
 import java.util.ArrayList;
 import java.util.List;
 
-class ChaptersListener implements ValueEventListener {
+class PostsListener implements ValueEventListener {
 
     private StoryActivity activity;
 
-    ChaptersListener(StoryActivity activity) {
+    PostsListener(StoryActivity activity) {
         this.activity = activity;
     }
 
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
-        List<Chapter> chapters = new ArrayList<>();
+        List<List<Post>> postsByChapter = new ArrayList<>();
 
-        for (DataSnapshot child : dataSnapshot.getChildren()) {
-            Chapter chapter = child.getValue(Chapter.class);
-            DataSnapshot posts = child.child("posts");
+        for (DataSnapshot chapterSnapshot : dataSnapshot.getChildren()) {
 
-            List<Post> postList = new ArrayList<>();
+            List<Post> posts = new ArrayList<>();
 
-            for (DataSnapshot post : posts.getChildren()) {
-                Post p = post.getValue(Post.class);
-                postList.add(p);
+            for (DataSnapshot postSnapshot : chapterSnapshot.getChildren()) {
+
+                Post post = postSnapshot.getValue(Post.class);
+                posts.add(post);
             }
 
-            chapter.setPostsList(postList);
-            chapters.add(chapter);
+            postsByChapter.add(posts);
         }
 
-        activity.gotChapters(chapters);
+        activity.gotPostsByChapter(postsByChapter);
     }
 
     @Override

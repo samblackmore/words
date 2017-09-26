@@ -3,7 +3,6 @@ package com.sam.words.story;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,22 +10,20 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.sam.words.R;
 import com.sam.words.components.Page;
 import com.sam.words.components.WordsView;
 import com.sam.words.main.CardAdapter;
-import com.sam.words.models.Chapter;
 import com.sam.words.models.Post;
 import com.sam.words.models.Story;
+import com.sam.words.utils.GoogleSignInActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class StoryActivity extends AppCompatActivity implements View.OnClickListener{
+public class StoryActivity extends GoogleSignInActivity implements View.OnClickListener{
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -38,7 +35,7 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
     private ViewPager viewPager;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story);
 
@@ -61,7 +58,7 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
                 .addValueEventListener(new StoryListener(this));
 
         database.getReference("posts").child(storyId)
-                .addValueEventListener(new ChaptersListener(this));
+                .addValueEventListener(new PostsListener(this));
     }
     
     @Override
@@ -85,18 +82,18 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
     /**
      * Callback for {@link StoryListener} once current story retrieved from Firebase
      */
-    public void gotChapters(List<Chapter> chapters) {
+    public void gotPostsByChapter(List<List<Post>> postsByChapter) {
 
         ProgressBar loading = (ProgressBar) findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
 
         int newPostCount = 0;
-        for (Chapter chapter : chapters)
-            newPostCount += chapter.getPosts().size();
+        for (List<Post> chapter : postsByChapter)
+            newPostCount += chapter.size();
 
         if (newPostCount != postCount) {
 
-            pages = rootWordsView.calculatePages(chapters);
+            pages = rootWordsView.calculatePages(postsByChapter);
 
             if (mStoryAdapter != null)
                 mStoryAdapter.update(pages);
@@ -124,6 +121,12 @@ public class StoryActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        viewPager.setCurrentItem(mStoryAdapter.getCount() - 1);
+        super.onClick(v);
+
+        switch (v.getId()) {
+            case R.id.fab:
+                viewPager.setCurrentItem(mStoryAdapter.getCount() - 1);
+                break;
+        }
     }
 }

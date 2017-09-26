@@ -4,12 +4,20 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.sam.words.R;
 import com.sam.words.models.Post;
 import com.sam.words.utils.SharedPreferencesHelper;
@@ -28,6 +36,7 @@ import java.util.List;
 
 public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     public static final String EXTRA_STORY = "STORY";
@@ -81,6 +90,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
     @Override
     public void onBindViewHolder(final CardHolder holder, int position) {
+        FirebaseUser user = auth.getCurrentUser();
         final Story story = stories.get(position);
         holder.mLikesView.setText(String.valueOf(story.getLikeCount()));
         holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
@@ -88,15 +98,54 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         holder.mTitleView.setText(TextUtil.capitalize(story.getTitle()));
         holder.mAuthorView.setText(story.getAuthorAlias());
 
-        String storyId = stories.get(position).getId();
-        database.getReference("posts").child(storyId).child("0").child("posts").addListenerForSingleValueEvent(new CardPostListener(holder));
+        final String storyId = story.getId();
+        database.getReference("posts").child(storyId).child("0").addListenerForSingleValueEvent(new CardPostListener(holder));
 
-        holder.mCardView.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener openStory = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(holder.mCardView.getContext(), StoryActivity.class);
-                intent.putExtra(EXTRA_STORY, story.getId());
+                intent.putExtra(EXTRA_STORY, storyId);
                 holder.mCardView.getContext().startActivity(intent);
+            }
+        };
+
+        holder.mTitleView.setOnClickListener(openStory);
+        holder.mWordsView.setOnClickListener(openStory);
+
+        if (user != null && story.getLikes().containsKey(user.getUid()))
+            holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_lit, 0, 0, 0);
+        else
+            holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart, 0, 0, 0);
+
+        holder.mLikesView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference ref = database.getReference("stories").child(storyId);
+                ref.runTransaction(new Transaction.Handler() {
+                    @Override
+                    public Transaction.Result doTransaction(MutableData mutableData) {
+                        Story s = mutableData.getValue(Story.class);
+                        FirebaseUser user = auth.getCurrentUser();
+
+                        if (s == null || user == null)
+                            return Transaction.success(mutableData);
+
+                        if (s.getLikes() != null && s.getLikes().containsKey(user.getUid()))
+                            s.removeLike(user.getUid());
+                        else
+                            s.addLike(user.getUid());
+
+                        mutableData.setValue(s);
+                        return Transaction.success(mutableData);
+                    }
+
+                    @Override
+                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                        if (databaseError != null)
+                            Log.d("Debug", databaseError.toString());
+                    }
+                });
             }
         });
     }

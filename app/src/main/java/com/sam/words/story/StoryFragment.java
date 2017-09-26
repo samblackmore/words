@@ -11,9 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.SignInButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -26,12 +29,13 @@ import com.sam.words.models.Poll;
 import com.sam.words.utils.SharedPreferencesHelper;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A page in a story. Contains a single WordsView representing that page.
  */
 
-public class StoryFragment extends Fragment implements View.OnClickListener{
+public class StoryFragment extends Fragment implements GoogleSignInFragment, View.OnClickListener{
 
     // FIXME - get real chapter id
     private int chapterId = 0;
@@ -43,6 +47,9 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private StoryActivity activity;
     private RecyclerView mRecyclerView;
+    private SignInButton signInButton;
+    private ProgressBar signInProgress;
+    private LinearLayout submitContainer;
     private TextView pollDescription;
     private EditText pollInput;
     private TextView timerText;
@@ -110,12 +117,14 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
             rootView = inflater.inflate(R.layout.story_poll, container, false);
             rootView.setVisibility(View.INVISIBLE);
 
+            submitContainer = (LinearLayout) rootView.findViewById(R.id.submit_container);
+            signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
+            signInProgress = (ProgressBar) rootView.findViewById(R.id.sign_in_progress);
             pollDescription = (TextView) rootView.findViewById(R.id.poll_description);
-            Button pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
-            TextView pollTitle = (TextView) rootView.findViewById(R.id.poll_title);
             pollInput = (EditText) rootView.findViewById(R.id.poll_input);
             timerText = (TextView) rootView.findViewById(R.id.timer);
-            
+            signInButton.setOnClickListener(activity);
+
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
             mRecyclerView = (RecyclerView) rootView.findViewById(R.id.votes_list);
             mRecyclerView.setHasFixedSize(true);
@@ -129,7 +138,15 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
 
             FirebaseUser user = auth.getCurrentUser();
 
+            if (user != null) {
+                submitContainer.setVisibility(View.VISIBLE);
+                signInButton.setVisibility(View.GONE);
+            }
+
             if (user != null && story != null) {
+                Button pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
+                TextView pollTitle = (TextView) rootView.findViewById(R.id.poll_title);
+
                 pollTitle.setText("Contribute to \"" + story.getTitle() + "\" by " + story.getAuthorAlias());
 
                 pollSubmit.setEnabled(true);
@@ -195,7 +212,16 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     private CountDownTimer makeTimer(long millisInFuture) {
         return new CountDownTimer(millisInFuture, 1000) {
             public void onTick(long millisUntilFinished) {
-                timerText.setText("Voting ends in " + millisUntilFinished / 1000 + "s");
+                long duration = millisUntilFinished / 1000;
+
+
+                //StringBuilder builder = new StringBuilder();
+
+
+                //builder.pre
+
+                String timeString = String.format(Locale.US, "%02d:%02d:%02d", duration / 3600, (duration % 3600) / 60, (duration % 60));
+                timerText.setText("Voting ends in " + timeString + "s");
             }
             public void onFinish() {
                 timerFinished();
@@ -220,6 +246,7 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+
             case R.id.poll_submit:
 
                 FirebaseUser user = auth.getCurrentUser();
@@ -247,6 +274,31 @@ public class StoryFragment extends Fragment implements View.OnClickListener{
                 }
 
                 break;
+        }
+    }
+
+    @Override
+    public void updateUI(FirebaseUser firebaseUser) {
+        showLoading(false);
+        submitContainer.setVisibility(firebaseUser == null ? View.GONE : View.VISIBLE);
+        signInButton.setVisibility(firebaseUser == null ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void showLoading(boolean show) {
+        if (show) {
+            signInProgress.setVisibility(View.VISIBLE);
+            signInButton.setVisibility(View.INVISIBLE);
+            submitContainer.setVisibility(View.INVISIBLE);
+        } else {
+            signInProgress.setVisibility(View.GONE);
+            if (auth.getCurrentUser() == null) {
+                signInButton.setVisibility(View.VISIBLE);
+                submitContainer.setVisibility(View.INVISIBLE);
+            } else {
+                signInButton.setVisibility(View.INVISIBLE);
+                submitContainer.setVisibility(View.VISIBLE);
+            }
         }
     }
 }

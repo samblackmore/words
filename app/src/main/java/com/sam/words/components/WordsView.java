@@ -23,7 +23,7 @@ public class WordsView extends View {
 
     private Paint mTextPaint;
     private Typeface typeface;
-    private List<Chapter> preview;
+    private List<List<Post>> preview;
     private Page page;
     private int pageNumber = 1;
     private int textSize;
@@ -114,7 +114,7 @@ public class WordsView extends View {
         //canvas.drawRect(0, 0, getWidth()-1, getHeight()-1, mTextPaint);
     }
 
-    public List<Page> calculatePages(List<Chapter> chapters) {
+    public List<Page> calculatePages(List<List<Post>> postsByChapter) {
 
         List<Page> pages = new ArrayList<>();
 
@@ -129,11 +129,11 @@ public class WordsView extends View {
         int lineHeight = getTextHeight(mTextPaint, "I");
         int lineSpacing = (int) ((lineHeight * lineSeperation) - lineHeight);
 
-        for (Chapter chapter : chapters) {
+        for (List<Post> chapterPosts : postsByChapter) {
 
             Page firstPage = new Page(typeface, textSize, lineHeight, lineSeperation);
             StringBuilder builder = new StringBuilder();
-            for (Post post : chapter.getPosts()) {
+            for (Post post : chapterPosts) {
                 builder.append(post.getMessage());
                 builder.append(" ");
             }
@@ -143,7 +143,7 @@ public class WordsView extends View {
             // Step 1 - Chapter title
 
             // TODO - Title layout
-            firstPage.setChapterTitle(chapter.getTitle());
+            firstPage.setChapterTitle(null);
 
             // Step 2 - Drop cap
 
@@ -321,25 +321,16 @@ public class WordsView extends View {
     }
 
     public void setPreview(List<Post> posts) {
-        Chapter dummyChapter = new Chapter(0, null);
-        dummyChapter.setPostsList(posts);
-
         preview = new ArrayList<>();
-        preview.add(dummyChapter);
-
+        preview.add(posts);
         invalidate();
     }
 
     public void setPreview(String message) {
-        Chapter dummyChapter = new Chapter(0, null);
         List<Post> dummyPosts = new ArrayList<>();
-
         dummyPosts.add(new Post(null, null, null, message));
-        dummyChapter.setPostsList(dummyPosts);
-
         preview = new ArrayList<>();
-        preview.add(dummyChapter);
-
+        preview.add(dummyPosts);
         invalidate();
     }
 }
