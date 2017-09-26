@@ -6,6 +6,8 @@ import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +55,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     private TextView pollDescription;
     private EditText pollInput;
     private TextView timerText;
+    private Button pollSubmit;
     private CountDownTimer timer;
     private Story story;
     private Poll currentPoll;
@@ -122,8 +125,27 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             signInProgress = (ProgressBar) rootView.findViewById(R.id.sign_in_progress);
             pollDescription = (TextView) rootView.findViewById(R.id.poll_description);
             pollInput = (EditText) rootView.findViewById(R.id.poll_input);
+            pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
             timerText = (TextView) rootView.findViewById(R.id.timer);
             signInButton.setOnClickListener(activity);
+
+            pollInput.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    boolean isValid = s.length() > 0 && s.toString().replaceAll(" +", " ").split(" ").length == 3;
+                    pollSubmit.setEnabled(isValid);
+                }
+            });
 
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
             mRecyclerView = (RecyclerView) rootView.findViewById(R.id.votes_list);
@@ -144,12 +166,10 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             }
 
             if (user != null && story != null) {
-                Button pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
                 TextView pollTitle = (TextView) rootView.findViewById(R.id.poll_title);
 
                 pollTitle.setText("Contribute to \"" + story.getTitle() + "\" by " + story.getAuthorAlias());
-
-                pollSubmit.setEnabled(true);
+                
                 pollSubmit.setOnClickListener(this);
             }
 

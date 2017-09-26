@@ -41,7 +41,7 @@ exports.finishUpdated = functions.database.ref('/poll/{storyId}/{chapterId}/{pol
       console.log('storyId', storyId)
       console.log('chapterId', chapterId)
 
-      postsRef.child(storyId).child(chapterId).child('posts').push().set(winningPost)
+      postsRef.child(storyId).child(chapterId).push().set(winningPost)
     })
 
     const newRound = parseInt(pollId) + 1
