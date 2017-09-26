@@ -15,6 +15,7 @@ public class Story {
     private String userId;
     private String authorAlias;
     private List<Chapter> chapters = new ArrayList<>();
+    private int chapterSize;
     private long dateCreated;
     private long dateUpdated;
     private int likeCount = 0;
@@ -28,6 +29,8 @@ public class Story {
         this.title = title;
         this.userId = userId;
         this.authorAlias = authorAlias;
+
+        chapterSize = 2;
 
         dateCreated = System.currentTimeMillis();
         dateUpdated = System.currentTimeMillis();
@@ -85,5 +88,9 @@ public class Story {
 
     public void addChapter(Chapter chapter) {
         chapters.add(chapter);
+    }
+
+    public int getChapterSize() {
+        return chapterSize;
     }
 }

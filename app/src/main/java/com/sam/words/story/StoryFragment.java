@@ -41,8 +41,8 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     private int chapterId = 0;
 
     //private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
-    private final int COUNTDOWN_LENGTH = 24 * 60 * 60 * 1000;
-    //private final int COUNTDOWN_LENGTH = 30 * 1000;
+    //private final int COUNTDOWN_LENGTH = 24 * 60 * 60 * 1000;
+    private final int COUNTDOWN_LENGTH = 30 * 1000;
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -63,6 +63,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     // Fragment arguments
     public static final String ARG_PAGE_NUMBER = "page_number";
     public static final String ARG_PAGE_COUNT = "page_count";
+    private PostValidation formValidation;
 
     public StoryFragment() {
     }
@@ -128,9 +129,12 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             pollInput = (EditText) rootView.findViewById(R.id.poll_input);
             pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
             timerText = (TextView) rootView.findViewById(R.id.poll_timer);
+
+            formValidation = new PostValidation(pollSubmit);
+
             signInButton.setOnClickListener(activity);
             pollSubmit.setOnClickListener(this);
-            pollInput.addTextChangedListener(new PostValidation(pollSubmit));
+            pollInput.addTextChangedListener(formValidation);
 
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
             mRecyclerView = (RecyclerView) rootView.findViewById(R.id.votes_list);
@@ -170,12 +174,24 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     }
 
     public void gotPoll(Poll poll) {
-        if (poll != null) {
+        if (story != null && poll != null) {
+
+            int maxRounds = story.getChapterSize();
+            int chapter = story.getChapters().size();
 
             if (currentPoll != null && currentPoll.getRound() != poll.getRound())
                 Toast.makeText(activity, "New voting round: " + poll.getRound(), Toast.LENGTH_SHORT).show();
 
-            pollRound.setText("Round " + poll.getRound());
+            if (poll.getRound() > maxRounds) {
+                pollRound.setText("Chapter " + chapter + " title");
+                pollInput.setHint(R.string.your_chapter_title);
+                formValidation.isTitle(true);
+            }
+            else {
+                pollRound.setText("Round " + poll.getRound() + "/" + maxRounds);
+                pollInput.setHint(R.string.your_3_words);
+                formValidation.isTitle(false);
+            }
 
             currentPoll = poll;
             gotPosts(poll.getPosts());

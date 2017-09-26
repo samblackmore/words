@@ -103,8 +103,11 @@ public class WordsView extends View {
                 page = pages.get(pageNumber - 1);
 
         } else {
-            if (preview != null)
-                page = calculatePages(preview).get(0);
+            if (preview != null) {
+                List<Page> pages = calculatePages(preview);
+                if (pages.size() > 0)
+                    page = pages.get(0);
+            }
         }
 
         if (page != null)

@@ -10,10 +10,21 @@ import android.widget.Button;
 
 class PostValidation implements TextWatcher {
 
+    private boolean isTitle;
     private Button submitButton;
 
     PostValidation(Button submitButton) {
         this.submitButton = submitButton;
+        isTitle = false;
+    }
+
+    PostValidation(Button submitButton, boolean isTitle) {
+        this.submitButton = submitButton;
+        this.isTitle = isTitle;
+    }
+
+    public void isTitle(boolean isTitle) {
+        this.isTitle = isTitle;
     }
 
     private boolean isValid(String s) {
@@ -29,7 +40,9 @@ class PostValidation implements TextWatcher {
         if (cleaned.length() > 1 && cleaned.charAt(0) == ' ')
             cleaned = cleaned.substring(1, cleaned.length());
 
-        return cleaned.split(" ").length == 3;
+        int wordCount = cleaned.split(" ").length;
+
+        return isTitle ? wordCount > 0 && wordCount < 4 : wordCount == 3;
     }
 
     @Override

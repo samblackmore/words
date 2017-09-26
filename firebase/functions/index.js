@@ -7,54 +7,60 @@ const functions = require('firebase-functions');
 exports.finishUpdated = functions.database.ref('/poll/{storyId}/{chapterId}/{pollId}/finished')
 .onUpdate(event => {
 
-  var promises = [];
+    console.log('got update event')
 
-  const pollId = event.params.pollId;
-  const chapterId = event.params.chapterId
-  const storyId = event.params.storyId;
-  const pollRef = event.data.ref.parent;
-  const postsRef = event.data.ref.root.child('posts')
-  const finished = event.data.val();
+    var promises = [];
 
-  if (finished) {
+    const pollId = event.params.pollId;
+    const pollRef = event.data.ref.parent;
+    const chapterId = event.params.chapterId
+    const storyId = event.params.storyId;
+    const storyRef = event.data.ref.root.child('stories').child(storyId)
+    const postsRef = event.data.ref.root.child('posts')
+    const finished = event.data.val();
 
-    const chooseWinnerPromise = pollRef.child('posts').once('value').then(snapshot => {
+    if (finished) {
 
-      var highestScore = -1;
-      var winningPost;
+        console.log('round finished, getting posts')
 
-      snapshot.forEach(function(childSnapshot) {
-        const post = childSnapshot.val()
+        return pollRef.once('value').then(snapshot => {
 
-        if (post.voteCount > highestScore) {
-          highestScore = post.voteCount
-          winningPost = post
-        }
+            console.log('got poll')
 
-        console.log('post', post)
-        console.log('winning', winningPost)
-      })
+            var highestScore = -1;
+            var winningPost;
 
-      console.log('winner', winningPost)
+            snapshot.child('posts').forEach(function(postSnapshot) {
 
-      console.log('postsRed', postsRef)
-      console.log('storyId', storyId)
-      console.log('chapterId', chapterId)
+                const post = postSnapshot.val()
 
-      postsRef.child(storyId).child(chapterId).push().set(winningPost)
-    })
+                if (post.voteCount > highestScore) {
+                    highestScore = post.voteCount
+                    winningPost = post
+                }
+            })
 
-    const newRound = parseInt(pollId) + 1
+            const rounds = parseInt(snapshot.child('rounds').val())
 
-    const newVotePromise = pollRef.parent.child(newRound).set({
-      round: newRound,
-      finished: false,
-      timeCreated: new Date().getTime()
-    });
+            console.log('poll', pollId, 'out of', rounds, 'winner', winningPost)
 
-    promises.push(newVotePromise);
-    promises.push(chooseWinnerPromise);
-
-    return Promise.all(promises)
-  }
+            if (pollId > rounds) {
+                const newChapter = parseInt(chapterId) + 1
+                console.log('winning title', winningPost.message)
+                storyRef.child('chapters').child(chapterId).child('title').set(winningPost.message)
+                storyRef.child('chapters').child(newChapter).set({chapter: newChapter})
+            } else {
+                const newRound = parseInt(pollId) + 1
+                console.log('new poll')
+                //return pollRef.parent.child(newRound).set(newPoll)
+                pollRef.parent.child(newRound).set({
+                    round: newRound,
+                    rounds: rounds,
+                    finished: false,
+                    timeCreated: new Date().getTime()
+                })
+                postsRef.child(storyId).child(chapterId).push().set(winningPost)
+            }
+        })
+    }
 });

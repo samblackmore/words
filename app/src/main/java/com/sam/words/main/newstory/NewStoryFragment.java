@@ -134,12 +134,12 @@ public class NewStoryFragment extends DialogFragment {
         String newStoryId = database.getReference("stories").push().getKey();
         String newPostId = database.getReference("posts").child(newStoryId).child(chapterId).push().getKey();
 
-        Poll newPoll = new Poll(pollRound);
-        Post newPost = new Post(newStoryId, userId, user.getDisplayName(), content);
         Story newStory = new Story(title, userId, author);
-        newStory.addLike(userId);
+        Post newPost = new Post(newStoryId, userId, user.getDisplayName(), content);
+        Poll newPoll = new Poll(pollRound, newStory.getChapterSize());
         Chapter firstChapter = new Chapter(chapter, "Chapter One");
         newStory.addChapter(firstChapter);
+        newStory.addLike(userId);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/stories/" + newStoryId, newStory);
