@@ -62,12 +62,12 @@ public class Page {
 
         if (chapterTitle != null) {
             paint.setTextSize(chapterTitle.getTextSize());
-            canvas.drawText(chapterTitle.toString(), 0, chapterTitle.getHeight(), paint);
+            canvas.drawText(chapterTitle.toString(), chapterTitle.getTextLeft(), chapterTitle.getTextHeight(), paint);
         }
 
         if (dropCap != null) {
             paint.setTextSize(dropCap.getTextSize());
-            canvas.drawText(dropCap.toString(), 0, dropCap.getHeight() + chapterTitle.getHeight(), paint);
+            canvas.drawText(dropCap.toString(), 0, dropCap.getTextHeight() + chapterTitle.getHeight(), paint);
 
             if (dropCapLines != null) {
                 paint.setTextSize(textSize);
@@ -76,7 +76,7 @@ public class Page {
 
             if (lines != null) {
                 paint.setTextSize(textSize);
-                drawLines(canvas, paint, 0, dropCap.getHeight() + lineSpacing, lines);
+                drawLines(canvas, paint, 0, dropCap.getTextHeight() + lineSpacing, lines);
             }
         } else if (lines != null) {
             paint.setTextSize(textSize);

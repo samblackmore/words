@@ -145,7 +145,13 @@ public class WordsView extends View {
 
             // Step 1 - Chapter title
 
-            firstPage.setChapterTitle(makeTextBox(mTextPaint, "Chapter " + chapter, lineHeight * 2));
+            if (preview != null)
+                firstPage.setChapterTitle(new TextBox());
+            else {
+                TextBox chapterTitle = makeTextBoxCentered(mTextPaint, "CHAPTER " + (chapter + 1), lineHeight * 2, viewWidth);
+                chapterTitle.addBottomPadding(lineHeight * 4);
+                firstPage.setChapterTitle(chapterTitle);
+            }
 
             // Step 2 - Drop cap
 
@@ -213,6 +219,12 @@ public class WordsView extends View {
         return new TextBox(text, textWidth, lineHeight, textSize);
     }
 
+    private TextBox makeTextBoxCentered(Paint paint, String text, int lineHeight, int boxWidth) {
+        TextBox textBox = makeTextBox(paint, text, lineHeight);
+        textBox.setTextLeft((boxWidth / 2) - (textBox.getWidth() / 2));
+        return textBox;
+    }
+
     int getTextHeight(Paint paint, String text) {
         Rect bounds = new Rect();
         paint.getTextBounds(text, 0, 1, bounds);
@@ -221,7 +233,7 @@ public class WordsView extends View {
 
     private int getTextWidth(Paint paint, String text) {
         Rect bounds = new Rect();
-        paint.getTextBounds(text, 0, 1, bounds);
+        paint.getTextBounds(text, 0, text.length(), bounds);
         return bounds.width();
     }
 
