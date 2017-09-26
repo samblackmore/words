@@ -145,32 +145,23 @@ public class WordsView extends View {
 
             // Step 1 - Chapter title
 
-            String title = "Chapter " + chapter;
-            int tHeight = lineHeight * 2;
-            int tTextSize = getFontSizeToMatchLineHeight(mTextPaint, tHeight);
-            mTextPaint.setTextSize(tTextSize);
-            int tWidth = getTextWidth(mTextPaint, title);
-
-            firstPage.setChapterTitle(new TextBox(title, tWidth, tHeight*2, tTextSize));
+            firstPage.setChapterTitle(makeTextBox(mTextPaint, "Chapter " + chapter, lineHeight * 2));
 
             // Step 2 - Drop cap
 
-            if (chapterContent != null && chapterContent.length() > 0) {
+            if (chapterContent.length() > 0) {
 
-                String dChar = String.valueOf(chapterContent.charAt(0)).toUpperCase();
-                int dHeight = (linesPerDropCap * lineHeight) + ((linesPerDropCap - 1) * lineSpacing);
-                int dTextSize = getFontSizeToMatchLineHeight(mTextPaint, dHeight);
-                mTextPaint.setTextSize(dTextSize);
-                int dWidth = getTextWidth(mTextPaint, String.valueOf(dChar));
+                String dropCap = String.valueOf(chapterContent.charAt(0)).toUpperCase();
+                int dropCapHeight = (linesPerDropCap * lineHeight) + ((linesPerDropCap - 1) * lineSpacing);
 
-                firstPage.setDropCap(new TextBox(dChar, dWidth, dHeight, dTextSize));
+                firstPage.setDropCap(makeTextBox(mTextPaint, dropCap, dropCapHeight));
 
                 // Step 3 - Lines around drop cap
 
                 if (chapterContent.length() > 1) {
 
                     mTextPaint.setTextSize(textSize);
-                    int dropCapLinesX = viewX + dWidth + lineSpacing;
+                    int dropCapLinesX = viewX + firstPage.getDropCap().getWidth() + lineSpacing;
 
                     List<String> lines = lineWrap(mTextPaint, viewWidth - dropCapLinesX, chapterContent.substring(chapterContent.length() > 2 && chapterContent.charAt(1) == ' ' ? 2 : 1, chapterContent.length()));
                     firstPage.setDropCapLines(lines.subList(0, Math.min(lines.size(), linesPerDropCap)));
@@ -184,7 +175,7 @@ public class WordsView extends View {
 
                         if (remainingLines.size() > 0) {
 
-                            int maxlinesLeftOnPage = Math.max(0, (viewHeight - (dHeight + lineSpacing)) / (lineHeight + lineSpacing));
+                            int maxlinesLeftOnPage = Math.max(0, (viewHeight - (dropCapHeight + lineSpacing)) / (lineHeight + lineSpacing));
                             int linesLeftOnPage = Math.min(remainingLines.size(), maxlinesLeftOnPage);
 
                             firstPage.setLines(remainingLines.subList(0, linesLeftOnPage));
@@ -212,6 +203,14 @@ public class WordsView extends View {
         }
 
         return pages;
+    }
+
+    private TextBox makeTextBox(Paint paint, String text, int lineHeight) {
+        int textSize = getFontSizeToMatchLineHeight(paint, lineHeight);
+        paint.setTextSize(textSize);
+        int textWidth = getTextWidth(paint, text);
+
+        return new TextBox(text, textWidth, lineHeight, textSize);
     }
 
     int getTextHeight(Paint paint, String text) {

@@ -33,6 +33,10 @@ public class Page {
         this.chapterTitle = chapterTitle;
     }
 
+    public TextBox getDropCap() {
+        return dropCap;
+    }
+
     void setDropCap(TextBox dropCap) {
         this.dropCap = dropCap;
     }
