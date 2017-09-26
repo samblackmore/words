@@ -157,7 +157,7 @@ public class WordsView extends View {
 
             if (chapterContent != null && chapterContent.length() > 0) {
 
-                String dChar = String.valueOf(chapterContent.charAt(0));
+                String dChar = String.valueOf(chapterContent.charAt(0)).toUpperCase();
                 int dHeight = (linesPerDropCap * lineHeight) + ((linesPerDropCap - 1) * lineSpacing);
                 int dTextSize = getFontSizeToMatchLineHeight(mTextPaint, dHeight);
                 mTextPaint.setTextSize(dTextSize);
