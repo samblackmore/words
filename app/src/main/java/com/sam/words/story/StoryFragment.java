@@ -37,9 +37,6 @@ import java.util.Locale;
 
 public class StoryFragment extends Fragment implements GoogleSignInFragment, View.OnClickListener{
 
-    // FIXME - get real chapter id
-    private int chapterId = 0;
-
     //private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
     //private final int COUNTDOWN_LENGTH = 24 * 60 * 60 * 1000;
     private final int COUNTDOWN_LENGTH = 30 * 1000;
@@ -59,6 +56,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     private CountDownTimer timer;
     private Story story;
     private Poll currentPoll;
+    private int chapterId;
 
     // Fragment arguments
     public static final String ARG_PAGE_NUMBER = "page_number";
@@ -82,6 +80,9 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
         activity = ((StoryActivity) getActivity());
         story = activity.getStory();
+
+        if (story != null)
+            chapterId = story.getChapters().size() - 1;
 
         int pageNum = getArguments().getInt(ARG_PAGE_NUMBER);
         int pageCnt = getArguments().getInt(ARG_PAGE_COUNT);
@@ -182,7 +183,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             if (currentPoll != null && currentPoll.getRound() != poll.getRound())
                 Toast.makeText(activity, "New voting round: " + poll.getRound(), Toast.LENGTH_SHORT).show();
 
-            if (poll.getRound() > maxRounds) {
+            if (poll.getRound() == maxRounds) {
                 pollRound.setText("Chapter " + chapter + " title");
                 pollInput.setHint(R.string.your_chapter_title);
                 formValidation.isTitle(true);

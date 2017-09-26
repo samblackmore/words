@@ -113,6 +113,7 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
 
     public void gotStory(Story story) {
         this.story = story;
+        mStoryAdapter.notifyDataSetChanged();
     }
 
     public Story getStory() {
