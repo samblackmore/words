@@ -42,9 +42,9 @@ import java.util.Locale;
 
 public class StoryFragment extends Fragment implements GoogleSignInFragment, View.OnClickListener{
 
-    //private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
+    private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
     //private final int COUNTDOWN_LENGTH = 24 * 60 * 60 * 1000;
-    private final int COUNTDOWN_LENGTH = 5 * 1000;
+    //private final int COUNTDOWN_LENGTH = 5 * 1000;
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -374,10 +374,11 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
         submitContainer.setVisibility(user == null ? View.GONE : View.VISIBLE);
         signInButton.setVisibility(user == null ? View.VISIBLE : View.GONE);
 
+        if (storyFinished())
+            showStoryEnd();
+
         if (user != null) {
-            if (storyFinished())
-                showStoryEnd();
-            else if (wonLastRound(user))
+            if (wonLastRound(user))
                 showBanner(R.string.you_won_last_round, R.drawable.ic_cake);
             else if (alreadyPosted(user))
                 showBanner(R.string.submitted, R.drawable.ic_check_box);
