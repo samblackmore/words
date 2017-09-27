@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.sam.words.R;
 import com.sam.words.components.WordsView;
 import com.sam.words.models.Post;
@@ -62,6 +63,8 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     public static final String ARG_PAGE_NUMBER = "page_number";
     public static final String ARG_PAGE_COUNT = "page_count";
     private PostValidation formValidation;
+    private ValueEventListener valueEventListener;
+    private DatabaseReference listenRef;
 
     public StoryFragment() {
     }
@@ -144,8 +147,8 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
             if (story != null) {
                 rootView.setVisibility(View.VISIBLE);
-                database.getReference("poll").child(story.getId()).child(String.valueOf(chapterId)).limitToLast(1)
-                        .addValueEventListener(new PollListener(this));
+                listenRef = database.getReference("poll").child(story.getId()).child(String.valueOf(chapterId));
+                valueEventListener = listenRef.limitToLast(1).addValueEventListener(new PollListener(this));
             }
 
             FirebaseUser user = auth.getCurrentUser();
@@ -172,6 +175,13 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (listenRef != null)
+            listenRef.removeEventListener(valueEventListener);
     }
 
     public void gotPoll(Poll poll) {
