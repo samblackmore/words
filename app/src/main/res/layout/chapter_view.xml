@@ -14,14 +14,14 @@
     >
 
     <TextView
-        android:id="@+id/words_view"
+        android:id="@+id/chapter_title"
         android:textSize="18dp"
         android:textColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <TextView
-        android:text="1"
+        android:id="@+id/page_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"/>

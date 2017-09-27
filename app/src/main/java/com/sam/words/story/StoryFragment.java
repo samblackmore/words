@@ -25,12 +25,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sam.words.R;
+import com.sam.words.components.Page;
 import com.sam.words.components.WordsView;
 import com.sam.words.models.Post;
 import com.sam.words.models.Story;
 import com.sam.words.models.Poll;
 import com.sam.words.utils.SharedPreferencesHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -103,6 +105,9 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
         Typeface typefaceItalic = Typeface.createFromAsset(getContext().getAssets(),
                 "fonts/CrimsonText/CrimsonText-Italic.ttf");
 
+        Typeface typefaceBold= Typeface.createFromAsset(getContext().getAssets(),
+                "fonts/CrimsonText/CrimsonText-Bold.ttf");
+
         View rootView;
 
         if (pageNum == 0) {
@@ -120,11 +125,28 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
             if (story != null) {
 
-                chapterList.setAdapter(new ChapterAdapter(story.getChapters()));
+                ChapterAdapter chapterAdapter = new ChapterAdapter(story.getChapters());
+
+                List<Page> pages = activity.getPages();
+                List<Integer> pageNumbers = new ArrayList<>();
+
+                if (pages != null && pages.size() > 0) {
+                    for (int num = 0; num < pages.size(); num++) {
+                        Page page = pages.get(num);
+                        if (page.getChapterSubtitle() != null)
+                            pageNumbers.add(num);
+                    }
+                }
+
+                if (pageNumbers.size() > 0)
+                    chapterAdapter.setPageNumbers(pageNumbers);
+
+                chapterList.setAdapter(chapterAdapter);
+
 
                 titleView.setText(story.getTitle().toUpperCase());
                 authorView.setText(story.getAuthorAlias());
-                titleView.setTypeface(typeface);
+                titleView.setTypeface(typefaceBold);
                 authorView.setTypeface(typefaceItalic);
                 byView.setTypeface(typefaceItalic);
                 authorView.setTextColor(getResources().getColor(R.color.gray));

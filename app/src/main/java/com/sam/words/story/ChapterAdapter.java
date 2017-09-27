@@ -14,11 +14,10 @@ import com.sam.words.utils.TextUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.security.AccessController.getContext;
-
 class ChapterAdapter extends RecyclerView.Adapter<ChapterHolder> {
 
     private List<Chapter> mDataset = new ArrayList<>();
+    private List<Integer> mPageNumbers = new ArrayList<>();
 
     ChapterAdapter(List<Chapter> myDataset) {
         mDataset = myDataset;
@@ -33,20 +32,27 @@ class ChapterAdapter extends RecyclerView.Adapter<ChapterHolder> {
         RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.chapter_view, parent, false);
 
-        TextView wordsView = (TextView) v.findViewById(R.id.words_view);
-        wordsView.setTypeface(typeface);
+        TextView chapterTitleView = (TextView) v.findViewById(R.id.chapter_title);
+        TextView pageNumView = (TextView) v.findViewById(R.id.page_number);
+        chapterTitleView.setTypeface(typeface);
 
-        return new ChapterHolder(v, wordsView);
+        return new ChapterHolder(v, chapterTitleView, pageNumView);
     }
 
     @Override
     public void onBindViewHolder(final ChapterHolder holder, int position) {
         final Chapter chapter = mDataset.get(position);
-        holder.wordsView.setText(String.valueOf(position) + ".    " + TextUtil.capitalize(chapter.getTitle()));
+        holder.chapterTitleView.setText(String.valueOf(position) + ".    " + TextUtil.capitalize(chapter.getTitle()));
+        if (mPageNumbers.size() > position)
+            holder.pageNumView.setText(String.valueOf(mPageNumbers.get(position) + 1));
     }
 
     @Override
     public int getItemCount() {
         return mDataset.size();
+    }
+
+    void setPageNumbers(List<Integer> pageNumbers) {
+        mPageNumbers = pageNumbers;
     }
 }
