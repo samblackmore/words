@@ -151,7 +151,7 @@ public class WordsView extends View {
             firstPage.setChapterSubtitle(new TextBox());
 
             if (preview == null) {
-                TextBox chapterTitle = makeTextBoxCentered(mTextPaint, "- CHAPTER ONE -", (int) (lineHeight * 1.1), viewWidth);
+                TextBox chapterTitle = makeTextBoxCentered(mTextPaint, "- CHAPTER " + TextUtil.numToString(chapter + 1).toUpperCase() + " -", (int) (lineHeight * 1.1), viewWidth);
                 chapterTitle.setBottomPadding(lineHeight * 4);
 
                 if (chapterTitles != null && chapterTitles.size() > chapter) {
