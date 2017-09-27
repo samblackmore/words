@@ -34,4 +34,6 @@
     <string name="text_size_preview_text">The quick brown fox jumped over the lazy dog. THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG!</string>
     <string name="submitted">Submitted!</string>
     <string name="you_won_last_round">Congrats, you won the last round!</string>
+    <string name="the_end">The End</string>
+    <string name="coming_soon_blurbs">Coming soon: blurbs!</string>
 </resources>

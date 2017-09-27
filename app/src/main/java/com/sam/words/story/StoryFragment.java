@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,9 +41,9 @@ import java.util.Locale;
 
 public class StoryFragment extends Fragment implements GoogleSignInFragment, View.OnClickListener{
 
-    private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
+    //private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
     //private final int COUNTDOWN_LENGTH = 24 * 60 * 60 * 1000;
-    //private final int COUNTDOWN_LENGTH = 30 * 1000;
+    private final int COUNTDOWN_LENGTH = 5 * 1000;
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -67,6 +68,9 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     private PostValidation formValidation;
     private ValueEventListener valueEventListener;
     private DatabaseReference listenRef;
+    private LinearLayout pollRoot;
+    private LinearLayout theEndContainer;
+    private TextView theEnd;
 
     public StoryFragment() {
     }
@@ -130,11 +134,18 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             submitContainer = (LinearLayout) rootView.findViewById(R.id.submit_container);
             signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
             signInProgress = (ProgressBar) rootView.findViewById(R.id.sign_in_progress);
+            pollRoot = (LinearLayout) rootView.findViewById(R.id.poll_root);
             pollTitle = (TextView) rootView.findViewById(R.id.poll_title);
             pollRound = (TextView) rootView.findViewById(R.id.poll_round);
             pollInput = (EditText) rootView.findViewById(R.id.poll_input);
             pollSubmit = (Button) rootView.findViewById(R.id.poll_submit);
             timerText = (TextView) rootView.findViewById(R.id.poll_timer);
+            theEndContainer = (LinearLayout) rootView.findViewById(R.id.the_end_container);
+            theEnd = (TextView) rootView.findViewById(R.id.the_end);
+
+            theEnd.setTypeface(typefaceItalic);
+            theEnd.setTextColor(getResources().getColor(R.color.black));
+            theEnd.setTextSize((float) SharedPreferencesHelper.getTextSize(getContext()) / 2);
 
             formValidation = new PostValidation(pollSubmit);
 
@@ -336,7 +347,12 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
             Post latestPost = activity.getLatestPost();
 
-            if (latestPost != null && latestPost.getUserId().equals(user.getUid())) {
+            if (story != null && story.isFinished()) {
+                pollRoot.setVisibility(View.GONE);
+                theEndContainer.setVisibility(View.VISIBLE);
+                activity.showFab(false);
+            }
+            else if (latestPost != null && latestPost.getUserId().equals(user.getUid())) {
                 submitContainer.setVisibility(View.GONE);
                 pollTitle.setVisibility(View.VISIBLE);
                 pollTitle.setText(R.string.you_won_last_round);

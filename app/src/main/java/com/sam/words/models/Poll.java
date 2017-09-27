@@ -8,7 +8,6 @@ import java.util.Map;
 public class Poll {
 
     private int round;
-    private int rounds;
     private long timeCreated;
     private Long timeEnding = null;
     private boolean finished = false;
@@ -18,9 +17,8 @@ public class Poll {
         // For firebase
     }
 
-    public Poll(int round, int rounds) {
+    public Poll(int round) {
         this.round = round;
-        this.rounds = rounds;
         timeCreated = System.currentTimeMillis();
     }
 
@@ -38,10 +36,6 @@ public class Poll {
 
     public int getRound() {
         return round;
-    }
-
-    public int getRounds() {
-        return rounds;
     }
 
     public boolean isFinished() {

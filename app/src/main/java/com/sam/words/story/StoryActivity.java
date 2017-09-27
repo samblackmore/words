@@ -35,6 +35,7 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
     private Post latestPost;
     private int postCount = 0;
     private ViewPager viewPager;
+    private FloatingActionButton fab;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,7 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
         viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(mStoryAdapter);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
 
         String storyId = getIntent().getStringExtra(CardAdapter.EXTRA_STORY);
@@ -123,6 +124,8 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
 
     public void gotStory(Story story) {
         this.story = story;
+        if (story.isFinished())
+            showFab(false);
         mStoryAdapter.notifyDataSetChanged();
     }
 
@@ -143,5 +146,9 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
                 viewPager.setCurrentItem(mStoryAdapter.getCount() - 1);
                 break;
         }
+    }
+
+    public void showFab(boolean show) {
+        fab.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 }

@@ -16,9 +16,11 @@ public class Story {
     private String authorAlias;
     private List<Chapter> chapters = new ArrayList<>();
     private int chapterSize;
+    private int chapterLimit;
     private long dateCreated;
     private long dateUpdated;
     private int likeCount = 0;
+    private boolean finished = false;
     private HashMap<String, Boolean> likes = new HashMap<>();
 
     public Story() {
@@ -31,6 +33,7 @@ public class Story {
         this.authorAlias = authorAlias;
 
         chapterSize = 20;
+        chapterLimit = 3;
 
         dateCreated = System.currentTimeMillis();
         dateUpdated = System.currentTimeMillis();
@@ -92,5 +95,13 @@ public class Story {
 
     public int getChapterSize() {
         return chapterSize;
+    }
+
+    public int getChapterLimit() {
+        return chapterLimit;
+    }
+
+    public boolean isFinished() {
+        return finished;
     }
 }
