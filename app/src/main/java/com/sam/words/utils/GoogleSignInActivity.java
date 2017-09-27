@@ -58,6 +58,7 @@ public class GoogleSignInActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button:
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
                 startActivityForResult(signInIntent, RC_SIGN_IN);
                 break;
