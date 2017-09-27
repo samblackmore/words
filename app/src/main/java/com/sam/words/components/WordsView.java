@@ -181,7 +181,7 @@ public class WordsView extends View {
 
                         if (remainingLines.size() > 0) {
 
-                            int maxlinesLeftOnPage = Math.max(0, (viewHeight - (dropCapHeight + lineSpacing)) / (lineHeight + lineSpacing));
+                            int maxlinesLeftOnPage = Math.max(0, (viewHeight - (firstPage.getChapterTitle().getHeight() + dropCapHeight + lineSpacing)) / (lineHeight + lineSpacing));
                             int linesLeftOnPage = Math.min(remainingLines.size(), maxlinesLeftOnPage);
 
                             firstPage.setLines(remainingLines.subList(0, linesLeftOnPage));
