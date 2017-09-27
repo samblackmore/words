@@ -76,7 +76,7 @@ public class Page {
 
             if (lines != null) {
                 paint.setTextSize(textSize);
-                drawLines(canvas, paint, 0, dropCap.getTextHeight() + lineSpacing, lines);
+                drawLines(canvas, paint, 0, chapterTitle.getHeight() + dropCap.getTextHeight() + lineSpacing, lines);
             }
         } else if (lines != null) {
             paint.setTextSize(textSize);

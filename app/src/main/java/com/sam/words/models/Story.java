@@ -30,7 +30,7 @@ public class Story {
         this.userId = userId;
         this.authorAlias = authorAlias;
 
-        chapterSize = 2;
+        chapterSize = 20;
 
         dateCreated = System.currentTimeMillis();
         dateUpdated = System.currentTimeMillis();
