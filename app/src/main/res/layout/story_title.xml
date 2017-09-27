@@ -2,27 +2,31 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:gravity="center"
     android:background="@color/white"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="48dp">
+    android:gravity="center_horizontal">
 
     <TextView
         android:id="@+id/story_title"
         android:lineSpacingMultiplier="0.8"
         android:text="Title"
         android:textAlignment="center"
+        android:textColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="48dp"
+        android:paddingRight="48dp"
+        android:paddingTop="48dp"
         android:layout_marginBottom="6dp"/>
 
     <TextView
         android:id="@+id/story_by"
         android:text="by"
-        android:layout_width="wrap_content"
+        android:textAlignment="center"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"/>
+        android:layout_marginBottom="6dp"/>
 
     <TextView
         android:id="@+id/story_author"
@@ -31,5 +35,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="48dp"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/chapter_list"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        />
 
 </LinearLayout>

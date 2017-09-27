@@ -22,9 +22,10 @@
         android:id="@+id/page_number"
         android:text="Page 1 of 1"
         android:textAlignment="center"
+        android:textColor="@color/gray"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
+        android:paddingTop="12dp"/>
 
 </RelativeLayout>

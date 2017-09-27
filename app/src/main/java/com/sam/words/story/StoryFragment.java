@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +48,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private StoryActivity activity;
     private RecyclerView mRecyclerView;
+    private RecyclerView chapterList;
     private SignInButton signInButton;
     private ProgressBar signInProgress;
     private LinearLayout submitContainer;
@@ -112,20 +112,28 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             TextView titleView = (TextView) rootView.findViewById(R.id.story_title);
             TextView authorView = (TextView) rootView.findViewById(R.id.story_author);
             TextView byView = (TextView) rootView.findViewById(R.id.story_by);
+
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+            chapterList = (RecyclerView) rootView.findViewById(R.id.chapter_list);
+            chapterList.setHasFixedSize(true);
+            chapterList.setLayoutManager(mLayoutManager);
+
             if (story != null) {
+
+                chapterList.setAdapter(new ChapterAdapter(story.getChapters()));
+
                 titleView.setText(story.getTitle().toUpperCase());
                 authorView.setText(story.getAuthorAlias());
                 titleView.setTypeface(typeface);
                 authorView.setTypeface(typefaceItalic);
                 byView.setTypeface(typefaceItalic);
-                titleView.setTextColor(getResources().getColor(R.color.grayDk));
                 authorView.setTextColor(getResources().getColor(R.color.gray));
                 byView.setTextColor(getResources().getColor(R.color.grayDk));
                 titleView.setTextSize((float) SharedPreferencesHelper.getTextSize(getContext()) / 2);
-                authorView.setTextSize((float) SharedPreferencesHelper.getTextSize(getContext()) / 2);
+                authorView.setTextSize((float) SharedPreferencesHelper.getTextSize(getContext()) / 3);
                 byView.setTextSize((float) SharedPreferencesHelper.getTextSize(getContext()) / 4);
-
             }
+
         } else if (pageNum == pageCnt + 1) {
 
             // Poll page
@@ -185,7 +193,6 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
                 wordsView.setPage(activity.getPages().get(pageNum - 1));
             wordsView.setPageNumber(pageNum);
 
-            pageNumberView.setTypeface(typeface);
             pageNumberView.setText("page " + pageNum + " of " + pageCnt);
         }
 
@@ -354,7 +361,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
                 showBanner(R.string.submitted, R.drawable.ic_check_box);
         }
     }
-    
+
     private boolean storyFinished() {
         return story != null && story.isFinished();
     }
