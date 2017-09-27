@@ -42,7 +42,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
     //private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
     //private final int COUNTDOWN_LENGTH = 24 * 60 * 60 * 1000;
-    private final int COUNTDOWN_LENGTH = 5 * 1000;
+    private final int COUNTDOWN_LENGTH = 30 * 1000;
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -332,12 +332,24 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
         submitContainer.setVisibility(user == null ? View.GONE : View.VISIBLE);
         signInButton.setVisibility(user == null ? View.VISIBLE : View.GONE);
 
-        if (user != null && currentPoll != null) {
-            for (Post post : currentPoll.getPosts()) {
-                if (post.getUserId().equals(user.getUid())) {
-                    submitContainer.setVisibility(View.GONE);
-                    pollTitle.setVisibility(View.VISIBLE);
-                    pollTitle.setText(R.string.submitted);
+        if (user != null) {
+
+            Post latestPost = activity.getLatestPost();
+
+            if (latestPost != null && latestPost.getUserId().equals(user.getUid())) {
+                submitContainer.setVisibility(View.GONE);
+                pollTitle.setVisibility(View.VISIBLE);
+                pollTitle.setText(R.string.you_won_last_round);
+                pollTitle.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_cake, 0, 0);
+            }
+            else if (currentPoll != null) {
+                for (Post post : currentPoll.getPosts()) {
+                    if (post.getUserId().equals(user.getUid())) {
+                        submitContainer.setVisibility(View.GONE);
+                        pollTitle.setVisibility(View.VISIBLE);
+                        pollTitle.setText(R.string.submitted);
+                        pollTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0);
+                    }
                 }
             }
         }

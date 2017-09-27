@@ -32,6 +32,7 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
     private StoryAdapter mStoryAdapter;
     private List<Page> pages = new ArrayList<>();
     private Story story;
+    private Post latestPost;
     private int postCount = 0;
     private ViewPager viewPager;
 
@@ -88,6 +89,9 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
         ProgressBar loading = (ProgressBar) findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
 
+        List<Post> latestChapter = postsByChapter.get(postsByChapter.size() - 1);
+        latestPost = latestChapter.get(latestChapter.size() - 1);
+
         int newPostCount = 0;
         for (List<Post> chapter : postsByChapter)
             newPostCount += chapter.size();
@@ -124,6 +128,10 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
 
     public Story getStory() {
         return story;
+    }
+
+    public Post getLatestPost() {
+        return latestPost;
     }
 
     @Override
