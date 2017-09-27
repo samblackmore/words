@@ -17,6 +17,7 @@ public class Page {
     private int lineHeight;
     private int lineSpacing;
     private TextBox chapterTitle;
+    private TextBox chapterSubtitle;
     private TextBox dropCap;
     private List<String> dropCapLines;
     private List<String> lines;
@@ -35,6 +36,14 @@ public class Page {
 
     public TextBox getChapterTitle() {
         return chapterTitle;
+    }
+
+    public TextBox getChapterSubtitle() {
+        return chapterSubtitle;
+    }
+
+    public void setChapterSubtitle(TextBox chapterSubtitle) {
+        this.chapterSubtitle = chapterSubtitle;
     }
 
     public TextBox getDropCap() {
@@ -69,18 +78,23 @@ public class Page {
             canvas.drawText(chapterTitle.toString(), chapterTitle.getTextLeft(), chapterTitle.getTextHeight(), paint);
         }
 
+        if (chapterSubtitle != null) {
+            paint.setTextSize(chapterSubtitle.getTextSize());
+            canvas.drawText(chapterSubtitle.toString(), chapterSubtitle.getTextLeft(), chapterTitle.getHeight() + chapterSubtitle.getTextHeight(), paint);
+        }
+
         if (dropCap != null) {
             paint.setTextSize(dropCap.getTextSize());
-            canvas.drawText(dropCap.toString(), 0, dropCap.getTextHeight() + chapterTitle.getHeight(), paint);
+            canvas.drawText(dropCap.toString(), 0, dropCap.getTextHeight() + chapterTitle.getHeight() + chapterSubtitle.getHeight(), paint);
 
             if (dropCapLines != null) {
                 paint.setTextSize(textSize);
-                drawLines(canvas, paint, dropCap.getWidth() + lineSpacing, chapterTitle.getHeight(), dropCapLines);
+                drawLines(canvas, paint, dropCap.getWidth() + lineSpacing, chapterTitle.getHeight() + chapterSubtitle.getHeight(), dropCapLines);
             }
 
             if (lines != null) {
                 paint.setTextSize(textSize);
-                drawLines(canvas, paint, 0, chapterTitle.getHeight() + dropCap.getTextHeight() + lineSpacing, lines);
+                drawLines(canvas, paint, 0, chapterTitle.getHeight() + chapterSubtitle.getHeight() + dropCap.getTextHeight() + lineSpacing, lines);
             }
         } else if (lines != null) {
             paint.setTextSize(textSize);

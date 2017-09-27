@@ -50,7 +50,7 @@ class TextBox {
         return height;
     }
 
-    public void addBottomPadding(int amount) {
+    public void setBottomPadding(int amount) {
         height = textHeight + amount;
     }
 }

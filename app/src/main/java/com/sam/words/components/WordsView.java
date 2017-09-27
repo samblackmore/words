@@ -13,6 +13,7 @@ import android.view.View;
 import com.sam.words.models.Post;
 import com.sam.words.story.StoryActivity;
 import com.sam.words.utils.SharedPreferencesHelper;
+import com.sam.words.utils.TextUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class WordsView extends View {
     private int textSize;
     private float lineSeperation = 1.9f;
     private int linesPerDropCap = 3;
+    private List<String> chapterTitles;
 
     public WordsView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -145,11 +147,20 @@ public class WordsView extends View {
 
             // Step 1 - Chapter title
 
-            if (preview != null)
-                firstPage.setChapterTitle(new TextBox());
-            else {
-                TextBox chapterTitle = makeTextBoxCentered(mTextPaint, "CHAPTER " + (chapter + 1), lineHeight * 2, viewWidth);
-                chapterTitle.addBottomPadding(lineHeight * 4);
+            firstPage.setChapterTitle(new TextBox());
+            firstPage.setChapterSubtitle(new TextBox());
+
+            if (preview == null) {
+                TextBox chapterTitle = makeTextBoxCentered(mTextPaint, "- CHAPTER ONE -", (int) (lineHeight * 1.1), viewWidth);
+                chapterTitle.setBottomPadding(lineHeight * 4);
+
+                if (chapterTitles != null && chapterTitles.size() > chapter) {
+                    TextBox chapterSubtitle = makeTextBoxCentered(mTextPaint, TextUtil.capitalize(chapterTitles.get(chapter)), (int) (lineHeight * 1.8), viewWidth);
+                    chapterSubtitle.setBottomPadding(lineHeight * 4);
+                    chapterTitle.setBottomPadding(lineHeight * 5);
+                    firstPage.setChapterSubtitle(chapterSubtitle);
+                }
+
                 firstPage.setChapterTitle(chapterTitle);
             }
 
@@ -181,7 +192,7 @@ public class WordsView extends View {
 
                         if (remainingLines.size() > 0) {
 
-                            int maxlinesLeftOnPage = Math.max(0, (viewHeight - (firstPage.getChapterTitle().getHeight() + dropCapHeight + lineSpacing)) / (lineHeight + lineSpacing));
+                            int maxlinesLeftOnPage = Math.max(0, (viewHeight - (firstPage.getChapterTitle().getHeight() + firstPage.getChapterSubtitle().getHeight() + dropCapHeight + lineSpacing)) / (lineHeight + lineSpacing));
                             int linesLeftOnPage = Math.min(remainingLines.size(), maxlinesLeftOnPage);
 
                             firstPage.setLines(remainingLines.subList(0, linesLeftOnPage));
@@ -351,5 +362,9 @@ public class WordsView extends View {
         preview = new ArrayList<>();
         preview.add(dummyPosts);
         invalidate();
+    }
+
+    public void setChapterTitles(List<String> chapterTitles) {
+        this.chapterTitles = chapterTitles;
     }
 }

@@ -15,6 +15,7 @@ import com.sam.words.R;
 import com.sam.words.components.Page;
 import com.sam.words.components.WordsView;
 import com.sam.words.main.CardAdapter;
+import com.sam.words.models.Chapter;
 import com.sam.words.models.Post;
 import com.sam.words.models.Story;
 import com.sam.words.utils.GoogleSignInActivity;
@@ -92,6 +93,14 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
             newPostCount += chapter.size();
 
         if (newPostCount != postCount) {
+
+            if (story != null) {
+                List<String> chapterTitles = new ArrayList<>();
+                for (Chapter chapter : story.getChapters())
+                    if (chapter.getTitle() != null)
+                        chapterTitles.add(chapter.getTitle());
+                rootWordsView.setChapterTitles(chapterTitles);
+            }
 
             pages = rootWordsView.calculatePages(postsByChapter);
 
