@@ -71,6 +71,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     private LinearLayout pollRoot;
     private LinearLayout theEndContainer;
     private TextView theEnd;
+    private LinearLayout pollBanner;
 
     public StoryFragment() {
     }
@@ -135,6 +136,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
             signInProgress = (ProgressBar) rootView.findViewById(R.id.sign_in_progress);
             pollRoot = (LinearLayout) rootView.findViewById(R.id.poll_root);
+            pollBanner = (LinearLayout) rootView.findViewById(R.id.poll_banner);
             pollTitle = (TextView) rootView.findViewById(R.id.poll_title);
             pollRound = (TextView) rootView.findViewById(R.id.poll_round);
             pollInput = (EditText) rootView.findViewById(R.id.poll_input);
@@ -344,31 +346,46 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
         signInButton.setVisibility(user == null ? View.VISIBLE : View.GONE);
 
         if (user != null) {
+            if (storyFinished())
+                showStoryEnd();
+            else if (wonLastRound(user))
+                showBanner(R.string.you_won_last_round, R.drawable.ic_cake);
+            else if (alreadyPosted(user))
+                showBanner(R.string.submitted, R.drawable.ic_check_box);
+        }
+    }
+    
+    private boolean storyFinished() {
+        return story != null && story.isFinished();
+    }
 
-            Post latestPost = activity.getLatestPost();
-
-            if (story != null && story.isFinished()) {
-                pollRoot.setVisibility(View.GONE);
-                theEndContainer.setVisibility(View.VISIBLE);
-                activity.showFab(false);
-            }
-            else if (latestPost != null && latestPost.getUserId().equals(user.getUid())) {
-                submitContainer.setVisibility(View.GONE);
-                pollTitle.setVisibility(View.VISIBLE);
-                pollTitle.setText(R.string.you_won_last_round);
-                pollTitle.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_cake, 0, 0);
-            }
-            else if (currentPoll != null) {
-                for (Post post : currentPoll.getPosts()) {
-                    if (post.getUserId().equals(user.getUid())) {
-                        submitContainer.setVisibility(View.GONE);
-                        pollTitle.setVisibility(View.VISIBLE);
-                        pollTitle.setText(R.string.submitted);
-                        pollTitle.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_check_box, 0, 0);
-                    }
-                }
+    private boolean alreadyPosted(FirebaseUser user) {
+        if (currentPoll != null) {
+            for (Post post : currentPoll.getPosts()) {
+                if (post.getUserId().equals(user.getUid()))
+                    return true;
             }
         }
+        return false;
+    }
+
+    private boolean wonLastRound(FirebaseUser user) {
+        Post latestPost = activity.getLatestPost();
+        return latestPost != null && latestPost.getUserId().equals(user.getUid());
+    }
+
+    private void showStoryEnd() {
+        pollRoot.setVisibility(View.GONE);
+        theEndContainer.setVisibility(View.VISIBLE);
+        activity.showFab(false);
+    }
+
+    private void showBanner(int stringId, int drawableId) {
+        submitContainer.setVisibility(View.GONE);
+        pollTitle.setVisibility(View.VISIBLE);
+        pollTitle.setText(stringId);
+        pollTitle.setCompoundDrawablesWithIntrinsicBounds(0, drawableId, 0, 0);
+        pollBanner.setBackgroundColor(getResources().getColor(R.color.gray));
     }
 
     @Override
