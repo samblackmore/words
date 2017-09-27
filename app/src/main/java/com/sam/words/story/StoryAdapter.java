@@ -41,4 +41,13 @@ class StoryAdapter extends FragmentStatePagerAdapter {
     public void update(List<Page> pages) {
         this.pages = pages;
     }
+
+    @Override
+    public void finishUpdate(ViewGroup container) {
+        try{
+            super.finishUpdate(container);
+        } catch (NullPointerException nullPointerException){
+            System.out.println("Catch the NullPointerException");
+        }
+    }
 }
