@@ -148,6 +148,10 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
         }
     }
 
+    public void goToPage(int num) {
+        viewPager.setCurrentItem(num);
+    }
+
     public void showFab(boolean show) {
         fab.setVisibility(show ? View.VISIBLE : View.GONE);
     }

@@ -125,7 +125,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
             if (story != null) {
 
-                ChapterAdapter chapterAdapter = new ChapterAdapter(story.getChapters());
+                ChapterAdapter chapterAdapter = new ChapterAdapter(activity, story.getChapters());
 
                 List<Page> pages = activity.getPages();
                 List<Integer> pageNumbers = new ArrayList<>();

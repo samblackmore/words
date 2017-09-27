@@ -10,11 +10,13 @@ import android.widget.TextView;
 
 class ChapterHolder extends RecyclerView.ViewHolder {
 
+    View itemView;
     TextView chapterTitleView;
     TextView pageNumView;
 
     ChapterHolder(View itemView, TextView chapterTitleView, TextView pageNumView) {
         super(itemView);
+        this.itemView = itemView;
         this.chapterTitleView = chapterTitleView;
         this.pageNumView = pageNumView;
     }
