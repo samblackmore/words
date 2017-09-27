@@ -1,5 +1,6 @@
 package com.sam.words.story;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -9,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -190,9 +192,6 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             int maxRounds = story.getChapterSize();
             int chapter = story.getChapters().size();
 
-            if (currentPoll != null && currentPoll.getRound() != poll.getRound())
-                Toast.makeText(activity, "New voting round: " + poll.getRound(), Toast.LENGTH_SHORT).show();
-
             if (poll.getRound() == maxRounds) {
                 pollRound.setText("Chapter " + chapter + " title");
                 pollInput.setHint(R.string.your_chapter_title);
@@ -213,8 +212,6 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     }
 
     public void gotPosts(List<Post> posts) {
-        Toast.makeText(activity, "Refreshed posts", Toast.LENGTH_SHORT).show();
-
         RecyclerView.Adapter mAdapter = new VoteAdapter(posts);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -287,6 +284,9 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
         switch (v.getId()) {
 
             case R.id.poll_submit:
+
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
                 FirebaseUser user = auth.getCurrentUser();
 

@@ -95,15 +95,12 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
 
             pages = rootWordsView.calculatePages(postsByChapter);
 
-            if (mStoryAdapter != null)
+            if (mStoryAdapter != null) {
                 mStoryAdapter.update(pages);
-            if (mStoryAdapter != null)
                 mStoryAdapter.notifyDataSetChanged();
-
+            }
 
             postCount = newPostCount;
-
-            Toast.makeText(this, "New post count " + newPostCount, Toast.LENGTH_SHORT).show();
         }
     }
 
