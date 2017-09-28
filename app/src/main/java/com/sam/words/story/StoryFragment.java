@@ -179,7 +179,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             theEnd.setTextColor(getResources().getColor(R.color.black));
             theEnd.setTextSize((float) SharedPreferencesHelper.getTextSize(getContext()) / 2);
 
-            formValidation = new PostValidation(pollSubmit);
+            formValidation = new PostValidation(pollInput, pollSubmit);
 
             signInButton.setOnClickListener(activity);
             pollSubmit.setOnClickListener(this);

@@ -3,6 +3,10 @@ package com.sam.words.story;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
+import android.widget.EditText;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Form validation for the
@@ -11,10 +15,12 @@ import android.widget.Button;
 class PostValidation implements TextWatcher {
 
     private boolean isTitle;
+    private EditText editText;
     private Button submitButton;
 
-    PostValidation(Button submitButton) {
+    PostValidation(EditText editText, Button submitButton) {
         this.submitButton = submitButton;
+        this.editText = editText;
         isTitle = false;
     }
 
@@ -33,8 +39,8 @@ class PostValidation implements TextWatcher {
             return false;
 
         String cleaned = s
-                .replaceAll("\\.", "")
-                .replaceAll(",", "")
+                .replaceAll("[\n↩]", " ")
+                .replaceAll("[^a-zA-Z0-9 ]", "")
                 .replaceAll(" +", " ");
 
         if (cleaned.length() > 1 && cleaned.charAt(0) == ' ')
@@ -47,6 +53,31 @@ class PostValidation implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable s) {
+
+        String newText = s.toString();
+
+        String re = "↩(?!\n)";
+
+        Pattern p = Pattern.compile(re);
+        Matcher m = p.matcher(newText);
+
+        if (m.find()) {
+            newText = newText.replaceAll(re, " ");
+            editText.setText(newText);
+            editText.setSelection(newText.length());
+        }
+
+        re = "(?<!↩)\n";
+
+        p = Pattern.compile(re);
+        m = p.matcher(newText);
+
+        if (m.find()) {
+            newText = newText.replaceAll(re, "↩\n");
+            editText.setText(newText);
+            editText.setSelection(newText.length());
+        }
+        
         submitButton.setEnabled(isValid(s.toString()));
     }
 
