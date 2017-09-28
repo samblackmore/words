@@ -42,6 +42,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
     public static final String EXTRA_STORY = "STORY";
     private List<Story> stories = new ArrayList<>();
     private List<Post> posts = new ArrayList<>();
+    private int pink;
+    private int pinkLt;
+    private Typeface typefaceBold;
 
     void refresh() {
         notifyDataSetChanged();
@@ -60,7 +63,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
     @Override
     public CardHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
 
-        Typeface typefaceBold = Typeface.createFromAsset(
+        typefaceBold = Typeface.createFromAsset(
                 parent.getContext().getAssets(),
                 "fonts/CrimsonText/CrimsonText-Bold.ttf"
         );
@@ -92,6 +95,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         authorView.setTextColor(parent.getResources().getColor(R.color.black));
         titleView.setTextSize((float) SharedPreferencesHelper.getTextSize(parent.getContext()) / 2);
 
+        pink = parent.getResources().getColor(R.color.pink);
+        pinkLt = parent.getResources().getColor(R.color.pinkLt);
+
         return new CardHolder(v, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, wordsView);
     }
 
@@ -105,9 +111,16 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         holder.mTitleView.setText(TextUtil.capitalize(story.getTitle()));
         holder.mAuthorView.setText(story.getAuthorAlias());
 
+        if (user != null && story.getUserId().equals(user.getUid())) {
+            holder.mAuthorView.setTextColor(pink);
+            holder.mAuthorView.setTypeface(typefaceBold);
+            holder.mAuthorView.setBackgroundColor(pinkLt);
+        }
+
         final String storyId = story.getId();
         database.getReference("posts").child(storyId).child("0").addListenerForSingleValueEvent(new CardPostListener(holder));
-        database.getReference("users").child(user.getUid()).child("activity").child(storyId).addListenerForSingleValueEvent(new CardActivityListener(holder, story));
+        if (user != null)
+            database.getReference("users").child(user.getUid()).child("activity").child(storyId).addListenerForSingleValueEvent(new CardActivityListener(holder, story));
 
         View.OnClickListener openStory = new View.OnClickListener() {
             @Override
