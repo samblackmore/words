@@ -83,7 +83,7 @@
                 <EditText
                     android:id="@+id/poll_input"
                     android:hint="@string/your_3_words"
-                    android:inputType="textAutoCorrect|textMultiLine"
+                    android:inputType="textAutoCorrect"
                     android:layout_gravity="center_horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>

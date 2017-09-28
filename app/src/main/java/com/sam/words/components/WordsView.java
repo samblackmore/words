@@ -187,7 +187,7 @@ public class WordsView extends View {
 
                     if (lines.size() > linesPerDropCap) {
 
-                        String remainingText = TextUtils.join(" ", lines.subList(linesPerDropCap, lines.size()));
+                        String remainingText = TextUtils.join("\n", lines.subList(linesPerDropCap, lines.size()));
                         List<String> remainingLines = lineWrap(mTextPaint, viewWidth, remainingText);
 
                         if (remainingLines.size() > 0) {
@@ -274,8 +274,8 @@ public class WordsView extends View {
 
         for (String line : lines) {
 
-            String[] words = line.replaceAll(" +", " ").replaceAll(" \\.", ".").replaceAll(" ,", ",").replaceAll("\t", "    ").split(" ");
-            String lineWrap = words[0];
+            String[] words = line.replaceAll(" \\.", ".").replaceAll(" ,", ",").split(" ");
+            String lineWrap = words[0].replaceAll("\t", "      ");
 
             // For each next word, see if we can add it to the line
             for (int i = 1; i < words.length; i++) {

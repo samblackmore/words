@@ -7,9 +7,13 @@ import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,9 +46,9 @@ import java.util.Locale;
 
 public class StoryFragment extends Fragment implements GoogleSignInFragment, View.OnClickListener{
 
-    private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
+    //private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
     //private final int COUNTDOWN_LENGTH = 24 * 60 * 60 * 1000;
-    //private final int COUNTDOWN_LENGTH = 5 * 1000;
+    private final int COUNTDOWN_LENGTH = 5 * 1000;
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -174,6 +178,18 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             timerText = (TextView) rootView.findViewById(R.id.poll_timer);
             theEndContainer = (LinearLayout) rootView.findViewById(R.id.the_end_container);
             theEnd = (TextView) rootView.findViewById(R.id.the_end);
+
+            pollInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                        pollInput.setInputType(pollInput.getInputType() | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+                        pollInput.append("\n");
+                        return true;
+                    }
+                    return false;
+                }
+            });
 
             theEnd.setTypeface(typefaceItalic);
             theEnd.setTextColor(getResources().getColor(R.color.black));
@@ -343,7 +359,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
                 }
 
                 if (currentPoll != null) {
-                    String message = pollInput.getText().toString();
+                    String message = pollInput.getText().toString().replaceAll("↩\n", "\n\t");
                     Post newPost = new Post(story.getId(), user.getUid(), user.getDisplayName(), message);
 
                     DatabaseReference pollRef = database.getReference("poll")
@@ -379,7 +395,8 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
         if (user != null) {
             if (wonLastRound(user))
-                showBanner(R.string.you_won_last_round, R.drawable.ic_cake);
+                Log.d("d","d");
+                //showBanner(R.string.you_won_last_round, R.drawable.ic_cake);
             else if (alreadyPosted(user))
                 showBanner(R.string.submitted, R.drawable.ic_check_box);
         }
