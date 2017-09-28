@@ -10,4 +10,5 @@
     <color name="grayLtr">#EEE</color>
     <color name="grayDk">#555</color>
     <color name="pink">#FF4081</color>
+    <color name="pinkLt">#24ff4081</color>
 </resources>

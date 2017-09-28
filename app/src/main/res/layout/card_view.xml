@@ -99,8 +99,10 @@
             <TextView
                 android:id="@+id/story_author"
                 android:text="author"
-                android:textAlignment="center"
-                android:layout_width="match_parent"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/story_title"
                 />
