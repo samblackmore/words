@@ -23,21 +23,33 @@ class CardActivityListener implements ValueEventListener {
 
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
-        long postCount = (long) dataSnapshot.child("postCount").getValue();
-        long chapterCount = (long) dataSnapshot.child("chapterCount").getValue();
-        long contributorsCount = (long) dataSnapshot.child("contributorsCount").getValue();
 
-        if (postCount != story.getPostCount()) {
-            holder.mNewPostsView.setText(String.valueOf(story.getPostCount() - postCount));
-            holder.mNewPostsView.setVisibility(View.VISIBLE);
+        Object oPostCount = dataSnapshot.child("postCount").getValue();
+        Object oChapterCount = dataSnapshot.child("chapterCount").getValue();
+        Object oContributorsCount = dataSnapshot.child("contributorsCount").getValue();
+
+        if (oPostCount != null) {
+            long postCount = (long) oPostCount;
+            if (postCount != story.getPostCount()) {
+                holder.mNewPostsView.setText(String.valueOf(story.getPostCount() - postCount));
+                holder.mNewPostsView.setVisibility(View.VISIBLE);
+            }
         }
-        if (chapterCount != story.getChapterCount()) {
-            holder.mNewChaptersView.setText(String.valueOf(story.getChapterCount() - chapterCount));
-            holder.mNewChaptersView.setVisibility(View.VISIBLE);
+
+        if (oChapterCount != null) {
+            long chapterCount = (long) oChapterCount;
+            if (chapterCount != story.getChapterCount()) {
+                holder.mNewChaptersView.setText(String.valueOf(story.getChapterCount() - chapterCount));
+                holder.mNewChaptersView.setVisibility(View.VISIBLE);
+            }
         }
-        if (contributorsCount != story.getContributorsCount()) {
-            holder.mNewContributorsView.setText(String.valueOf(story.getContributorsCount() - contributorsCount));
-            holder.mNewContributorsView.setVisibility(View.VISIBLE);
+
+        if (oContributorsCount != null) {
+            long contributorsCount = (long) oContributorsCount;
+            if (contributorsCount != story.getContributorsCount()) {
+                holder.mNewContributorsView.setText(String.valueOf(story.getContributorsCount() - contributorsCount));
+                holder.mNewContributorsView.setVisibility(View.VISIBLE);
+            }
         }
     }
 

@@ -35,6 +35,7 @@ import com.sam.words.utils.GoogleSignInActivity;
 public class MainActivity extends GoogleSignInActivity {
 
     private FirebaseAuth mAuth;
+    private TabAdapter mTabAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,10 +93,18 @@ public class MainActivity extends GoogleSignInActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mTabAdapter = new TabAdapter(getSupportFragmentManager());
+
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
-        viewPager.setAdapter(new TabAdapter(getSupportFragmentManager()));
+        viewPager.setAdapter(mTabAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mTabAdapter.notifyDataSetChanged();
     }
 }
