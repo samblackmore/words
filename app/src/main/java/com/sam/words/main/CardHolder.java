@@ -13,13 +13,16 @@ import com.sam.words.components.WordsView;
 class CardHolder extends RecyclerView.ViewHolder {
 
     CardView mCardView;
+    TextView mNewPostsView;
+    TextView mNewChaptersView;
+    TextView mNewContributorsView;
     TextView mLikesView;
     TextView mDateView;
     TextView mTitleView;
     TextView mAuthorView;
     WordsView mWordsView;
 
-    CardHolder(CardView card, TextView likes, TextView date, TextView title, TextView author, WordsView words) {
+    CardHolder(CardView card, TextView newPosts, TextView newChapters, TextView newContributors, TextView likes, TextView date, TextView title, TextView author, WordsView words) {
         super(card);
         mCardView = card;
         mLikesView = likes;
@@ -27,5 +30,8 @@ class CardHolder extends RecyclerView.ViewHolder {
         mTitleView = title;
         mAuthorView = author;
         mWordsView = words;
+        mNewPostsView = newPosts;
+        mNewChaptersView = newChapters;
+        mNewContributorsView = newContributors;
     }
 }

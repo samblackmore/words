@@ -76,6 +76,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         v.setAlpha(0);
         v.animate().alpha(1.0f);
 
+        TextView newPostsView = (TextView) v.findViewById(R.id.new_posts_count);
+        TextView newChaptersView = (TextView) v.findViewById(R.id.new_chapters_count);
+        TextView newContributorsView = (TextView) v.findViewById(R.id.new_contributors_count);
         TextView likesView = (TextView) v.findViewById(R.id.story_likes);
         TextView dateView = (TextView) v.findViewById(R.id.story_date);
         TextView titleView = (TextView) v.findViewById(R.id.story_title);
@@ -89,7 +92,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         authorView.setTextColor(parent.getResources().getColor(R.color.black));
         titleView.setTextSize((float) SharedPreferencesHelper.getTextSize(parent.getContext()) / 2);
 
-        return new CardHolder(v, likesView, dateView, titleView, authorView, wordsView);
+        return new CardHolder(v, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, wordsView);
     }
 
     @Override
@@ -104,6 +107,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
         final String storyId = story.getId();
         database.getReference("posts").child(storyId).child("0").addListenerForSingleValueEvent(new CardPostListener(holder));
+        database.getReference("users").child(user.getUid()).child("activity").child(storyId).addListenerForSingleValueEvent(new CardActivityListener(holder, story));
 
         View.OnClickListener openStory = new View.OnClickListener() {
             @Override
