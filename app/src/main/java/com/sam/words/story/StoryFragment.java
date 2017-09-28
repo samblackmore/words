@@ -25,8 +25,12 @@ import android.widget.Toast;
 import com.google.android.gms.common.SignInButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.sam.words.R;
 import com.sam.words.components.Page;
@@ -37,8 +41,10 @@ import com.sam.words.models.Poll;
 import com.sam.words.utils.SharedPreferencesHelper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * A page in a story. Contains a single WordsView representing that page.
@@ -48,7 +54,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
     //private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
     //private final int COUNTDOWN_LENGTH = 24 * 60 * 60 * 1000;
-    private final int COUNTDOWN_LENGTH = 5 * 1000;
+    private final int COUNTDOWN_LENGTH = 30 * 1000;
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -346,7 +352,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
-                FirebaseUser user = auth.getCurrentUser();
+                final FirebaseUser user = auth.getCurrentUser();
 
                 if (user == null) {
                     Toast.makeText(getActivity(), "Not signed in!", Toast.LENGTH_SHORT).show();
@@ -362,17 +368,38 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
                     String message = pollInput.getText().toString().replaceAll("↩\n", "\n\t");
                     Post newPost = new Post(story.getId(), user.getUid(), user.getDisplayName(), message);
 
-                    DatabaseReference pollRef = database.getReference("poll")
-                            .child(story.getId())
-                            .child(String.valueOf(chapterId))
-                            .child(String.valueOf(currentPoll.getRound()));
-
+                    String pollPath = "/poll/" + story.getId() + "/" + chapterId + "/" + currentPoll.getRound();
+                    DatabaseReference pollRef = database.getReference(pollPath);
                     DatabaseReference newPostRef = pollRef.child("posts").push();
                     newPost.setPath(newPostRef.toString());
-                    newPostRef.setValue(newPost);
+                    String postId = newPostRef.getKey();
 
-                    pollRef.child("timeEnding")
-                            .setValue(System.currentTimeMillis() + COUNTDOWN_LENGTH);
+                    Map<String, Object> childUpdates = new HashMap<>();
+                    childUpdates.put(pollPath + "/timeEnding", System.currentTimeMillis() + COUNTDOWN_LENGTH);
+                    childUpdates.put(pollPath + "/posts/" + postId, newPost);
+
+                    database.getReference().updateChildren(childUpdates);
+                    database.getReference("stories").child(story.getId()).runTransaction(new Transaction.Handler() {
+                        @Override
+                        public Transaction.Result doTransaction(MutableData mutableData) {
+                            Story s = mutableData.getValue(Story.class);
+
+                            if (s == null || user == null)
+                                return Transaction.success(mutableData);
+
+                            if (s.getContributors() == null || !s.getContributors().containsKey(user.getUid()))
+                                s.addContributor(user.getUid());
+
+                            mutableData.setValue(s);
+                            return Transaction.success(mutableData);
+                        }
+
+                        @Override
+                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                            if (databaseError != null)
+                                Log.d("Debug", databaseError.toString());
+                        }
+                    });
 
                     submitContainer.setVisibility(View.GONE);
                     pollTitle.setVisibility(View.VISIBLE);
@@ -395,8 +422,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
         if (user != null) {
             if (wonLastRound(user))
-                Log.d("d","d");
-                //showBanner(R.string.you_won_last_round, R.drawable.ic_cake);
+                showBanner(R.string.you_won_last_round, R.drawable.ic_cake);
             else if (alreadyPosted(user))
                 showBanner(R.string.submitted, R.drawable.ic_check_box);
         }

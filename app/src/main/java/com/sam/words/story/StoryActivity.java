@@ -10,7 +10,12 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.sam.words.R;
 import com.sam.words.components.Page;
 import com.sam.words.components.WordsView;
@@ -21,21 +26,24 @@ import com.sam.words.models.Story;
 import com.sam.words.utils.GoogleSignInActivity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class StoryActivity extends GoogleSignInActivity implements View.OnClickListener{
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
 
     private WordsView rootWordsView;
     private StoryAdapter mStoryAdapter;
     private List<Page> pages = new ArrayList<>();
     private Story story;
     private Post latestPost;
-    private int postCount = 0;
     private ViewPager viewPager;
     private FloatingActionButton fab;
+    private String storyId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +63,7 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
 
-        String storyId = getIntent().getStringExtra(CardAdapter.EXTRA_STORY);
+        storyId = getIntent().getStringExtra(CardAdapter.EXTRA_STORY);
 
         database.getReference("stories").child(storyId)
                 .addValueEventListener(new StoryListener(this));
@@ -93,28 +101,19 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
         List<Post> latestChapter = postsByChapter.get(postsByChapter.size() - 1);
         latestPost = latestChapter.get(latestChapter.size() - 1);
 
-        int newPostCount = 0;
-        for (List<Post> chapter : postsByChapter)
-            newPostCount += chapter.size();
+        if (story != null) {
+            List<String> chapterTitles = new ArrayList<>();
+            for (Chapter chapter : story.getChapters())
+                if (chapter.getTitle() != null)
+                    chapterTitles.add(chapter.getTitle());
+            rootWordsView.setChapterTitles(chapterTitles);
+        }
 
-        if (newPostCount != postCount) {
+        pages = rootWordsView.calculatePages(postsByChapter);
 
-            if (story != null) {
-                List<String> chapterTitles = new ArrayList<>();
-                for (Chapter chapter : story.getChapters())
-                    if (chapter.getTitle() != null)
-                        chapterTitles.add(chapter.getTitle());
-                rootWordsView.setChapterTitles(chapterTitles);
-            }
-
-            pages = rootWordsView.calculatePages(postsByChapter);
-
-            if (mStoryAdapter != null) {
-                mStoryAdapter.update(pages);
-                mStoryAdapter.notifyDataSetChanged();
-            }
-
-            postCount = newPostCount;
+        if (mStoryAdapter != null) {
+            mStoryAdapter.update(pages);
+            mStoryAdapter.notifyDataSetChanged();
         }
     }
 
@@ -127,6 +126,33 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
         if (story.isFinished())
             showFab(false);
         mStoryAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onStop() {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null) {
+            final String userId = user.getUid();
+            database.getReference("stories").child(storyId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    Story story = snapshot.getValue(Story.class);
+                    if (story != null) {
+                        Map<String, Object> childUpdates = new HashMap<>();
+                        childUpdates.put("/users/" + userId + "/activity/" + storyId + "/postCount", story.getPostCount());
+                        childUpdates.put("/users/" + userId + "/activity/" + storyId + "/chapterCount", story.getChapterCount());
+                        childUpdates.put("/users/" + userId + "/activity/" + storyId + "/contributorsCount", story.getContributorsCount());
+                        database.getReference().updateChildren(childUpdates);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+        super.onStop();
     }
 
     public Story getStory() {

@@ -140,11 +140,15 @@ public class NewStoryFragment extends DialogFragment {
         Chapter firstChapter = new Chapter(chapter, "Chapter One");
         newStory.addChapter(firstChapter);
         newStory.addLike(userId);
+        newStory.addContributor(userId);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/stories/" + newStoryId, newStory);
         childUpdates.put("/posts/" + newStoryId + "/" + chapterId + "/" + newPostId, newPost);
         childUpdates.put("/poll/" + newStoryId + "/" + chapterId + "/" + newPollId, newPoll);
+        childUpdates.put("/users/" + userId + "/activity/" + newStoryId + "/postCount", 1);
+        childUpdates.put("/users/" + userId + "/activity/" + newStoryId + "/chapterCount", 1);
+        childUpdates.put("/users/" + userId + "/activity/" + newStoryId + "/contributorsCount", 1);
         childUpdates.put("/users/" + userId + "/stories/" + newStoryId, true);
         childUpdates.put("/users/" + userId + "/posts/" + newPostId, true);
 

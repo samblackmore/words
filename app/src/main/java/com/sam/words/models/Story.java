@@ -15,13 +15,17 @@ public class Story {
     private String userId;
     private String authorAlias;
     private List<Chapter> chapters = new ArrayList<>();
-    private int chapterSize;
-    private int chapterLimit;
+    private int chapterSize = 20;
+    private int chapterCount = 1;
+    private int chapterLimit = 3;
     private long dateCreated;
     private long dateUpdated;
     private int likeCount = 0;
+    private int postCount = 1;
+    private int contributorsCount = 0;
     private boolean finished = false;
     private HashMap<String, Boolean> likes = new HashMap<>();
+    private HashMap<String, Boolean> contributors = new HashMap<>();
 
     public Story() {
         // Default constructor required for calls to DataSnapshot.getValue(Story.class)
@@ -31,9 +35,6 @@ public class Story {
         this.title = title;
         this.userId = userId;
         this.authorAlias = authorAlias;
-
-        chapterSize = 20;
-        chapterLimit = 3;
 
         dateCreated = System.currentTimeMillis();
         dateUpdated = System.currentTimeMillis();
@@ -103,5 +104,26 @@ public class Story {
 
     public boolean isFinished() {
         return finished;
+    }
+
+    public int getChapterCount() {
+        return chapterCount;
+    }
+
+    public int getPostCount() {
+        return postCount;
+    }
+
+    public int getContributorsCount() {
+        return contributorsCount;
+    }
+
+    public HashMap<String, Boolean> getContributors() {
+        return contributors;
+    }
+
+    public void addContributor(String userId) {
+        contributors.put(userId, true);
+        contributorsCount = contributors.size();
     }
 }

@@ -44,7 +44,17 @@ exports.finishUpdated = functions.database.ref('/poll/{storyId}/{chapterId}/{pol
                     const newRound = round + 1
 
                     // Push winning post
-                    postsRef.child(storyId).child(chapterId).push().set(winningPost)
+                    const newPostRef = postsRef.child(storyId).child(chapterId).push();
+                    const newPostId = newPostRef.key
+                    newPostRef.set(winningPost)
+
+                    // Update winning user's posts
+                    postsRef.root.child('users').child(winningPost.userId).child('posts').child(newPostId).set(true)
+
+                    // Increment postCount on story
+                    storyRef.child('postCount').transaction(function (current_value) {
+                      return (current_value || 0) + 1;
+                    });
 
                     // Start new round
                     pollRef.parent.child(newRound).set({
@@ -67,6 +77,11 @@ exports.finishUpdated = functions.database.ref('/poll/{storyId}/{chapterId}/{pol
                     } else {
                         // Add the next chapter
                         storyRef.child('chapters').child(newChapter).set({chapter: newChapter})
+
+                        // Increment chapterCount on story
+                        storyRef.child('chapterCount').transaction(function (current_value) {
+                          return (current_value || 0) + 1;
+                        });
 
                         // Start first round of new chapter
                         pollRef.root.child('poll').child(storyId).child(newChapter).child(0).set({
