@@ -2,6 +2,9 @@ package com.sam.words.utils;
 
 public class TextUtil {
     public static String capitalize(String s) {
+        if (s.length() == 0)
+            return s;
+
         String[] words = s.toLowerCase().split(" ");
         StringBuilder builder = new StringBuilder();
         for (String word : words) {

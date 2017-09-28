@@ -20,6 +20,8 @@ class ChapterAdapter extends RecyclerView.Adapter<ChapterHolder> {
     private StoryActivity mStoryActivity;
     private List<Chapter> mDataset = new ArrayList<>();
     private List<Integer> mPageNumbers = new ArrayList<>();
+    private Typeface typeface;
+    private Typeface typefaceItalic;
 
     ChapterAdapter(StoryActivity storyActivity, List<Chapter> myDataset) {
         mDataset = myDataset;
@@ -29,8 +31,11 @@ class ChapterAdapter extends RecyclerView.Adapter<ChapterHolder> {
     @Override
     public ChapterHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
 
-        Typeface typeface = Typeface.createFromAsset(parent.getContext().getAssets(),
+        typeface = Typeface.createFromAsset(parent.getContext().getAssets(),
                 "fonts/CrimsonText/CrimsonText-Regular.ttf");
+
+        typefaceItalic = Typeface.createFromAsset(parent.getContext().getAssets(),
+                "fonts/CrimsonText/CrimsonText-Italic.ttf");
 
         RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.chapter_view, parent, false);
@@ -44,8 +49,17 @@ class ChapterAdapter extends RecyclerView.Adapter<ChapterHolder> {
 
     @Override
     public void onBindViewHolder(final ChapterHolder holder, final int position) {
-        final Chapter chapter = mDataset.get(position);
-        holder.chapterTitleView.setText(String.valueOf(position) + ".    " + TextUtil.capitalize(chapter.getTitle()));
+        String title = mDataset.get(position).getTitle();
+
+        if (title == null) {
+            title = "Untitled (in progress)";
+            holder.chapterTitleView.setTypeface(typefaceItalic);
+        } else {
+            title = TextUtil.capitalize(title);
+        }
+
+        holder.chapterTitleView.setText(String.valueOf(position) + ".    " + title);
+
         if (mPageNumbers.size() > position) {
             final int pageNum = mPageNumbers.get(position) + 1;
             holder.pageNumView.setText(String.valueOf(pageNum));
