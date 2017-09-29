@@ -101,10 +101,4 @@ public class MainActivity extends GoogleSignInActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mTabAdapter.notifyDataSetChanged();
-    }
 }
