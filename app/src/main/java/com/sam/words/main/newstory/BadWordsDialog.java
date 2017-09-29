@@ -27,12 +27,36 @@ public class BadWordsDialog extends DialogFragment {
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        final ArrayList<String> wordsToAdd = getArguments().getStringArrayList(key);
-        String message = "Sorry, bad words: " + TextUtils.join(", ", wordsToAdd);
+        final ArrayList<String> badWords = getArguments().getStringArrayList(key);
+        String message = "Sorry, the words " + niceList(badWords) + " are not allowed in your story!";
 
         return new AlertDialog.Builder(getActivity())
                 .setMessage(message)
                 .setPositiveButton(R.string.try_again, null)
                 .create();
+    }
+
+    private String quote(String word) {
+        return "\"" + word + "\"";
+    }
+
+    private String niceList(ArrayList<String> words) {
+
+        if (words.size() == 1)
+            return quote(words.get(0));
+
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < words.size(); i++) {
+
+            builder.append(quote(words.get(i)));
+
+            if (i < words.size() - 2)
+                builder.append(", ");
+            else if (i < words.size() - 1)
+                builder.append(" and ");
+        }
+
+        return builder.toString();
     }
 }

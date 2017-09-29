@@ -112,7 +112,6 @@ public class NewStoryFragment extends DialogFragment {
 
                 for (String word : query) {
                     String sanitized = word.replaceAll("[^a-zA-Z0-9\\-]", "");
-                    database.getReference("bad-words").child("fuck").setValue(true);
                     database.getReference("bad-words").child(sanitized)
                             .addListenerForSingleValueEvent(new WordsFoundListener(NewStoryFragment.this));
                 }
