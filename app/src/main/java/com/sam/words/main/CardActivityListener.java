@@ -1,6 +1,7 @@
 package com.sam.words.main;
 
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,32 +25,20 @@ class CardActivityListener implements ValueEventListener {
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
 
-        Object oPostCount = dataSnapshot.child("postCount").getValue();
-        Object oChapterCount = dataSnapshot.child("chapterCount").getValue();
-        Object oContributorsCount = dataSnapshot.child("contributorsCount").getValue();
+        Long postCount = (Long) dataSnapshot.child("postCount").getValue();
+        Long chapterCount = (Long) dataSnapshot.child("chapterCount").getValue();
+        Long contributorsCount = (Long) dataSnapshot.child("contributorsCount").getValue();
 
-        if (oPostCount != null) {
-            long postCount = (long) oPostCount;
-            if (postCount != story.getPostCount()) {
-                holder.mNewPostsView.setText(String.valueOf(story.getPostCount() - postCount));
-                holder.mNewPostsView.setVisibility(View.VISIBLE);
-            }
-        }
+        showNotification(holder.mNewPostsView, story.getPostCount(), postCount);
+        showNotification(holder.mNewChaptersView, story.getChapterCount(), chapterCount);
+        showNotification(holder.mNewContributorsView, story.getContributorsCount(), contributorsCount);
+    }
 
-        if (oChapterCount != null) {
-            long chapterCount = (long) oChapterCount;
-            if (chapterCount != story.getChapterCount()) {
-                holder.mNewChaptersView.setText(String.valueOf(story.getChapterCount() - chapterCount));
-                holder.mNewChaptersView.setVisibility(View.VISIBLE);
-            }
-        }
-
-        if (oContributorsCount != null) {
-            long contributorsCount = (long) oContributorsCount;
-            if (contributorsCount != story.getContributorsCount()) {
-                holder.mNewContributorsView.setText(String.valueOf(story.getContributorsCount() - contributorsCount));
-                holder.mNewContributorsView.setVisibility(View.VISIBLE);
-            }
+    private void showNotification(TextView view, long storyCount, Long userCount) {
+        if (userCount != null) {
+            long diff = storyCount - userCount;
+            view.setText(String.valueOf(diff));
+            view.setVisibility(diff == 0 ? View.GONE : View.VISIBLE);
         }
     }
 
