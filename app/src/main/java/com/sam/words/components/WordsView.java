@@ -142,7 +142,7 @@ public class WordsView extends View {
                 builder.append(post.getMessage());
                 builder.append(" ");
             }
-            String chapterContent = builder.toString();
+            String chapterContent = builder.toString().replaceAll(" +\\.", ".").replaceAll(" +,", ",");
             List<String> leftOverLines = new ArrayList<>();
 
             // Step 1 - Chapter title
@@ -263,40 +263,55 @@ public class WordsView extends View {
     /**
      * Split a string over multiple lines if it's too long
      * @param paint The paint instance whose font we're using
+     * @param input The text to wrap
+     * @param linesLimit When to stop processing
      * @param widthAvailable The width in pixels to wrap after
-     * @param string The text to wrap
-     * @return a list of strings representing the lines after wrapping
+     * @param output A list of strings representing the lines after wrapping
+     * @return Point in the input string that we've processed up to
      */
-    private List<String> lineWrap(Paint paint, int widthAvailable, String string) {
+    private int lineWrap(Paint paint, String input, Integer linesLimit, int widthAvailable, List<String> output) {
 
-        String[] lines = string.split("\n");
-        List<String> wrappedLines = new ArrayList<>();
+        int count = 0;                          // Count where in the input we've processed
+        String[] lines = input.split("\n");     // Respect newlines that exist in the input
 
         for (String line : lines) {
 
-            String[] words = line.replaceAll(" \\.", ".").replaceAll(" ,", ",").split(" ");
+            String[] words = line.split(" ");
 
             if (words.length > 0) {
-                String lineWrap = words[0].replaceAll("\t", "      ");
+
+                StringBuilder lineWrap = new StringBuilder();
+
+                // Start with the first word and handle tabs
+                lineWrap.append(words[0].replaceAll("\t", "      "));
 
                 // For each next word, see if we can add it to the line
                 for (int i = 1; i < words.length; i++) {
                     String nextWord = words[i];
-                    String lineWithNextWord = lineWrap + " " + nextWord;
+                    String lineWithNextWord = lineWrap.toString() + " " + nextWord;
                     float testWidth = paint.measureText(lineWithNextWord, 0, lineWithNextWord.length());
+
                     // If proposed line is too long
                     if (widthAvailable - testWidth <= 0) {
-                        wrappedLines.add(lineWrap);
-                        lineWrap = nextWord;
-                    } else lineWrap = lineWithNextWord;
+
+                        // Output this line without the next word
+                        output.add(lineWrap.toString());
+
+                        // Start a new line wrap
+                        lineWrap = new StringBuilder();
+                        lineWrap.append(nextWord);
+                    } else {
+                        lineWrap.append(" ");
+                        lineWrap.append(nextWord);
+                    }
                 }
-                wrappedLines.add(lineWrap);
+                output.add(lineWrap.toString());
             } else {
-                wrappedLines.add("");
+                output.add("");
             }
         }
 
-        return wrappedLines;
+        return count;
     }
 
     private int getFontSizeToMatchLineHeight(Paint paint, int targetLineHeight) {

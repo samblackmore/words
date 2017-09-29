@@ -58,6 +58,10 @@ public class Page {
         this.dropCapLines = dropCapLines;
     }
 
+    public List<String> getDropCapLines() {
+        return dropCapLines;
+    }
+
     void setLines(List<String> lines) {
         this.lines = lines;
     }
