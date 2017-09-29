@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.sam.words.models.Word;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,7 +35,7 @@ public class AdminActivity extends AppCompatActivity {
             BufferedReader r = new BufferedReader(new InputStreamReader(stream));
             String line;
             while ((line = r.readLine()) != null) {
-                ref.child(line.replace(".", ",")).setValue(new Word());
+                //ref.child(line.replace(".", ",")).setValue(new Word());
             }
         } catch (IOException e) {
             //

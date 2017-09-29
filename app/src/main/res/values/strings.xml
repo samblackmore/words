@@ -14,7 +14,6 @@
     <string name="saved_text_size">com.sam.words.PREFERENCE_TEXT_SIZE</string>
     <string name="new_story">New story</string>
     <string name="add_story">Create</string>
-    <string name="add_words">Add them!</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="try_again">Try Again</string>

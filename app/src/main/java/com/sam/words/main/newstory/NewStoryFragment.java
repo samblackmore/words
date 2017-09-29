@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.sam.words.R;
 import com.sam.words.components.SimpleDialog;
@@ -37,7 +36,6 @@ import java.util.Map;
 public class NewStoryFragment extends DialogFragment {
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference ref = database.getReference("words");
     private FirebaseAuth auth = FirebaseAuth.getInstance();
 
     private LinkedHashSet<String> query;
@@ -108,11 +106,16 @@ public class NewStoryFragment extends DialogFragment {
                 words.addAll(Arrays.asList(title.toLowerCase().split(" ")));
                 words.addAll(Arrays.asList(content.toLowerCase().split(" ")));
 
+                // Convert to set to remove duplicates, Linked preserves order for error message
                 query = new LinkedHashSet<>(words);
                 foundWords = new ArrayList<>();
 
-                for (String word : query)
-                    ref.child(word).addListenerForSingleValueEvent(new WordsFoundListener(NewStoryFragment.this));
+                for (String word : query) {
+                    String sanitized = word.replaceAll("[^a-zA-Z0-9\\-]", "");
+                    database.getReference("bad-words").child("fuck").setValue(true);
+                    database.getReference("bad-words").child(sanitized)
+                            .addListenerForSingleValueEvent(new WordsFoundListener(NewStoryFragment.this));
+                }
             }
         });
     }
@@ -161,21 +164,26 @@ public class NewStoryFragment extends DialogFragment {
         foundWords.add(word);
 
         if (foundWords.size() == query.size()) {
-            /*query.removeAll(foundWords);
-            if (query.size() > 0)
-                showError(query);
-            else*/
+
+            ArrayList<String> badWords = new ArrayList<>();
+            for (String foundWord : foundWords)
+                if (foundWord != null)
+                    badWords.add(foundWord);
+
+            if (badWords.size() > 0)
+                showError(badWords);
+            else
                 postStory();
         }
     }
 
     private void showError(String message) {
         SimpleDialog dialog = SimpleDialog.newInstance(message);
-        dialog.show(((MainActivity) getActivity()).getSupportFragmentManager(), "wordserror");
+        dialog.show(((MainActivity) getActivity()).getSupportFragmentManager(), "form-error");
     }
 
-    private void showError(LinkedHashSet<String> query) {
-        WordsNotFoundDialog dialog = WordsNotFoundDialog.newInstance(new ArrayList<>(query));
-        dialog.show(((MainActivity) getActivity()).getSupportFragmentManager(), "addwords");
+    private void showError(ArrayList<String> badWords) {
+        BadWordsDialog dialog = BadWordsDialog.newInstance(badWords);
+        dialog.show(((MainActivity) getActivity()).getSupportFragmentManager(), "bad-words");
     }
 }
