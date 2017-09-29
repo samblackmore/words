@@ -275,22 +275,25 @@ public class WordsView extends View {
         for (String line : lines) {
 
             String[] words = line.replaceAll(" \\.", ".").replaceAll(" ,", ",").split(" ");
-            String lineWrap = words[0].replaceAll("\t", "      ");
 
-            // For each next word, see if we can add it to the line
-            for (int i = 1; i < words.length; i++) {
-                String nextWord = words[i];
-                String lineWithNextWord = lineWrap + " " + nextWord;
-                float testWidth = paint.measureText(lineWithNextWord, 0, lineWithNextWord.length());
-                // If proposed line is too long
-                if (widthAvailable - testWidth <= 0) {
-                    wrappedLines.add(lineWrap);
-                    lineWrap = nextWord;
+            if (words.length > 0) {
+                String lineWrap = words[0].replaceAll("\t", "      ");
+
+                // For each next word, see if we can add it to the line
+                for (int i = 1; i < words.length; i++) {
+                    String nextWord = words[i];
+                    String lineWithNextWord = lineWrap + " " + nextWord;
+                    float testWidth = paint.measureText(lineWithNextWord, 0, lineWithNextWord.length());
+                    // If proposed line is too long
+                    if (widthAvailable - testWidth <= 0) {
+                        wrappedLines.add(lineWrap);
+                        lineWrap = nextWord;
+                    } else lineWrap = lineWithNextWord;
                 }
-                else lineWrap = lineWithNextWord;
+                wrappedLines.add(lineWrap);
+            } else {
+                wrappedLines.add("");
             }
-            wrappedLines.add(lineWrap);
-
         }
 
         return wrappedLines;
