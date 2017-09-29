@@ -191,12 +191,12 @@ public class WordsView extends View {
                     if (processedUpTo < chapterContent.length()) {
 
                         List<String> remainingLines = new ArrayList<>();
-                        lineWrap(mTextPaint, chapterContent.substring(processedUpTo, chapterContent.length()), viewWidth, 0, remainingLines);
+                        int debug = lineWrap(mTextPaint, chapterContent.substring(contentStart + processedUpTo, chapterContent.length()), viewWidth, null, remainingLines);
 
                         if (remainingLines.size() > 0) {
 
-                            int maxlinesLeftOnPage = Math.max(0, (viewHeight - (firstPage.getChapterTitle().getHeight() + firstPage.getChapterSubtitle().getHeight() + dropCapHeight + lineSpacing)) / (lineHeight + lineSpacing));
-                            int linesLeftOnPage = Math.min(remainingLines.size(), maxlinesLeftOnPage);
+                            int maxLinesLeftOnPage = Math.max(0, (viewHeight - (firstPage.getChapterTitle().getHeight() + firstPage.getChapterSubtitle().getHeight() + dropCapHeight + lineSpacing)) / (lineHeight + lineSpacing));
+                            int linesLeftOnPage = Math.min(remainingLines.size(), maxLinesLeftOnPage);
 
                             firstPage.setLines(remainingLines.subList(0, linesLeftOnPage));
 
@@ -272,9 +272,9 @@ public class WordsView extends View {
      * @param output A list of strings representing the lines after wrapping
      * @return Point in the input string that we've processed up to
      */
-    private int lineWrap(Paint paint, String input, int widthAvailable, int linesLimit, List<String> output) {
+    private int lineWrap(Paint paint, String input, int widthAvailable, Integer linesLimit, List<String> output) {
 
-        int count = 0;                          // Count where in the input we've processed
+        int count = 1;                          // Count where in the input we've processed
         String[] lines = input.split("\n");     // Respect newlines that exist in the input
 
         for (String line : lines) {
@@ -291,7 +291,7 @@ public class WordsView extends View {
 
                 // For each next word, see if we can add it to the line
                 for (int i = 1; i < words.length; i++) {
-                    String nextWord = words[i];//.length() > 0 ? words[i] : " ";
+                    String nextWord = words[i];
                     String lineWithNextWord = lineWrap.toString() + " " + nextWord;
                     float testWidth = paint.measureText(lineWithNextWord, 0, lineWithNextWord.length());
 
@@ -300,6 +300,9 @@ public class WordsView extends View {
 
                         // Output this line without next word
                         output.add(lineWrap.toString());
+
+                        if (linesLimit != null && output.size() >= linesLimit)
+                            return count;
 
                         // Start fresh for the next word
                         lineWrap = new StringBuilder();
@@ -313,7 +316,11 @@ public class WordsView extends View {
             } else {
                 output.add("");
             }
+
             count++;    // Count the newline that got removed when we split the input
+
+            if (linesLimit != null && output.size() >= linesLimit)
+                return count;
         }
 
         return count;
