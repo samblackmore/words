@@ -1,5 +1,7 @@
 package com.sam.words.story;
 
+import android.graphics.Typeface;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +31,8 @@ class VoteAdapter extends RecyclerView.Adapter<VoteHolder> {
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private List<Post> mDataset = new ArrayList<>();
+    private int pink;
+    private int white;
 
     VoteAdapter(List<Post> myDataset) {
         mDataset = myDataset;
@@ -40,25 +44,36 @@ class VoteAdapter extends RecyclerView.Adapter<VoteHolder> {
         RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.vote_view, parent, false);
 
+        ConstraintLayout clickableView = (ConstraintLayout) v.findViewById(R.id.vote_view);
         TextView scoreView = (TextView) v.findViewById(R.id.score);
         ImageView upArrow = (ImageView) v.findViewById(R.id.up_arrow);
         TextView wordView = (TextView) v.findViewById(R.id.word);
         TextView submittedByView = (TextView) v.findViewById(R.id.word_submitted_by);
         TextView timeAgoView = (TextView) v.findViewById(R.id.time_ago);
 
-        return new VoteHolder(v, scoreView, upArrow, wordView, submittedByView, timeAgoView);
+        pink = parent.getResources().getColor(R.color.pink);
+        white = parent.getResources().getColor(R.color.white);
+
+        return new VoteHolder(v, clickableView, scoreView, upArrow, wordView, submittedByView, timeAgoView);
     }
 
     @Override
     public void onBindViewHolder(final VoteHolder holder, int position) {
         final Post post = mDataset.get(position);
         if (post != null) {
+
+            FirebaseUser user = auth.getCurrentUser();
+            if (user != null && post.getVotes().contains(user.getUid())) {
+                holder.scoreView.setBackgroundColor(pink);
+                holder.scoreView.setTextColor(white);
+            }
+
             holder.scoreView.setText(String.valueOf(post.getVoteCount()));
             holder.postView.setText(post.getMessage());
             holder.submittedByView.setText(post.getAuthorName());
             holder.timeAgoView.setText(TimeAgo.timeAgo(post.getDateCreated()) + " ago");
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
+            holder.clickableView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     DatabaseReference ref = database.getReferenceFromUrl(post.getPath());
