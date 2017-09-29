@@ -180,15 +180,18 @@ public class WordsView extends View {
                     mTextPaint.setTextSize(textSize);
                     int dropCapLinesX = viewX + firstPage.getDropCap().getWidth() + lineSpacing;
 
-                    List<String> lines = lineWrap(mTextPaint, viewWidth - dropCapLinesX, chapterContent.substring(chapterContent.length() > 2 && chapterContent.charAt(1) == ' ' ? 2 : 1, chapterContent.length()));
-                    firstPage.setDropCapLines(lines.subList(0, Math.min(lines.size(), linesPerDropCap)));
+                    List<String> dropCapLines = new ArrayList<>();
+                    int contentStart = chapterContent.length() > 2 && chapterContent.charAt(1) == ' ' ? 2 : 1;
+                    int processedUpTo = lineWrap(mTextPaint, chapterContent.substring(contentStart, chapterContent.length()), viewWidth - dropCapLinesX, linesPerDropCap, dropCapLines);
+
+                    firstPage.setDropCapLines(dropCapLines);
 
                     // Step 4 - Remaining lines
 
-                    if (lines.size() > linesPerDropCap) {
+                    if (processedUpTo < chapterContent.length()) {
 
-                        String remainingText = TextUtils.join("\n", lines.subList(linesPerDropCap, lines.size()));
-                        List<String> remainingLines = lineWrap(mTextPaint, viewWidth, remainingText);
+                        List<String> remainingLines = new ArrayList<>();
+                        lineWrap(mTextPaint, chapterContent.substring(processedUpTo, chapterContent.length()), viewWidth, 0, remainingLines);
 
                         if (remainingLines.size() > 0) {
 
@@ -269,7 +272,7 @@ public class WordsView extends View {
      * @param output A list of strings representing the lines after wrapping
      * @return Point in the input string that we've processed up to
      */
-    private int lineWrap(Paint paint, String input, Integer linesLimit, int widthAvailable, List<String> output) {
+    private int lineWrap(Paint paint, String input, int widthAvailable, int linesLimit, List<String> output) {
 
         int count = 0;                          // Count where in the input we've processed
         String[] lines = input.split("\n");     // Respect newlines that exist in the input
@@ -284,31 +287,33 @@ public class WordsView extends View {
 
                 // Start with the first word and handle tabs
                 lineWrap.append(words[0].replaceAll("\t", "      "));
+                count += words[0].length();
 
                 // For each next word, see if we can add it to the line
                 for (int i = 1; i < words.length; i++) {
-                    String nextWord = words[i];
+                    String nextWord = words[i];//.length() > 0 ? words[i] : " ";
                     String lineWithNextWord = lineWrap.toString() + " " + nextWord;
                     float testWidth = paint.measureText(lineWithNextWord, 0, lineWithNextWord.length());
 
                     // If proposed line is too long
                     if (widthAvailable - testWidth <= 0) {
 
-                        // Output this line without the next word
+                        // Output this line without next word
                         output.add(lineWrap.toString());
 
-                        // Start a new line wrap
+                        // Start fresh for the next word
                         lineWrap = new StringBuilder();
-                        lineWrap.append(nextWord);
                     } else {
                         lineWrap.append(" ");
-                        lineWrap.append(nextWord);
                     }
+                    lineWrap.append(nextWord);
+                    count += nextWord.length() + 1;     // +1 for the space
                 }
                 output.add(lineWrap.toString());
             } else {
                 output.add("");
             }
+            count++;    // Count the newline that got removed when we split the input
         }
 
         return count;
