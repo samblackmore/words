@@ -8,26 +8,17 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 import com.sam.words.R;
 import com.sam.words.components.SimpleDialog;
 import com.sam.words.main.MainActivity;
-import com.sam.words.models.Chapter;
-import com.sam.words.models.Poll;
-import com.sam.words.models.Post;
-import com.sam.words.models.Story;
 import com.sam.words.utils.TextUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 
 /**
  * New story popup
@@ -35,17 +26,12 @@ import java.util.Map;
 
 public class NewStoryFragment extends DialogFragment {
 
-    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
-
-    private LinkedHashSet<String> query;
-    private List<String> foundWords;
-    private String title;
-    private String author;
-    private String content;
+    private NewStoryFragment newStoryFragment;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        newStoryFragment = this;
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
@@ -84,9 +70,9 @@ public class NewStoryFragment extends DialogFragment {
         d.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                title = ((TextInputEditText) d.findViewById(R.id.new_story_title)).getText().toString();
-                author = ((TextInputEditText) d.findViewById(R.id.new_story_author)).getText().toString();
-                content = ((TextInputEditText) d.findViewById(R.id.new_story_content)).getText().toString();
+                String title = ((TextInputEditText) d.findViewById(R.id.new_story_title)).getText().toString();
+                String author = ((TextInputEditText) d.findViewById(R.id.new_story_author)).getText().toString();
+                String content = ((TextInputEditText) d.findViewById(R.id.new_story_content)).getText().toString();
 
                 String error = null;
 
@@ -103,86 +89,18 @@ public class NewStoryFragment extends DialogFragment {
                 }
 
                 List<String> words = new ArrayList<>();
-                words.addAll(Arrays.asList(title.toLowerCase().split(" ")));
-                words.addAll(Arrays.asList(content.toLowerCase().split(" ")));
+                words.addAll(Arrays.asList(title.split(" ")));
+                words.addAll(Arrays.asList(content.split(" ")));
 
-                // Convert to set to remove duplicates, Linked preserves order for error message
-                query = new LinkedHashSet<>(words);
-                foundWords = new ArrayList<>();
-
-                for (String word : query) {
-                    String sanitized = word.replaceAll("[^a-zA-Z0-9\\-]", "");
-                    database.getReference("bad-words").child(sanitized)
-                            .addListenerForSingleValueEvent(new WordsFoundListener(NewStoryFragment.this));
-                }
+                PostStoryCallback callback = new PostStoryCallback(newStoryFragment, title, author, content);
+                BadWordsCheck badWordsCheck = new BadWordsCheck(words, callback);
+                badWordsCheck.execute();
             }
         });
-    }
-
-    private void postStory() {
-        FirebaseUser user = auth.getCurrentUser();
-
-        if (user == null) {
-            Toast.makeText(getActivity(), "Not signed in!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        int chapter = 0;
-        int pollRound = 0;
-        String chapterId = String.valueOf(chapter);
-        String newPollId = String.valueOf(pollRound);
-
-        String userId = user.getUid();
-        String newStoryId = database.getReference("stories").push().getKey();
-        String newPostId = database.getReference("posts").child(newStoryId).child(chapterId).push().getKey();
-
-        Story newStory = new Story(title, userId, author);
-        Post newPost = new Post(newStoryId, userId, user.getDisplayName(), content);
-        Poll newPoll = new Poll(pollRound);
-        Chapter firstChapter = new Chapter(chapter, null);
-        newStory.addChapter(firstChapter);
-        newStory.addLike(userId);
-        newStory.addContributor(userId);
-
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/stories/" + newStoryId, newStory);
-        childUpdates.put("/posts/" + newStoryId + "/" + chapterId + "/" + newPostId, newPost);
-        childUpdates.put("/poll/" + newStoryId + "/" + chapterId + "/" + newPollId, newPoll);
-        childUpdates.put("/users/" + userId + "/activity/" + newStoryId + "/postCount", 1);
-        childUpdates.put("/users/" + userId + "/activity/" + newStoryId + "/chapterCount", 1);
-        childUpdates.put("/users/" + userId + "/activity/" + newStoryId + "/contributorsCount", 1);
-        childUpdates.put("/users/" + userId + "/stories/" + newStoryId, true);
-        childUpdates.put("/users/" + userId + "/posts/" + newPostId, true);
-
-        database.getReference().updateChildren(childUpdates);
-        
-        getDialog().dismiss();
-    }
-
-    public void foundWord(String word) {
-        foundWords.add(word);
-
-        if (foundWords.size() == query.size()) {
-
-            ArrayList<String> badWords = new ArrayList<>();
-            for (String foundWord : foundWords)
-                if (foundWord != null)
-                    badWords.add(foundWord);
-
-            if (badWords.size() > 0)
-                showError(badWords);
-            else
-                postStory();
-        }
     }
 
     private void showError(String message) {
         SimpleDialog dialog = SimpleDialog.newInstance(message);
         dialog.show(((MainActivity) getActivity()).getSupportFragmentManager(), "form-error");
-    }
-
-    private void showError(ArrayList<String> badWords) {
-        BadWordsDialog dialog = BadWordsDialog.newInstance(badWords);
-        dialog.show(((MainActivity) getActivity()).getSupportFragmentManager(), "bad-words");
     }
 }
