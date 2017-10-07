@@ -88,12 +88,10 @@ public class NewStoryFragment extends DialogFragment {
                     return;
                 }
 
-                List<String> words = new ArrayList<>();
-                words.addAll(Arrays.asList(title.split(" ")));
-                words.addAll(Arrays.asList(content.split(" ")));
+                String inputs = title + " " + author + " " + content;
 
                 PostStoryCallback callback = new PostStoryCallback(newStoryFragment, title, author, content);
-                BadWordsCheck badWordsCheck = new BadWordsCheck(words, callback);
+                BadWordsCheck badWordsCheck = new BadWordsCheck(inputs, callback);
                 badWordsCheck.execute();
             }
         });

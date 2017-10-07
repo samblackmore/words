@@ -35,6 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.sam.words.R;
 import com.sam.words.components.Page;
 import com.sam.words.components.WordsView;
+import com.sam.words.main.newstory.BadWordsCheck;
 import com.sam.words.models.Post;
 import com.sam.words.models.Story;
 import com.sam.words.models.Poll;
@@ -51,10 +52,6 @@ import java.util.Map;
  */
 
 public class StoryFragment extends Fragment implements GoogleSignInFragment, View.OnClickListener{
-
-    //private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
-    //private final int COUNTDOWN_LENGTH = 24 * 60 * 60 * 1000;
-    private final int COUNTDOWN_LENGTH = 30 * 1000;
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -349,10 +346,11 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
             case R.id.poll_submit:
 
+                // Hide keyboard
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
-                final FirebaseUser user = auth.getCurrentUser();
+                FirebaseUser user = auth.getCurrentUser();
 
                 if (user == null) {
                     Toast.makeText(getActivity(), "Not signed in!", Toast.LENGTH_SHORT).show();
@@ -365,47 +363,18 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
                 }
 
                 if (currentPoll != null) {
-                    String message = pollInput.getText().toString().replaceAll("↩\n", "\n\t");
+                    String input = pollInput.getText().toString();
+                    String message = input.replaceAll("↩\n", "\n\t");
                     Post newPost = new Post(story.getId(), user.getUid(), user.getDisplayName(), message);
 
-                    String pollPath = "/poll/" + story.getId() + "/" + chapterId + "/" + currentPoll.getRound();
-                    DatabaseReference pollRef = database.getReference(pollPath);
-                    DatabaseReference newPostRef = pollRef.child("posts").push();
-                    newPost.setPath(newPostRef.toString());
-                    String postId = newPostRef.getKey();
+                    NewPostCallback newPostCallback = new NewPostCallback(activity, newPost, story.getId(), String.valueOf(chapterId), String.valueOf(currentPoll.getRound()));
+                    BadWordsCheck badWordsCheck = new BadWordsCheck(input, newPostCallback);
+                    badWordsCheck.execute();
 
-                    Map<String, Object> childUpdates = new HashMap<>();
-                    childUpdates.put(pollPath + "/timeEnding", System.currentTimeMillis() + COUNTDOWN_LENGTH);
-                    childUpdates.put(pollPath + "/posts/" + postId, newPost);
-
-                    database.getReference().updateChildren(childUpdates);
-                    database.getReference("stories").child(story.getId()).runTransaction(new Transaction.Handler() {
-                        @Override
-                        public Transaction.Result doTransaction(MutableData mutableData) {
-                            Story s = mutableData.getValue(Story.class);
-
-                            if (s == null || user == null)
-                                return Transaction.success(mutableData);
-
-                            if (s.getContributors() == null || !s.getContributors().containsKey(user.getUid()))
-                                s.addContributor(user.getUid());
-
-                            mutableData.setValue(s);
-                            return Transaction.success(mutableData);
-                        }
-
-                        @Override
-                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                            if (databaseError != null)
-                                Log.d("Debug", databaseError.toString());
-                        }
-                    });
-
-                    submitContainer.setVisibility(View.GONE);
-                    pollTitle.setVisibility(View.VISIBLE);
-                    pollTitle.setText(R.string.submitted);
-                    pollInput.setText("");
+                    updateUI(user);
                 }
+
+                pollInput.setText("");
 
                 break;
         }

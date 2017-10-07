@@ -4,6 +4,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -17,8 +18,10 @@ public class BadWordsCheck {
     private final ArrayList<String> results;
     private BadWordsCallback callback;
 
-    public BadWordsCheck(List<String> words, BadWordsCallback callback) {
+    public BadWordsCheck(String input, BadWordsCallback callback) {
         this.callback = callback;
+
+        List<String> words = Arrays.asList(input.split(" "));
 
         // Convert to set to remove duplicates, Linked preserves order for error message
         query = new LinkedHashSet<>(words);
