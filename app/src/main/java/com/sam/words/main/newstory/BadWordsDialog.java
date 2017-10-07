@@ -27,8 +27,18 @@ public class BadWordsDialog extends DialogFragment {
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        final ArrayList<String> badWords = getArguments().getStringArrayList(key);
-        String message = "Sorry, the words " + niceList(badWords) + " are not allowed in your story!";
+        ArrayList<String> badWords = getArguments().getStringArrayList(key);
+        
+        assert badWords != null;
+
+        String message = "Sorry, the word";
+
+        if (badWords.size() > 1)
+            message += "s " + niceList(badWords) + " are ";
+        else
+            message += " " + niceList(badWords) + " is ";
+
+        message += "not allowed in your story!";
 
         return new AlertDialog.Builder(getActivity())
                 .setMessage(message)
