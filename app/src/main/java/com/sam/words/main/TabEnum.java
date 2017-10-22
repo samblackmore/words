@@ -2,7 +2,7 @@ package com.sam.words.main;
 
 enum TabEnum {
 
-    ACTIVITY ("Activity"),
+    ACTIVITY ("Home"),
     NEW ("New"),
     TOP ("Top");
 
