@@ -97,14 +97,14 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
         TabEnum section = TabEnum.getSection(getArguments().getInt(ARG_TAB_SECTION));
 
         switch (section) {
-            case TOP:
+            case ACTIVITY:
                 mCardAdapter.setActivityList(true);
                 query = ref.orderByChild("likes").limitToLast(10);
                 break;
             case NEW:
                 query = ref.orderByChild("dateCreated").limitToLast(10);
                 break;
-            case ME:
+            case TOP:
                 initMyStories();
                 query = (currentUser == null ? null : ref.orderByChild("userId").equalTo(currentUser.getUid()));
                 break;
