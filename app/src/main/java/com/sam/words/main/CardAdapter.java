@@ -52,6 +52,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
     }
 
     private void updateStories(Story newStory) {
+
         for (int i = 0; i < stories.size(); i++) {
             Story story = stories.get(i);
             if (story.getId().equals(newStory.getId())) {
@@ -136,8 +137,18 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
     @Override
     public void onBindViewHolder(final CardHolder holder, int position) {
+
+        ArrayList<Story> updatedStories = new ArrayList<>();
+        for (Story s : stories) {
+            if (s.hasUpdates())
+                updatedStories.add(s);
+        }
+
+        ArrayList<Story> oldStories = new ArrayList<>(stories);
+        oldStories.removeAll(updatedStories);
+
         FirebaseUser user = auth.getCurrentUser();
-        final Story story = stories.get(position);
+        final Story story = position < updatedStories.size() ? updatedStories.get(position) : oldStories.get(position - updatedStories.size());
         final String storyId = story.getId();
 
         View.OnClickListener openStory = new View.OnClickListener() {
@@ -149,8 +160,18 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
             }
         };
 
-        if (activityList && position == 0)
-            holder.mHeaderView.setVisibility(View.VISIBLE);
+        if (activityList && updatedStories.size() > 0 && oldStories.size() > 0) {
+
+            if (position == 0) {
+                holder.mHeaderView.setVisibility(View.VISIBLE);
+                holder.mHeaderView.setText(updatedStories.size() + " updates");
+            }
+            if (position == updatedStories.size()) {
+                holder.mHeaderView.setVisibility(View.VISIBLE);
+                holder.mHeaderView.setText(oldStories.size() + " history");
+            }
+        }
+
 
         holder.mLikesView.setText(String.valueOf(story.getLikeCount()));
         holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));

@@ -24,6 +24,10 @@ class UserActivityListener implements ValueEventListener {
 
             String storyId = child.getKey();
 
+            final Integer knownPostCount = child.child("postCount").getValue(Integer.class);
+            final Integer knownChapterCount = child.child("chapterCount").getValue(Integer.class);
+            final Integer knownContributorsCount = child.child("contributorsCount").getValue(Integer.class);
+
             database.getReference("stories").child(storyId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -32,7 +36,14 @@ class UserActivityListener implements ValueEventListener {
                     Story story = dataSnapshot.getValue(Story.class);
 
                     if (story != null) {
+
                         story.setId(storyId);
+
+                        if ((knownPostCount != null && knownPostCount != story.getPostCount())
+                                || (knownChapterCount != null && knownChapterCount != story.getChapterCount())
+                                || (knownContributorsCount != null && knownContributorsCount != story.getContributorsCount()))
+                            story.setHasUpdates(true);
+
                         frag.gotStory(story);
                     }
                 }
