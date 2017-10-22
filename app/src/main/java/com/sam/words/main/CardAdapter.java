@@ -104,12 +104,17 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
             titleView.setTextSize((float) SharedPreferencesHelper.getTextSize(parent.getContext()) / 2);
 
             WordsView wordsView = (WordsView) v.findViewById(R.id.words_view);
+            wordsView.setVisibility(View.VISIBLE);
             wordsView.setAlpha(0);
-            wordsView.setVisibility(activityList ? View.GONE : View.VISIBLE);
 
             return new CardHolder(v, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, wordsView);
-        } else
+        } else {
+
+            titleView.setTypeface(Typeface.DEFAULT_BOLD);
+            titleView.setTextSize(16);
+
             return new CardHolder(v, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, null);
+        }
     }
 
     @Override
