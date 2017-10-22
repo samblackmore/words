@@ -51,6 +51,22 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         notifyDataSetChanged();
     }
 
+    private void updateStories(Story newStory) {
+        for (int i = 0; i < stories.size(); i++) {
+            Story story = stories.get(i);
+            if (story.getId().equals(newStory.getId())) {
+                stories.set(i, story);
+                return;
+            }
+        }
+        stories.add(newStory);
+    }
+
+    void gotStory(Story story) {
+        updateStories(story);
+        notifyDataSetChanged();
+    }
+
     void gotStories(List<Story> stories) {
         this.stories = stories;
         notifyDataSetChanged();

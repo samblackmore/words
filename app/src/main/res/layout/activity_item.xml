@@ -10,6 +10,7 @@
         android:visibility="gone"
         android:text="updates"
         android:paddingTop="24dp"
+        android:paddingBottom="4dp"
         android:textAlignment="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
@@ -22,7 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="18dp"
         android:layout_marginRight="18dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="4dp"
         android:layout_below="@+id/header"
         card_view:cardCornerRadius="4dp"
         card_view:cardElevation="1dp"

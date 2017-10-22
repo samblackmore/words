@@ -21,7 +21,7 @@ public class BadWordsCheck {
     public BadWordsCheck(String input, BadWordsCallback callback) {
         this.callback = callback;
 
-        List<String> words = Arrays.asList(input.split(" "));
+        List<String> words = filterNotNull(Arrays.asList(input.split(" ")));
 
         // Convert to set to remove duplicates, Linked preserves order for error message
         query = new LinkedHashSet<>(words);
@@ -58,10 +58,10 @@ public class BadWordsCheck {
         callback.databaseError("Failed to look up word! " + databaseError.toString());
     }
 
-    private ArrayList<String> filterNotNull(ArrayList<String> input) {
+    private ArrayList<String> filterNotNull(List<String> input) {
         ArrayList<String> output = new ArrayList<>();
         for (String s : input)
-            if (s != null)
+            if (s != null && s.length() > 0)
                 output.add(s);
         return output;
     }

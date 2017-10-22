@@ -39,7 +39,6 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference ref = database.getReference("stories");
 
     private RecyclerView mRecyclerView;
     private CardAdapter mCardAdapter;
@@ -77,11 +76,28 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
         mCardAdapter = new CardAdapter();
         mRecyclerView.setAdapter(mCardAdapter);
 
-        Query query = null;
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        TabEnum section = TabEnum.getSection(getArguments().getInt(ARG_TAB_SECTION));
+        FirebaseUser user = mAuth.getCurrentUser();
+        DatabaseReference storyRef = database.getReference("stories");
+        DatabaseReference activityRef = user == null ? null : database.getReference("users").child(user.getUid()).child("activity");
 
-        if (currentUser != null)
-            database.getReference("users").child(currentUser.getUid()).child("activity").addValueEventListener(new ValueEventListener() {
+        switch (section) {
+            case ACTIVITY:
+                mCardAdapter.setActivityList(true);
+                if (activityRef != null)
+                    activityRef.addListenerForSingleValueEvent(new UserActivityListener(this));
+                break;
+            case NEW:
+                storyRef.orderByChild("dateCreated").limitToLast(10).addValueEventListener(new CardStoryListener(this));
+                break;
+            case TOP:
+                initMyStories();
+                storyRef.orderByChild("likes").limitToLast(10).addValueEventListener(new CardStoryListener(this));
+                break;
+        }
+
+        if (activityRef != null)
+            activityRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     mCardAdapter.notifyDataSetChanged();
@@ -92,26 +108,6 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
 
                 }
             });
-
-
-        TabEnum section = TabEnum.getSection(getArguments().getInt(ARG_TAB_SECTION));
-
-        switch (section) {
-            case ACTIVITY:
-                mCardAdapter.setActivityList(true);
-                query = ref.orderByChild("likes").limitToLast(10);
-                break;
-            case NEW:
-                query = ref.orderByChild("dateCreated").limitToLast(10);
-                break;
-            case TOP:
-                initMyStories();
-                query = (currentUser == null ? null : ref.orderByChild("userId").equalTo(currentUser.getUid()));
-                break;
-        }
-
-        if (query != null)
-            query.addValueEventListener(new CardStoryListener(this));
 
         return rootView;
     }
@@ -169,6 +165,12 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
                 addStoryButton.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    public void gotStory(Story story) {
+        progressBar.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mCardAdapter.gotStory(story);
     }
 
     public void gotStories(List<Story> stories) {
