@@ -98,6 +98,7 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
 
         switch (section) {
             case TOP:
+                mCardAdapter.setActivityList(true);
                 query = ref.orderByChild("likes").limitToLast(10);
                 break;
             case NEW:

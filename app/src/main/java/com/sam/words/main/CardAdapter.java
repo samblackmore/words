@@ -45,6 +45,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
     private int pink;
     private int pinkLt;
     private Typeface typefaceBold;
+    private boolean activityList = false;
 
     void refresh() {
         notifyDataSetChanged();
@@ -60,6 +61,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         notifyDataSetChanged();
     }
 
+    void setActivityList(boolean activityList) {
+        this.activityList = activityList;
+    }
+
     @Override
     public CardHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
 
@@ -73,8 +78,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
                 "fonts/CrimsonText/CrimsonText-Italic.ttf"
         );
 
-        CardView v = (CardView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.card_view, parent, false);
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(activityList ? R.layout.activity_item : R.layout.card_view, parent, false);
 
         v.setAlpha(0);
         v.animate().alpha(1.0f);
@@ -86,41 +91,32 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         TextView dateView = (TextView) v.findViewById(R.id.story_date);
         TextView titleView = (TextView) v.findViewById(R.id.story_title);
         TextView authorView = (TextView) v.findViewById(R.id.story_author);
-        final WordsView wordsView = (WordsView) v.findViewById(R.id.words_view);
-        wordsView.setAlpha(0);
-
-        titleView.setTypeface(typefaceBold);
-        authorView.setTypeface(typefaceItalic);
-        titleView.setTextColor(parent.getResources().getColor(R.color.black));
-        authorView.setTextColor(parent.getResources().getColor(R.color.black));
-        titleView.setTextSize((float) SharedPreferencesHelper.getTextSize(parent.getContext()) / 2);
 
         pink = parent.getResources().getColor(R.color.pink);
         pinkLt = parent.getResources().getColor(R.color.pinkLt);
 
-        return new CardHolder(v, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, wordsView);
+        if (!activityList) {
+
+            titleView.setTypeface(typefaceBold);
+            authorView.setTypeface(typefaceItalic);
+            titleView.setTextColor(parent.getResources().getColor(R.color.black));
+            authorView.setTextColor(parent.getResources().getColor(R.color.black));
+            titleView.setTextSize((float) SharedPreferencesHelper.getTextSize(parent.getContext()) / 2);
+
+            WordsView wordsView = (WordsView) v.findViewById(R.id.words_view);
+            wordsView.setAlpha(0);
+            wordsView.setVisibility(activityList ? View.GONE : View.VISIBLE);
+
+            return new CardHolder(v, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, wordsView);
+        } else
+            return new CardHolder(v, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, null);
     }
 
     @Override
     public void onBindViewHolder(final CardHolder holder, int position) {
         FirebaseUser user = auth.getCurrentUser();
         final Story story = stories.get(position);
-        holder.mLikesView.setText(String.valueOf(story.getLikeCount()));
-        holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
-
-        holder.mTitleView.setText(TextUtil.capitalize(story.getTitle()));
-        holder.mAuthorView.setText(story.getAuthorAlias());
-
-        if (user != null && story.getUserId().equals(user.getUid())) {
-            holder.mAuthorView.setTextColor(pink);
-            holder.mAuthorView.setTypeface(typefaceBold);
-            holder.mAuthorView.setBackgroundColor(pinkLt);
-        }
-
         final String storyId = story.getId();
-        database.getReference("posts").child(storyId).child("0").addListenerForSingleValueEvent(new CardPostListener(holder));
-        if (user != null)
-            database.getReference("users").child(user.getUid()).child("activity").child(storyId).addListenerForSingleValueEvent(new CardActivityListener(holder, story));
 
         View.OnClickListener openStory = new View.OnClickListener() {
             @Override
@@ -131,13 +127,31 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
             }
         };
 
+        holder.mLikesView.setText(String.valueOf(story.getLikeCount()));
+        holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
+        holder.mTitleView.setText(TextUtil.capitalize(story.getTitle()));
+        holder.mAuthorView.setText(story.getAuthorAlias());
         holder.mTitleView.setOnClickListener(openStory);
-        holder.mWordsView.setOnClickListener(openStory);
 
-        if (user != null && story.getLikes().containsKey(user.getUid()))
-            holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_lit, 0, 0, 0);
-        else
-            holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart, 0, 0, 0);
+        if (user != null) {
+            database.getReference("users").child(user.getUid()).child("activity").child(storyId).addListenerForSingleValueEvent(new CardActivityListener(holder, story));
+
+            if (story.getUserId().equals(user.getUid())) {
+                holder.mAuthorView.setTextColor(pink);
+                holder.mAuthorView.setTypeface(activityList ? Typeface.DEFAULT_BOLD : typefaceBold);
+                holder.mAuthorView.setBackgroundColor(pinkLt);
+            }
+
+            if (story.getLikes().containsKey(user.getUid()))
+                holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_lit, 0, 0, 0);
+            else
+                holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart, 0, 0, 0);
+        }
+
+        if (!activityList) {
+            holder.mWordsView.setOnClickListener(openStory);
+            database.getReference("posts").child(storyId).child("0").addListenerForSingleValueEvent(new CardPostListener(holder));
+        }
 
         holder.mLikesView.setOnClickListener(new View.OnClickListener() {
             @Override
