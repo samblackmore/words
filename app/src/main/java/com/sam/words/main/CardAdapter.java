@@ -84,6 +84,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         v.setAlpha(0);
         v.animate().alpha(1.0f);
 
+        TextView headerView = (TextView) v.findViewById(R.id.header);
         TextView newPostsView = (TextView) v.findViewById(R.id.new_posts_count);
         TextView newChaptersView = (TextView) v.findViewById(R.id.new_chapters_count);
         TextView newContributorsView = (TextView) v.findViewById(R.id.new_contributors_count);
@@ -107,13 +108,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
             wordsView.setVisibility(View.VISIBLE);
             wordsView.setAlpha(0);
 
-            return new CardHolder(v, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, wordsView);
+            return new CardHolder(v, headerView, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, wordsView);
         } else {
 
             titleView.setTypeface(Typeface.DEFAULT_BOLD);
             titleView.setTextSize(16);
 
-            return new CardHolder(v, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, null);
+            return new CardHolder(v, headerView, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, null);
         }
     }
 
@@ -131,6 +132,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
                 holder.mCardView.getContext().startActivity(intent);
             }
         };
+
+        if (activityList && position == 0)
+            holder.mHeaderView.setVisibility(View.VISIBLE);
 
         holder.mLikesView.setText(String.valueOf(story.getLikeCount()));
         holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
