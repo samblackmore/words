@@ -188,10 +188,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
                 holder.mAuthorView.setBackgroundColor(pinkLt);
             }
 
-            if (story.getLikes().containsKey(user.getUid()))
-                holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_lit, 0, 0, 0);
+            int heart = story.getLikes().containsKey(user.getUid()) ? R.drawable.ic_heart_lit : R.drawable.ic_heart;
+
+            if (activityList)
+                holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(0, heart, 0, 0);
             else
-                holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart, 0, 0, 0);
+                holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(heart, 0, 0, 0);
         }
 
         if (!activityList) {
