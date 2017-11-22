@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.sam.words.R;
+import com.sam.words.models.Notifications;
 import com.sam.words.models.Post;
 import com.sam.words.utils.SharedPreferencesHelper;
 import com.sam.words.story.StoryActivity;
@@ -28,6 +31,7 @@ import com.sam.words.utils.TextUtil;
 import com.sam.words.utils.TimeAgo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -42,6 +46,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
     public static final String EXTRA_STORY = "STORY";
     private List<Story> stories = new ArrayList<>();
     private List<Post> posts = new ArrayList<>();
+    private HashMap<String, Notifications> activity = new HashMap<>();
     private int pink;
     private int pinkLt;
     private Typeface typefaceBold;
@@ -75,6 +80,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
     void gotPosts(List<Post> posts) {
         this.posts = posts;
+        notifyDataSetChanged();
+    }
+
+    void gotActivity(HashMap<String, Notifications> activity) {
+        this.activity = activity;
         notifyDataSetChanged();
     }
 
@@ -135,13 +145,30 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         }
     }
 
+    private void showNotification(TextView view, int storyCount, int userCount) {
+        int diff = storyCount - userCount;
+        view.setText(String.valueOf(diff));
+        view.setVisibility(diff == 0 ? View.GONE : View.VISIBLE);
+        if (diff != 0)
+            ((View) view.getParent()).setVisibility(View.VISIBLE);
+    }
+
     @Override
     public void onBindViewHolder(final CardHolder holder, int position) {
 
         ArrayList<Story> updatedStories = new ArrayList<>();
+
         for (Story s : stories) {
-            if (s.hasUpdates())
-                updatedStories.add(s);
+
+            Notifications a = activity.get(s.getId());
+
+            if (a != null) {
+                if (a.getPostCount() != s.getPostCount() ||
+                        a.getChapterCount() != s.getChapterCount() ||
+                        a.getContributorsCount() != s.getContributorsCount()) {
+                    updatedStories.add(s);
+                }
+            }
         }
 
         ArrayList<Story> oldStories = new ArrayList<>(stories);
@@ -180,8 +207,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         holder.mTitleView.setOnClickListener(openStory);
 
         if (user != null) {
-            database.getReference("users").child(user.getUid()).child("activity").child(storyId).addListenerForSingleValueEvent(new CardActivityListener(holder, story));
-
             if (story.getUserId().equals(user.getUid())) {
                 holder.mAuthorView.setTextColor(pink);
                 holder.mAuthorView.setTypeface(activityList ? Typeface.DEFAULT_BOLD : typefaceBold);
@@ -190,8 +215,17 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
             int heart = story.getLikes().containsKey(user.getUid()) ? R.drawable.ic_heart_lit : R.drawable.ic_heart;
 
-            if (activityList)
+            if (activityList) {
+
+                Notifications a = activity.get(story.getId());
+
+                if (a != null) {
+                    showNotification(holder.mNewPostsView, story.getPostCount(), a.getPostCount());
+                    showNotification(holder.mNewChaptersView, story.getChapterCount(), a.getChapterCount());
+                    showNotification(holder.mNewContributorsView, story.getContributorsCount(), a.getContributorsCount());
+                }
                 holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(0, heart, 0, 0);
+            }
             else
                 holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(heart, 0, 0, 0);
         }

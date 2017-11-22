@@ -19,14 +19,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.sam.words.R;
+import com.sam.words.models.Notifications;
 import com.sam.words.models.Post;
 import com.sam.words.models.Story;
 import com.sam.words.story.GoogleSignInFragment;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -58,6 +59,11 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
         return fragment;
     }
 
+    /*@Override
+    public void onResume(Bundle bundle) {
+
+    }*/
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -85,7 +91,7 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
             case ACTIVITY:
                 mCardAdapter.setActivityList(true);
                 if (activityRef != null)
-                    activityRef.addListenerForSingleValueEvent(new UserActivityListener(this));
+                    activityRef.addValueEventListener(new UserActivityListener(this));
                 break;
             case NEW:
                 storyRef.orderByChild("dateCreated").limitToLast(10).addValueEventListener(new CardStoryListener(this));
@@ -171,6 +177,10 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
         progressBar.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
         mCardAdapter.gotStory(story);
+    }
+
+    public void gotActivity(HashMap<String, Notifications> activity) {
+        mCardAdapter.gotActivity(activity);
     }
 
     public void gotStories(List<Story> stories) {

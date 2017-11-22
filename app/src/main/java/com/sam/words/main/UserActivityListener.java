@@ -6,7 +6,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.sam.words.models.Notifications;
 import com.sam.words.models.Story;
+
+import java.util.HashMap;
 
 class UserActivityListener implements ValueEventListener {
 
@@ -20,13 +23,12 @@ class UserActivityListener implements ValueEventListener {
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
 
+        HashMap<String, Notifications> activity = new HashMap<>();
+
         for (DataSnapshot child : dataSnapshot.getChildren()) {
 
             String storyId = child.getKey();
-
-            final Integer knownPostCount = child.child("postCount").getValue(Integer.class);
-            final Integer knownChapterCount = child.child("chapterCount").getValue(Integer.class);
-            final Integer knownContributorsCount = child.child("contributorsCount").getValue(Integer.class);
+            activity.put(storyId, child.getValue(Notifications.class));
 
             database.getReference("stories").child(storyId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -39,11 +41,6 @@ class UserActivityListener implements ValueEventListener {
 
                         story.setId(storyId);
 
-                        if ((knownPostCount != null && knownPostCount != story.getPostCount())
-                                || (knownChapterCount != null && knownChapterCount != story.getChapterCount())
-                                || (knownContributorsCount != null && knownContributorsCount != story.getContributorsCount()))
-                            story.setHasUpdates(true);
-
                         frag.gotStory(story);
                     }
                 }
@@ -54,6 +51,8 @@ class UserActivityListener implements ValueEventListener {
                 }
             });
         }
+
+        frag.gotActivity(activity);
     }
 
     @Override

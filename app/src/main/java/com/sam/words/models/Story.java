@@ -24,7 +24,6 @@ public class Story {
     private int postCount = 1;
     private int contributorsCount = 0;
     private boolean finished = false;
-    private boolean hasUpdates = false;
     private HashMap<String, Boolean> likes = new HashMap<>();
     private HashMap<String, Boolean> contributors = new HashMap<>();
 
@@ -105,14 +104,6 @@ public class Story {
 
     public boolean isFinished() {
         return finished;
-    }
-
-    public boolean hasUpdates() {
-        return hasUpdates;
-    }
-
-    public void setHasUpdates(boolean hasUpdates) {
-        this.hasUpdates = hasUpdates;
     }
 
     public int getChapterCount() {
