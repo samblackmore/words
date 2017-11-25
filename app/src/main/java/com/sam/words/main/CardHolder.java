@@ -1,5 +1,6 @@
 package com.sam.words.main;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -12,7 +13,8 @@ import com.sam.words.components.WordsView;
 
 class CardHolder extends RecyclerView.ViewHolder {
 
-    View mCardView;
+    View mItemView;
+    CardView mCardView;
     TextView mHeaderView;
     TextView mNewPostsView;
     TextView mNewChaptersView;
@@ -23,9 +25,10 @@ class CardHolder extends RecyclerView.ViewHolder {
     TextView mAuthorView;
     WordsView mWordsView;
 
-    CardHolder(View card, TextView headerView, TextView newPosts, TextView newChapters, TextView newContributors, TextView likes, TextView date, TextView title, TextView author, WordsView words) {
-        super(card);
-        mCardView = card;
+    CardHolder(View item, CardView cardView, TextView headerView, TextView newPosts, TextView newChapters, TextView newContributors, TextView likes, TextView date, TextView title, TextView author, WordsView words) {
+        super(item);
+        mItemView = item;
+        mCardView = cardView;
         mHeaderView = headerView;
         mLikesView = likes;
         mDateView = date;

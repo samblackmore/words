@@ -8,8 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -111,6 +109,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         v.setAlpha(0);
         v.animate().alpha(1.0f);
 
+        CardView cardView = (CardView) v.findViewById(R.id.card_view);
         TextView headerView = (TextView) v.findViewById(R.id.header);
         TextView newPostsView = (TextView) v.findViewById(R.id.new_posts_count);
         TextView newChaptersView = (TextView) v.findViewById(R.id.new_chapters_count);
@@ -135,13 +134,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
             wordsView.setVisibility(View.VISIBLE);
             wordsView.setAlpha(0);
 
-            return new CardHolder(v, headerView, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, wordsView);
+            return new CardHolder(v, null, headerView, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, wordsView);
         } else {
 
             titleView.setTypeface(Typeface.DEFAULT_BOLD);
             titleView.setTextSize(16);
 
-            return new CardHolder(v, headerView, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, null);
+            return new CardHolder(v, cardView, headerView, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, null);
         }
     }
 
@@ -175,103 +174,119 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         oldStories.removeAll(updatedStories);
 
         FirebaseUser user = auth.getCurrentUser();
-        final Story story = position < updatedStories.size() ? updatedStories.get(position) : oldStories.get(position - updatedStories.size());
-        final String storyId = story.getId();
+        Story story = null;
 
-        View.OnClickListener openStory = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(holder.mCardView.getContext(), StoryActivity.class);
-                intent.putExtra(EXTRA_STORY, storyId);
-                holder.mCardView.getContext().startActivity(intent);
-            }
-        };
+        // On activity list, account for the 2 extra positions taken up by headers
+        if (activityList) {
+            if (position > 0 && position < updatedStories.size() + 1)
+                story = updatedStories.get(position - 1);
+            else if (position > updatedStories.size() + 1)
+                story = oldStories.get(position - updatedStories.size() - 2);
+        } else if (stories.size() > 0)
+            story = stories.get(position);
 
         if (activityList) {
             holder.mHeaderView.setVisibility(View.GONE);
+            holder.mCardView.setVisibility(View.VISIBLE);
+        }
 
-            if (updatedStories.size() > 0 && oldStories.size() > 0) {
+        if (story == null) {
+            if (activityList) {
 
                 if (position == 0) {
+                    holder.mCardView.setVisibility(View.GONE);
                     holder.mHeaderView.setVisibility(View.VISIBLE);
                     holder.mHeaderView.setText(updatedStories.size() + " updates");
                 }
-                if (position == updatedStories.size()) {
+                if (position == 1 + updatedStories.size()) {
+                    holder.mCardView.setVisibility(View.GONE);
                     holder.mHeaderView.setVisibility(View.VISIBLE);
                     holder.mHeaderView.setText(oldStories.size() + " active");
                 }
+
             }
-        }
+        } else {
+            final String storyId = story.getId();
 
-        holder.mLikesView.setText(String.valueOf(story.getLikeCount()));
-        holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
-        holder.mTitleView.setText(TextUtil.capitalize(story.getTitle()));
-        holder.mAuthorView.setText(story.getAuthorAlias());
-        holder.mTitleView.setOnClickListener(openStory);
-
-        if (user != null) {
-            if (story.getUserId().equals(user.getUid())) {
-                holder.mAuthorView.setTextColor(pink);
-                holder.mAuthorView.setTypeface(activityList ? Typeface.DEFAULT_BOLD : typefaceBold);
-                holder.mAuthorView.setBackgroundColor(pinkLt);
-            }
-
-            int heart = story.getLikes().containsKey(user.getUid()) ? R.drawable.ic_heart_lit : R.drawable.ic_heart;
-
-            if (activityList) {
-
-                Notifications a = activity.get(story.getId());
-
-                if (a != null) {
-                    showNotification(holder.mNewPostsView, story.getPostCount(), a.getPostCount());
-                    showNotification(holder.mNewChaptersView, story.getChapterCount(), a.getChapterCount());
-                    showNotification(holder.mNewContributorsView, story.getContributorsCount(), a.getContributorsCount());
+            View.OnClickListener openStory = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(holder.mItemView.getContext(), StoryActivity.class);
+                    intent.putExtra(EXTRA_STORY, storyId);
+                    holder.mItemView.getContext().startActivity(intent);
                 }
-                holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(0, heart, 0, 0);
+            };
+
+            holder.mLikesView.setText(String.valueOf(story.getLikeCount()));
+            holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
+            holder.mTitleView.setText(TextUtil.capitalize(story.getTitle()));
+            holder.mAuthorView.setText(story.getAuthorAlias());
+            holder.mTitleView.setOnClickListener(openStory);
+
+            if (user != null) {
+                if (story.getUserId().equals(user.getUid())) {
+                    holder.mAuthorView.setTextColor(pink);
+                    holder.mAuthorView.setTypeface(activityList ? Typeface.DEFAULT_BOLD : typefaceBold);
+                    holder.mAuthorView.setBackgroundColor(pinkLt);
+                }
+
+                int heart = story.getLikes().containsKey(user.getUid()) ? R.drawable.ic_heart_lit : R.drawable.ic_heart;
+
+                if (activityList) {
+
+                    Notifications a = activity.get(story.getId());
+
+                    if (a != null) {
+                        showNotification(holder.mNewPostsView, story.getPostCount(), a.getPostCount());
+                        showNotification(holder.mNewChaptersView, story.getChapterCount(), a.getChapterCount());
+                        showNotification(holder.mNewContributorsView, story.getContributorsCount(), a.getContributorsCount());
+                    }
+                    holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(0, heart, 0, 0);
+                }
+                else
+                    holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(heart, 0, 0, 0);
             }
-            else
-                holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(heart, 0, 0, 0);
-        }
 
-        if (!activityList) {
-            holder.mWordsView.setOnClickListener(openStory);
-            database.getReference("posts").child(storyId).child("0").addListenerForSingleValueEvent(new CardPostListener(holder));
-        }
+            if (!activityList) {
+                holder.mWordsView.setOnClickListener(openStory);
+                database.getReference("posts").child(storyId).child("0").addListenerForSingleValueEvent(new CardPostListener(holder));
+            }
 
-        holder.mLikesView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatabaseReference ref = database.getReference("stories").child(storyId);
-                ref.runTransaction(new Transaction.Handler() {
-                    @Override
-                    public Transaction.Result doTransaction(MutableData mutableData) {
-                        Story s = mutableData.getValue(Story.class);
-                        FirebaseUser user = auth.getCurrentUser();
+            holder.mLikesView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatabaseReference ref = database.getReference("stories").child(storyId);
+                    ref.runTransaction(new Transaction.Handler() {
+                        @Override
+                        public Transaction.Result doTransaction(MutableData mutableData) {
+                            Story s = mutableData.getValue(Story.class);
+                            FirebaseUser user = auth.getCurrentUser();
 
-                        if (s == null || user == null)
+                            if (s == null || user == null)
+                                return Transaction.success(mutableData);
+
+                            if (s.getLikes() != null && s.getLikes().containsKey(user.getUid()))
+                                s.removeLike(user.getUid());
+                            else
+                                s.addLike(user.getUid());
+
+                            mutableData.setValue(s);
                             return Transaction.success(mutableData);
+                        }
 
-                        if (s.getLikes() != null && s.getLikes().containsKey(user.getUid()))
-                            s.removeLike(user.getUid());
-                        else
-                            s.addLike(user.getUid());
-
-                        mutableData.setValue(s);
-                        return Transaction.success(mutableData);
-                    }
-
-                    @Override
-                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                        if (databaseError != null)
-                            Log.d("Debug", databaseError.toString());
-                    }
-                });
-            }
-        });
+                        @Override
+                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                            if (databaseError != null)
+                                Log.d("Debug", databaseError.toString());
+                        }
+                    });
+                }
+            });
+        }
     }
 
     @Override
     public int getItemCount() {
-        return stories.size();
+        return stories.size() + 2;
     }
 }
