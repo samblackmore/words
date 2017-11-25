@@ -90,8 +90,12 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
         switch (section) {
             case ACTIVITY:
                 mCardAdapter.setActivityList(true);
-                if (activityRef != null)
-                    activityRef.addValueEventListener(new UserActivityListener(this));
+                if (activityRef != null) {
+                    // Do this once - gets user's stories and sets up listeners for those
+                    activityRef.addListenerForSingleValueEvent(new UserActivityListener(this, true));
+                    // Do this always - update user's activity, don't create new listeners
+                    activityRef.addValueEventListener(new UserActivityListener(this, false));
+                }
                 break;
             case NEW:
                 storyRef.orderByChild("dateCreated").limitToLast(10).addValueEventListener(new CardStoryListener(this));
@@ -101,19 +105,6 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
                 storyRef.orderByChild("likes").limitToLast(10).addValueEventListener(new CardStoryListener(this));
                 break;
         }
-
-        if (activityRef != null)
-            activityRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    mCardAdapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
 
         return rootView;
     }

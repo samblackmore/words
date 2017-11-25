@@ -13,11 +13,13 @@ import java.util.HashMap;
 
 class UserActivityListener implements ValueEventListener {
 
-    TabFragment frag;
+    private TabFragment frag;
+    private boolean setStoryListeners;
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-    UserActivityListener(TabFragment tabFragment) {
+    UserActivityListener(TabFragment tabFragment, boolean setStoryListeners) {
         frag = tabFragment;
+        this.setStoryListeners = setStoryListeners;
     }
 
     @Override
@@ -30,29 +32,32 @@ class UserActivityListener implements ValueEventListener {
             String storyId = child.getKey();
             activity.put(storyId, child.getValue(Notifications.class));
 
-            database.getReference("stories").child(storyId).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+            if (setStoryListeners) {
+                database.getReference("stories").child(storyId).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    String storyId = dataSnapshot.getKey();
-                    Story story = dataSnapshot.getValue(Story.class);
+                        String storyId = dataSnapshot.getKey();
+                        Story story = dataSnapshot.getValue(Story.class);
 
-                    if (story != null) {
+                        if (story != null) {
 
-                        story.setId(storyId);
+                            story.setId(storyId);
 
-                        frag.gotStory(story);
+                            frag.gotStory(story);
+                        }
                     }
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Toast.makeText(frag.getContext(), "Failed to get story! " + databaseError.toString(), Toast.LENGTH_SHORT).show();
-                }
-            });
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(frag.getContext(), "Failed to get story! " + databaseError.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
 
-        frag.gotActivity(activity);
+        if (!setStoryListeners)
+            frag.gotActivity(activity);
     }
 
     @Override

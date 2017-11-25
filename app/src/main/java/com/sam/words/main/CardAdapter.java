@@ -61,7 +61,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         for (int i = 0; i < stories.size(); i++) {
             Story story = stories.get(i);
             if (story.getId().equals(newStory.getId())) {
-                stories.set(i, story);
+                stories.set(i, newStory);
                 return;
             }
         }
@@ -186,7 +186,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
                 holder.mCardView.getContext().startActivity(intent);
             }
         };
-        
+
         if (activityList) {
             holder.mHeaderView.setVisibility(View.GONE);
 
@@ -198,7 +198,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
                 }
                 if (position == updatedStories.size()) {
                     holder.mHeaderView.setVisibility(View.VISIBLE);
-                    holder.mHeaderView.setText(oldStories.size() + " history");
+                    holder.mHeaderView.setText(oldStories.size() + " active");
                 }
             }
         }
