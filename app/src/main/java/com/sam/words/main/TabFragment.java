@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.common.SignInButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,6 +48,7 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
     private Button addStoryButton;
     private ProgressBar signInProgressBar;
     private ProgressBar progressBar;
+    private TextView tabMessage;
 
     public TabFragment() {
     }
@@ -74,6 +76,7 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
         addStoryButton = (Button) rootView.findViewById(R.id.add_story);
         signInProgressBar = (ProgressBar) rootView.findViewById(R.id.sign_in_progress);
         progressBar = (ProgressBar) rootView.findViewById(R.id.loading);
+        tabMessage = (TextView) rootView.findViewById(R.id.tab_message);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.stories_list);
         mRecyclerView.setHasFixedSize(true);
@@ -171,7 +174,14 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
     }
 
     public void gotActivity(HashMap<String, Notifications> activity) {
-        mCardAdapter.gotActivity(activity);
+        if (activity.size() == 0) {
+            progressBar.setVisibility(View.GONE);
+            tabMessage.setVisibility(View.VISIBLE);
+            tabMessage.setText("No activity to show.\nTry contributing to a story!");
+        } else {
+            tabMessage.setVisibility(View.GONE);
+            mCardAdapter.gotActivity(activity);
+        }
     }
 
     public void gotStories(List<Story> stories) {
