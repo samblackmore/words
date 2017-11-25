@@ -186,19 +186,22 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
                 holder.mCardView.getContext().startActivity(intent);
             }
         };
+        
+        if (activityList) {
+            holder.mHeaderView.setVisibility(View.GONE);
 
-        if (activityList && updatedStories.size() > 0 && oldStories.size() > 0) {
+            if (updatedStories.size() > 0 && oldStories.size() > 0) {
 
-            if (position == 0) {
-                holder.mHeaderView.setVisibility(View.VISIBLE);
-                holder.mHeaderView.setText(updatedStories.size() + " updates");
-            }
-            if (position == updatedStories.size()) {
-                holder.mHeaderView.setVisibility(View.VISIBLE);
-                holder.mHeaderView.setText(oldStories.size() + " history");
+                if (position == 0) {
+                    holder.mHeaderView.setVisibility(View.VISIBLE);
+                    holder.mHeaderView.setText(updatedStories.size() + " updates");
+                }
+                if (position == updatedStories.size()) {
+                    holder.mHeaderView.setVisibility(View.VISIBLE);
+                    holder.mHeaderView.setText(oldStories.size() + " history");
+                }
             }
         }
-
 
         holder.mLikesView.setText(String.valueOf(story.getLikeCount()));
         holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
