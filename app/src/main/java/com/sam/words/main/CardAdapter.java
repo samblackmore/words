@@ -287,6 +287,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
     @Override
     public int getItemCount() {
-        return stories.size() + 2;
+        return stories.size() + (activityList ? 2 : 0);
     }
 }
