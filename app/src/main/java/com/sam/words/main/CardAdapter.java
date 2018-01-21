@@ -221,7 +221,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
             holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
             holder.mTitleView.setText(TextUtil.capitalize(story.getTitle()));
             holder.mAuthorView.setText(story.getAuthorAlias());
-            holder.mTitleView.setOnClickListener(openStory);
+
+            if (holder.mCardView != null)
+                holder.mCardView.setOnClickListener(openStory);
 
             if (user != null) {
                 if (story.getUserId().equals(user.getUid())) {
