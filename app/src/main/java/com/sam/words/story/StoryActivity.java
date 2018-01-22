@@ -170,6 +170,7 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
         switch (v.getId()) {
             case R.id.fab:
                 viewPager.setCurrentItem(mStoryAdapter.getCount() - 1);
+                showFab(false);
                 break;
         }
     }

@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,10 +78,12 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     private PostValidation formValidation;
     private ValueEventListener valueEventListener;
     private DatabaseReference listenRef;
-    private LinearLayout pollRoot;
+    private RelativeLayout pollRoot;
     private LinearLayout theEndContainer;
     private TextView theEnd;
     private LinearLayout pollBanner;
+    private Integer pageNum;
+    private Integer pageCnt;
 
     public StoryFragment() {
     }
@@ -95,6 +98,14 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     }
 
     @Override
+    public void setMenuVisibility(final boolean visible) {
+        super.setMenuVisibility(visible);
+        if (visible && activity != null && pageNum != null && pageCnt != null) {
+            activity.showFab(pageNum != pageCnt + 1);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         activity = ((StoryActivity) getActivity());
@@ -103,8 +114,8 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
         if (story != null)
             chapterId = story.getChapters().size() - 1;
 
-        int pageNum = getArguments().getInt(ARG_PAGE_NUMBER);
-        int pageCnt = getArguments().getInt(ARG_PAGE_COUNT);
+        pageNum = getArguments().getInt(ARG_PAGE_NUMBER);
+        pageCnt = getArguments().getInt(ARG_PAGE_COUNT);
 
         Typeface typeface = Typeface.createFromAsset(getContext().getAssets(),
                 "fonts/CrimsonText/CrimsonText-Regular.ttf");
@@ -172,7 +183,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             submitContainer = (LinearLayout) rootView.findViewById(R.id.submit_container);
             signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
             signInProgress = (ProgressBar) rootView.findViewById(R.id.sign_in_progress);
-            pollRoot = (LinearLayout) rootView.findViewById(R.id.poll_root);
+            pollRoot = (RelativeLayout) rootView.findViewById(R.id.poll_root);
             pollBanner = (LinearLayout) rootView.findViewById(R.id.poll_banner);
             pollTitle = (TextView) rootView.findViewById(R.id.poll_title);
             pollRound = (TextView) rootView.findViewById(R.id.poll_round);
