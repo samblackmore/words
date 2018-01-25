@@ -32,10 +32,13 @@ public class BadWordsCheck {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         for (String word : query) {
-            String sanitized = word.toLowerCase().replaceAll("[^a-zA-Z0-9\\-]", "");
+            String sanitized = word.toLowerCase().replaceAll("[.#$\\[\\]]", "");
 
-            database.getReference("bad-words").child(sanitized)
-                    .addListenerForSingleValueEvent(new WordsFoundListener(this));
+            if (sanitized.length() == 0)    // If word entirely unsanitary
+                gotWord(null);              // skip check
+            else
+                database.getReference("bad-words").child(sanitized)
+                        .addListenerForSingleValueEvent(new WordsFoundListener(this));
         }
     }
 

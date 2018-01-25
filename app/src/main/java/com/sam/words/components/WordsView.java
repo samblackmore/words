@@ -191,7 +191,6 @@ public class WordsView extends View {
                     if (processedUpTo < chapterContent.length()) {
 
                         List<String> remainingLines = new ArrayList<>();
-                        int debug = lineWrap(mTextPaint, chapterContent.substring(contentStart + processedUpTo, chapterContent.length()), viewWidth, null, remainingLines);
 
                         if (remainingLines.size() > 0) {
 
