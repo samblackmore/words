@@ -45,7 +45,6 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
     private RecyclerView mRecyclerView;
     private CardAdapter mCardAdapter;
     private SignInButton signInButton;
-    private Button addStoryButton;
     private ProgressBar signInProgressBar;
     private ProgressBar progressBar;
     private TextView tabMessage;
@@ -73,7 +72,6 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(rootView.getContext());
 
         signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
-        addStoryButton = (Button) rootView.findViewById(R.id.add_story);
         signInProgressBar = (ProgressBar) rootView.findViewById(R.id.sign_in_progress);
         progressBar = (ProgressBar) rootView.findViewById(R.id.loading);
         tabMessage = (TextView) rootView.findViewById(R.id.tab_message);
@@ -99,34 +97,18 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
                     // Do this always - update user's activity, don't create new listeners
                     activityRef.addValueEventListener(new UserActivityListener(this, false));
                 }
+                signInButton.setOnClickListener((MainActivity) getActivity());
+                updateUI(mAuth.getCurrentUser());
                 break;
             case NEW:
                 storyRef.orderByChild("dateCreated").limitToLast(10).addValueEventListener(new CardStoryListener(this));
                 break;
             case TOP:
-                initMyStories();
                 storyRef.orderByChild("likes").limitToLast(10).addValueEventListener(new CardStoryListener(this));
                 break;
         }
 
         return rootView;
-    }
-
-    private void initMyStories() {
-
-        // Show container
-        FrameLayout addStoryContainer = (FrameLayout) addStoryButton.getParent().getParent();
-        addStoryContainer.setVisibility(View.VISIBLE);
-
-        // Set up button
-        int color = getResources().getColor(R.color.colorAccent);
-        int textColor = getResources().getColor(R.color.white);
-        addStoryButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-        addStoryButton.setTextColor(textColor);
-        addStoryButton.setOnClickListener((MainActivity) getActivity());
-        signInButton.setOnClickListener((MainActivity) getActivity());
-
-        updateUI(mAuth.getCurrentUser());
     }
 
     public void updateUI(FirebaseUser user) {
@@ -137,32 +119,40 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
         MainActivity activity = (MainActivity) getActivity();
         activity.invalidateOptionsMenu();
 
+        TabEnum section = TabEnum.getSection(getArguments().getInt(ARG_TAB_SECTION));
+
         if (user == null) {
-            signInButton.setVisibility(View.VISIBLE);
-            addStoryButton.setVisibility(View.INVISIBLE);
+            if (section == TabEnum.ACTIVITY) {
+                mRecyclerView.setVisibility(View.INVISIBLE);
+                signInButton.setVisibility(View.VISIBLE);
+            }
+            activity.showAddStoryButton(false);
         } else {
-            signInButton.setVisibility(View.INVISIBLE);
-            addStoryButton.setVisibility(View.VISIBLE);
+            if (section == TabEnum.ACTIVITY)
+                mRecyclerView.setVisibility(View.VISIBLE);
+            signInButton.setVisibility(View.GONE);
+            activity.showAddStoryButton(true);
         }
 
         mCardAdapter.refresh();
     }
 
     public void showLoading(boolean show) {
+        MainActivity activity = (MainActivity) getActivity();
         if (show) {
             progressBar.setVisibility(View.VISIBLE);
-            signInProgressBar.setVisibility(View.VISIBLE);
-            signInButton.setVisibility(View.INVISIBLE);
-            addStoryButton.setVisibility(View.INVISIBLE);
+            signInProgressBar.setVisibility(View.GONE);
+            signInButton.setVisibility(View.GONE);
+            activity.showAddStoryButton(false);
         } else {
             progressBar.setVisibility(View.GONE);
             signInProgressBar.setVisibility(View.GONE);
             if (mAuth.getCurrentUser() == null) {
                 signInButton.setVisibility(View.VISIBLE);
-                addStoryButton.setVisibility(View.INVISIBLE);
+                activity.showAddStoryButton(false);
             } else {
-                signInButton.setVisibility(View.INVISIBLE);
-                addStoryButton.setVisibility(View.VISIBLE);
+                signInButton.setVisibility(View.GONE);
+                activity.showAddStoryButton(true);
             }
         }
     }

@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -36,6 +37,7 @@ public class MainActivity extends GoogleSignInActivity {
 
     private FirebaseAuth mAuth;
     private TabAdapter mTabAdapter;
+    private FloatingActionButton fab;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,10 @@ public class MainActivity extends GoogleSignInActivity {
                 fragment.show(getFragmentManager(), "newstory");
                 break;
         }
+    }
+
+    public void showAddStoryButton(boolean show) {
+        fab.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -89,6 +95,8 @@ public class MainActivity extends GoogleSignInActivity {
 
     private void initLayout() {
         setContentView(R.layout.activity_browse);
+
+        fab = (FloatingActionButton) findViewById(R.id.add_story);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
