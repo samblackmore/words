@@ -23,7 +23,7 @@
     <string name="setting_text_size_smaller">Smaller</string>
     <string name="new_story_title_hint">Title</string>
     <string name="new_story_author_hint">Author</string>
-    <string name="new_story_content_hint">Once upon a time</string>
+    <string name="new_story_content_hint">Your first words</string>
     <string name="sign_out">Sign out</string>
     <string name="new_story_title">New story</string>
     <string name="your_3_words">Your 3 words...</string>

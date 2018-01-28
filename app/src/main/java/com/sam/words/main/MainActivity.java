@@ -103,6 +103,7 @@ public class MainActivity extends GoogleSignInActivity {
         setContentView(R.layout.activity_browse);
 
         fab = (FloatingActionButton) findViewById(R.id.add_story);
+        fab.setOnClickListener(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
