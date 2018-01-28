@@ -1,6 +1,5 @@
 package com.sam.words.main;
 
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,19 +7,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.common.SignInButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.sam.words.R;
 import com.sam.words.models.Notifications;
 import com.sam.words.models.Post;
@@ -98,7 +92,9 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
                     activityRef.addValueEventListener(new UserActivityListener(this, false));
                 }
                 signInButton.setOnClickListener((MainActivity) getActivity());
-                updateUI(mAuth.getCurrentUser());
+                mRecyclerView.setVisibility(user != null ? View.VISIBLE : View.GONE);
+                signInButton.setVisibility(user != null ? View.GONE : View.VISIBLE);
+                progressBar.setVisibility(user != null ? View.VISIBLE : View.GONE);
                 break;
             case NEW:
                 storyRef.orderByChild("dateCreated").limitToLast(10).addValueEventListener(new CardStoryListener(this));
@@ -108,53 +104,23 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
                 break;
         }
 
+        MainActivity activity = (MainActivity) getActivity();
+        activity.showAddStoryButton(user != null);
+
         return rootView;
     }
 
-    public void updateUI(FirebaseUser user) {
-
-        showLoading(false);
-
-        // Refresh the options menu
+    @Override
+    public void onSignInSignOut(FirebaseUser firebaseUser) {
+        // All tab fragments need to reset so sign out the whole activity
         MainActivity activity = (MainActivity) getActivity();
-        activity.invalidateOptionsMenu();
-
-        TabEnum section = TabEnum.getSection(getArguments().getInt(ARG_TAB_SECTION));
-
-        if (user == null) {
-            if (section == TabEnum.ACTIVITY) {
-                mRecyclerView.setVisibility(View.INVISIBLE);
-                signInButton.setVisibility(View.VISIBLE);
-            }
-            activity.showAddStoryButton(false);
-        } else {
-            if (section == TabEnum.ACTIVITY)
-                mRecyclerView.setVisibility(View.VISIBLE);
-            signInButton.setVisibility(View.GONE);
-            activity.showAddStoryButton(true);
-        }
-
-        mCardAdapter.refresh();
+        activity.onSignInSignOut();
     }
 
-    public void showLoading(boolean show) {
-        MainActivity activity = (MainActivity) getActivity();
-        if (show) {
-            progressBar.setVisibility(View.VISIBLE);
-            signInProgressBar.setVisibility(View.GONE);
-            signInButton.setVisibility(View.GONE);
-            activity.showAddStoryButton(false);
-        } else {
-            progressBar.setVisibility(View.GONE);
-            signInProgressBar.setVisibility(View.GONE);
-            if (mAuth.getCurrentUser() == null) {
-                signInButton.setVisibility(View.VISIBLE);
-                activity.showAddStoryButton(false);
-            } else {
-                signInButton.setVisibility(View.GONE);
-                activity.showAddStoryButton(true);
-            }
-        }
+    public void showSignInLoading(boolean show) {
+        signInProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (show)
+            signInButton.setVisibility(View.INVISIBLE);
     }
 
     public void gotStory(Story story) {

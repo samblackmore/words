@@ -38,6 +38,7 @@ public class MainActivity extends GoogleSignInActivity {
     private FirebaseAuth mAuth;
     private TabAdapter mTabAdapter;
     private FloatingActionButton fab;
+    private ViewPager viewPager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,13 +87,18 @@ public class MainActivity extends GoogleSignInActivity {
             case R.id.action_sign_out:
                 mAuth.signOut();
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
-                getFrag().updateUI(null);
+                onSignInSignOut();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    public void onSignInSignOut() {
+        // Hacky! Should use notifyDataSetChanged on the adapter
+        viewPager.setAdapter(mTabAdapter);
+    }
+    
     private void initLayout() {
         setContentView(R.layout.activity_browse);
 
@@ -103,7 +109,7 @@ public class MainActivity extends GoogleSignInActivity {
 
         mTabAdapter = new TabAdapter(getSupportFragmentManager());
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
+        viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(mTabAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);

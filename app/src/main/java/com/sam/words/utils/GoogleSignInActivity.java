@@ -75,9 +75,9 @@ public class GoogleSignInActivity extends AppCompatActivity implements View.OnCl
             if (result.isSuccess()) {
                 GoogleSignInAccount googleAccount = result.getSignInAccount();
                 firebaseAuthWithGoogle(googleAccount);
-                getFrag().showLoading(true);
+                getFrag().showSignInLoading(true);
             } else {
-                getFrag().showLoading(false);
+                getFrag().showSignInLoading(false);
                 Toast.makeText(this, result.getStatus().toString(), Toast.LENGTH_SHORT).show();
             }
         }
@@ -93,9 +93,9 @@ public class GoogleSignInActivity extends AppCompatActivity implements View.OnCl
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                            getFrag().updateUI(user);
+                            getFrag().onSignInSignOut(user);
                         } else {
-                            getFrag().updateUI(null);
+                            getFrag().onSignInSignOut(null);
                         }
                     }
                 });

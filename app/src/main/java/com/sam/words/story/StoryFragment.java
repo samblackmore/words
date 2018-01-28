@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,12 +25,8 @@ import android.widget.Toast;
 import com.google.android.gms.common.SignInButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.sam.words.R;
 import com.sam.words.components.Page;
@@ -43,10 +38,8 @@ import com.sam.words.models.Poll;
 import com.sam.words.utils.SharedPreferencesHelper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * A page in a story. Contains a single WordsView representing that page.
@@ -279,7 +272,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             gotPosts(poll.getPosts());
             gotTimer(poll.getTimeEnding());
 
-            updateUI(auth.getCurrentUser());
+            onSignInSignOut(auth.getCurrentUser());
         }
     }
 
@@ -382,7 +375,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
                     BadWordsCheck badWordsCheck = new BadWordsCheck(input, newPostCallback);
                     badWordsCheck.execute();
 
-                    updateUI(user);
+                    onSignInSignOut(user);
                 }
 
                 pollInput.setText("");
@@ -392,8 +385,8 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     }
 
     @Override
-    public void updateUI(FirebaseUser user) {
-        showLoading(false);
+    public void onSignInSignOut(FirebaseUser user) {
+        showSignInLoading(false);
         submitContainer.setVisibility(user == null ? View.GONE : View.VISIBLE);
         signInButton.setVisibility(user == null ? View.VISIBLE : View.GONE);
 
@@ -442,7 +435,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     }
 
     @Override
-    public void showLoading(boolean show) {
+    public void showSignInLoading(boolean show) {
         if (show) {
             signInProgress.setVisibility(View.VISIBLE);
             signInButton.setVisibility(View.GONE);

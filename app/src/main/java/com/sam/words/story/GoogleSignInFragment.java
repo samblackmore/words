@@ -7,6 +7,6 @@ import com.google.firebase.auth.FirebaseUser;
  */
 
 public interface GoogleSignInFragment {
-    void updateUI(FirebaseUser firebaseUser);
-    void showLoading(boolean show);
+    void onSignInSignOut(FirebaseUser firebaseUser);
+    void showSignInLoading(boolean show);
 }
