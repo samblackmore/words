@@ -1,10 +1,12 @@
 package com.sam.words.story;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -30,7 +32,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sam.words.R;
 import com.sam.words.components.Page;
+import com.sam.words.components.SimpleDialog;
 import com.sam.words.components.WordsView;
+import com.sam.words.main.MainActivity;
 import com.sam.words.main.newstory.BadWordsCheck;
 import com.sam.words.models.Post;
 import com.sam.words.models.Story;
@@ -77,6 +81,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     private LinearLayout pollBanner;
     private Integer pageNum;
     private Integer pageCnt;
+    private int secretOptionsCountdown = 1;
 
     public StoryFragment() {
     }
@@ -128,6 +133,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             TextView titleView = (TextView) rootView.findViewById(R.id.story_title);
             TextView authorView = (TextView) rootView.findViewById(R.id.story_author);
             TextView byView = (TextView) rootView.findViewById(R.id.story_by);
+            titleView.setOnClickListener(this);
 
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
             chapterList = (RecyclerView) rootView.findViewById(R.id.chapter_list);
@@ -346,15 +352,51 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
     @Override
     public void onClick(View v) {
+
+        FirebaseUser user = auth.getCurrentUser();
+
         switch (v.getId()) {
+
+            case R.id.story_title:
+
+                if (story != null && user != null && user.getUid().equals(story.getUserId())) {
+                    if (secretOptionsCountdown == 5) {
+                        secretOptionsCountdown = 1;
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        database.getReference("stories")
+                                                .child(story.getId())
+                                                .child("finished")
+                                                .setValue(true);
+                                        break;
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        dialog.cancel();
+                                        break;
+                                }
+                            }
+                        };
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage("Are you sure you you want to end this story now? This cannot be undone!")
+                                .setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener)
+                                .show();
+                    } else {
+                        secretOptionsCountdown += 1;
+                    }
+
+                }
+
+                break;
 
             case R.id.poll_submit:
 
                 // Hide keyboard
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-
-                FirebaseUser user = auth.getCurrentUser();
 
                 if (user == null) {
                     Toast.makeText(getActivity(), "Not signed in!", Toast.LENGTH_SHORT).show();
