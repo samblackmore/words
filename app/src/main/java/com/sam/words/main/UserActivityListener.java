@@ -4,22 +4,23 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sam.words.models.Notifications;
 import com.sam.words.models.Story;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 class UserActivityListener implements ValueEventListener {
 
     private TabFragment frag;
-    private boolean setStoryListeners;
+    private ArrayList<String> storiesListenedTo = new ArrayList<>();
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-    UserActivityListener(TabFragment tabFragment, boolean setStoryListeners) {
+    UserActivityListener(TabFragment tabFragment) {
         frag = tabFragment;
-        this.setStoryListeners = setStoryListeners;
     }
 
     @Override
@@ -32,7 +33,8 @@ class UserActivityListener implements ValueEventListener {
             String storyId = child.getKey();
             activity.put(storyId, child.getValue(Notifications.class));
 
-            if (setStoryListeners) {
+            if (!storiesListenedTo.contains(storyId)) {
+                storiesListenedTo.add(storyId);
                 database.getReference("stories").child(storyId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -56,8 +58,7 @@ class UserActivityListener implements ValueEventListener {
             }
         }
 
-        if (!setStoryListeners)
-            frag.gotActivity(activity);
+        frag.gotActivity(activity);
     }
 
     @Override

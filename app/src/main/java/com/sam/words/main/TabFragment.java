@@ -88,8 +88,7 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
                 mCardAdapter.setActivityList(true);
                 if (user != null) {
                     DatabaseReference userRef = database.getReference("users").child(user.getUid());
-                    userRef.child("activity").addListenerForSingleValueEvent(new UserActivityListener(this, true));
-                    userRef.child("activity").addValueEventListener(new UserActivityListener(this, false));
+                    userRef.child("activity").addValueEventListener(new UserActivityListener(this));
                     userRef.child("stories").addValueEventListener(new UserStoryListener(this));
                 }
                 signInButton.setOnClickListener((MainActivity) getActivity());
