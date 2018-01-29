@@ -174,42 +174,65 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
             }
         }
 
-        ArrayList<Story> oldStories = new ArrayList<>(stories);
-        oldStories.removeAll(updatedStories);
+        ArrayList<Story> notUpdatedStories = new ArrayList<>(stories);
+        notUpdatedStories.removeAll(updatedStories);
 
         FirebaseUser user = auth.getCurrentUser();
         Story story = null;
 
-        // On activity list, account for the 2 extra positions taken up by headers
+        ArrayList<Story> myActiveStories = new ArrayList<>();
+        ArrayList<Story> myFinishedStories = new ArrayList<>();
+        ArrayList<Story> otherActiveStories = new ArrayList<>();
+        ArrayList<Story> otherFinishedStories = new ArrayList<>();
+
+        if (activityList && user != null) {
+            for (Story s : notUpdatedStories) {
+                if (s.getUserId().equals(user.getUid())) {
+                    if (s.isFinished())
+                        myFinishedStories.add(s);
+                    else
+                        myActiveStories.add(s);
+                } else {
+                    if (s.isFinished())
+                        otherFinishedStories.add(s);
+                    else
+                        otherActiveStories.add(s);
+                }
+            }
+        }
+
         if (activityList) {
-            if (position > 0 && position < updatedStories.size() + 1)
-                story = updatedStories.get(position - 1);
-            else if (position > updatedStories.size() + 1)
-                story = oldStories.get(position - updatedStories.size() - 2);
+            ArrayList<Object> list = new ArrayList<>();
+            list.add(updatedStories.size() + " updates");
+            list.addAll(updatedStories);
+            list.add(myActiveStories.size() + " my active");
+            list.addAll(myActiveStories);
+            list.add(otherActiveStories.size() + " other active");
+            list.addAll(otherActiveStories);
+            list.add(myFinishedStories.size() + " my finished");
+            list.addAll(myFinishedStories);
+            list.add(otherFinishedStories.size() + " other finished");
+            list.addAll(otherFinishedStories);
+
+            Object item = list.get(position);
+
+            if (item instanceof String) {
+                holder.mCardView.setVisibility(View.GONE);
+                holder.mHeaderView.setVisibility(View.VISIBLE);
+                holder.mHeaderView.setText((String) item);
+            }
+            if (item instanceof Story) {
+                holder.mCardView.setVisibility(View.VISIBLE);
+                holder.mHeaderView.setVisibility(View.GONE);
+                story = (Story) item;
+            }
+
         } else if (stories.size() > 0)
             story = stories.get(position);
 
-        if (activityList) {
-            holder.mHeaderView.setVisibility(View.GONE);
-            holder.mCardView.setVisibility(View.VISIBLE);
-        }
 
-        if (story == null) {
-            if (activityList) {
 
-                if (position == 0) {
-                    holder.mCardView.setVisibility(View.GONE);
-                    holder.mHeaderView.setVisibility(View.VISIBLE);
-                    holder.mHeaderView.setText(updatedStories.size() + " updates");
-                }
-                if (position == 1 + updatedStories.size()) {
-                    holder.mCardView.setVisibility(View.GONE);
-                    holder.mHeaderView.setVisibility(View.VISIBLE);
-                    holder.mHeaderView.setText(oldStories.size() + " active");
-                }
-
-            }
-        } else {
+        if (story != null) {
             final String storyId = story.getId();
 
             View.OnClickListener openStory = new View.OnClickListener() {
@@ -293,6 +316,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
     @Override
     public int getItemCount() {
-        return stories.size() + (activityList ? 2 : 0);
+        return stories.size() + (activityList ? 5 : 0);
     }
 }
