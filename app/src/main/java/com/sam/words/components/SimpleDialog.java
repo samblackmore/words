@@ -11,11 +11,13 @@ import com.sam.words.R;
 public class SimpleDialog extends DialogFragment {
 
     static String key = "MESSAGE";
+    static String btn = "BUTTON";
 
-    public static SimpleDialog newInstance(String message) {
+    public static SimpleDialog newInstance(String message, int btnText) {
         SimpleDialog f = new SimpleDialog();
         Bundle args = new Bundle();
         args.putString(key, message);
+        args.putInt(btn, btnText);
         f.setArguments(args);
         return f;
     }
@@ -25,7 +27,7 @@ public class SimpleDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         return new AlertDialog.Builder(getActivity())
                 .setMessage(getArguments().getString(key))
-                .setPositiveButton(R.string.try_again, null)
+                .setPositiveButton(getArguments().getInt(btn), null)
                 .create();
     }
 }

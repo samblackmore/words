@@ -21,6 +21,7 @@ import com.sam.words.models.Post;
 import com.sam.words.models.Story;
 import com.sam.words.story.GoogleSignInFragment;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,7 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
     private ProgressBar signInProgressBar;
     private ProgressBar progressBar;
     private TextView tabMessage;
+    private Long userStoryCount;
 
     public TabFragment() {
     }
@@ -80,16 +82,15 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
         TabEnum section = TabEnum.getSection(getArguments().getInt(ARG_TAB_SECTION));
         FirebaseUser user = mAuth.getCurrentUser();
         DatabaseReference storyRef = database.getReference("stories");
-        DatabaseReference activityRef = user == null ? null : database.getReference("users").child(user.getUid()).child("activity");
 
         switch (section) {
             case ACTIVITY:
                 mCardAdapter.setActivityList(true);
-                if (activityRef != null) {
-                    // Do this once - gets user's stories and sets up listeners for those
-                    activityRef.addListenerForSingleValueEvent(new UserActivityListener(this, true));
-                    // Do this always - update user's activity, don't create new listeners
-                    activityRef.addValueEventListener(new UserActivityListener(this, false));
+                if (user != null) {
+                    DatabaseReference userRef = database.getReference("users").child(user.getUid());
+                    userRef.child("activity").addListenerForSingleValueEvent(new UserActivityListener(this, true));
+                    userRef.child("activity").addValueEventListener(new UserActivityListener(this, false));
+                    userRef.child("stories").addValueEventListener(new UserStoryListener(this));
                 }
                 signInButton.setOnClickListener((MainActivity) getActivity());
                 mRecyclerView.setVisibility(user != null ? View.VISIBLE : View.GONE);
@@ -123,10 +124,31 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
             signInButton.setVisibility(View.INVISIBLE);
     }
 
+    public void gotUserStoryCount(long count) {
+        userStoryCount = count;
+    }
+
     public void gotStory(Story story) {
         progressBar.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
         mCardAdapter.gotStory(story);
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        if (user != null) {
+            int myActiveCount = 0;
+            ArrayList<Story> myStories = new ArrayList<>();
+            MainActivity activity = (MainActivity) getActivity();
+
+            for (Story s : mCardAdapter.getStories()) {
+                if (s.getUserId().equals(user.getUid())) {
+                    myStories.add(s);
+                    myActiveCount += s.isFinished() ? 0 : 1;
+                }
+            }
+            if (userStoryCount != null && myStories.size() == userStoryCount)
+                activity.gotActiveStoryCount(myActiveCount);
+        }
     }
 
     public void gotActivity(HashMap<String, Notifications> activity) {

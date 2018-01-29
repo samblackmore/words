@@ -76,6 +76,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         notifyDataSetChanged();
     }
 
+    public List<Story> getStories() {
+        return stories;
+    }
+
     void gotPosts(List<Post> posts) {
         this.posts = posts;
         notifyDataSetChanged();

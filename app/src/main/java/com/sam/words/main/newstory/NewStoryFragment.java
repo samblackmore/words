@@ -98,7 +98,7 @@ public class NewStoryFragment extends DialogFragment {
     }
 
     private void showError(String message) {
-        SimpleDialog dialog = SimpleDialog.newInstance(message);
+        SimpleDialog dialog = SimpleDialog.newInstance(message, R.string.try_again);
         dialog.show(((MainActivity) getActivity()).getSupportFragmentManager(), "form-error");
     }
 }

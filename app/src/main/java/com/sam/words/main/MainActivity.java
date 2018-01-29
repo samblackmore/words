@@ -29,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.sam.words.R;
+import com.sam.words.components.SimpleDialog;
 import com.sam.words.main.newstory.NewStoryFragment;
 import com.sam.words.settings.SettingsActivity;
 import com.sam.words.utils.GoogleSignInActivity;
@@ -39,6 +40,7 @@ public class MainActivity extends GoogleSignInActivity {
     private TabAdapter mTabAdapter;
     private FloatingActionButton fab;
     private ViewPager viewPager;
+    private boolean reachedStoryLimit = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,14 +55,24 @@ public class MainActivity extends GoogleSignInActivity {
 
         switch (v.getId()) {
             case R.id.add_story:
-                DialogFragment fragment = new NewStoryFragment();
-                fragment.show(getFragmentManager(), "newstory");
+                if (!reachedStoryLimit) {
+                    DialogFragment fragment = new NewStoryFragment();
+                    fragment.show(getFragmentManager(), "newstory");
+                } else {
+                    SimpleDialog dialog = SimpleDialog.newInstance("Sorry! You can only have 10 unfinished stories active at once. Please let one of your stories reach its end before starting a new one or, to finish a story at any time, open the story and tap its title 5 times.", R.string.ok);
+                    dialog.show(getSupportFragmentManager(), "story-limit-error");
+                }
+
                 break;
         }
     }
 
     public void showAddStoryButton(boolean show) {
         fab.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    public void gotActiveStoryCount(int count) {
+        reachedStoryLimit = count >= 10;
     }
 
     @Override
