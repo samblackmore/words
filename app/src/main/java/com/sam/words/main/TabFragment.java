@@ -100,7 +100,7 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
                 storyRef.orderByChild("dateCreated").limitToLast(10).addValueEventListener(new CardStoryListener(this));
                 break;
             case TOP:
-                storyRef.orderByChild("likes").limitToLast(10).addValueEventListener(new CardStoryListener(this));
+                storyRef.orderByChild("likeCount").limitToLast(10).addValueEventListener(new CardStoryListener(this));
                 break;
         }
 
