@@ -47,8 +47,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
     private HashMap<String, Notifications> activity = new HashMap<>();
     private int pink;
     private int pinkLt;
+    private int gray;
     private Typeface typefaceBold;
     private boolean activityList = false;
+    private Typeface typefaceItalic;
+    private int grayLtr;
 
     void refresh() {
         notifyDataSetChanged();
@@ -102,7 +105,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
                 "fonts/CrimsonText/CrimsonText-Bold.ttf"
         );
 
-        Typeface typefaceItalic = Typeface.createFromAsset(
+        typefaceItalic = Typeface.createFromAsset(
                 parent.getContext().getAssets(),
                 "fonts/CrimsonText/CrimsonText-Italic.ttf"
         );
@@ -125,6 +128,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
         pink = parent.getResources().getColor(R.color.pink);
         pinkLt = parent.getResources().getColor(R.color.pinkLt);
+        gray = parent.getResources().getColor(R.color.grayDk);
+        grayLtr = parent.getResources().getColor(R.color.grayLtr);
 
         if (!activityList) {
 
@@ -248,6 +253,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
             holder.mDateView.setText(TimeAgo.timeAgo(story.getDateUpdated()));
             holder.mTitleView.setText(TextUtil.capitalize(story.getTitle()));
             holder.mAuthorView.setText(story.getAuthorAlias());
+            if (activityList) {
+                holder.mTitleView.setTypeface(story.isFinished() ? Typeface.DEFAULT : Typeface.DEFAULT_BOLD);
+                holder.mAuthorView.setTextColor(gray);
+                holder.mAuthorView.setTypeface(typefaceItalic);
+                holder.mAuthorView.setBackgroundColor(0);
+            }
 
             if (holder.mCardView != null)
                 holder.mCardView.setOnClickListener(openStory);
@@ -255,7 +266,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
             if (user != null) {
                 if (story.getUserId().equals(user.getUid())) {
                     holder.mAuthorView.setTextColor(pink);
-                    holder.mAuthorView.setTypeface(activityList ? Typeface.DEFAULT_BOLD : typefaceBold);
+                    if (activityList)
+                        holder.mAuthorView.setTypeface(story.isFinished() ? Typeface.DEFAULT : Typeface.DEFAULT_BOLD);
+                    else
+                        holder.mAuthorView.setTypeface(typefaceBold);
                     holder.mAuthorView.setBackgroundColor(pinkLt);
                 }
 
