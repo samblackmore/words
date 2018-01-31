@@ -95,6 +95,11 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
                 mRecyclerView.setVisibility(user != null ? View.VISIBLE : View.GONE);
                 signInButton.setVisibility(user != null ? View.GONE : View.VISIBLE);
                 progressBar.setVisibility(user != null ? View.VISIBLE : View.GONE);
+                if (user == null) {
+                    tabMessage.setVisibility(View.VISIBLE);
+                    //tabMessage.setText("Welcome to 3 Words!\n\nSign in to start your own story\nor swipe to browse other people's");
+                    tabMessage.setText("Welcome to 3 Words!\n\nSwipe to browse ongoing stories or\nsign in to start your own");
+                }
                 break;
             case NEW:
                 storyRef.orderByChild("dateCreated").limitToLast(10).addValueEventListener(new CardStoryListener(this));

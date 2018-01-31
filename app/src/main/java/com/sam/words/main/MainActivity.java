@@ -109,6 +109,7 @@ public class MainActivity extends GoogleSignInActivity {
     public void onSignInSignOut() {
         // Hacky! Should use notifyDataSetChanged on the adapter
         viewPager.setAdapter(mTabAdapter);
+        invalidateOptionsMenu();
     }
     
     private void initLayout() {
