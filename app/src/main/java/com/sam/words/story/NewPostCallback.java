@@ -25,9 +25,9 @@ import java.util.Map;
 
 public class NewPostCallback implements BadWordsCallback {
 
-    //private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
+    private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
     //private final int COUNTDOWN_LENGTH = 24 * 60 * 60 * 1000;
-    private final int COUNTDOWN_LENGTH = 30 * 1000;
+    //private final int COUNTDOWN_LENGTH = 30 * 1000;
 
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
