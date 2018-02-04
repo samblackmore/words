@@ -92,7 +92,7 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
                     userRef.child("stories").addValueEventListener(new UserStoryListener(this));
                 }
                 signInButton.setOnClickListener((MainActivity) getActivity());
-                mRecyclerView.setVisibility(user != null ? View.VISIBLE : View.GONE);
+                mRecyclerView.setVisibility(View.GONE);
                 signInButton.setVisibility(user != null ? View.GONE : View.VISIBLE);
                 progressBar.setVisibility(user != null ? View.VISIBLE : View.GONE);
                 if (user == null) {
@@ -160,9 +160,11 @@ public class TabFragment extends Fragment implements GoogleSignInFragment{
             progressBar.setVisibility(View.GONE);
             tabMessage.setVisibility(View.VISIBLE);
             tabMessage.setText("No activity to show.\nTry contributing to a story!");
+            mRecyclerView.setVisibility(View.GONE);
         } else {
             tabMessage.setVisibility(View.GONE);
             mCardAdapter.gotActivity(activity);
+            mRecyclerView.setVisibility(View.VISIBLE);
         }
     }
 
