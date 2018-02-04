@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.sam.words.story.StoryActivity">
+    tools:context="com.sam.story.story.StoryActivity">
 
     <include
         layout="@layout/fragment_story_page"

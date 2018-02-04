@@ -106,7 +106,7 @@
                 android:layout_below="@id/story_title"
                 />
 
-            <com.sam.words.components.WordsView
+            <com.sam.story.components.WordsView
                 android:id="@+id/words_view"
                 android:layout_marginTop="48dp"
                 android:layout_below="@+id/story_author"

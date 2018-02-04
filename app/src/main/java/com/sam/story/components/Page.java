@@ -1,0 +1,108 @@
+package com.sam.story.components;
+
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+
+import java.util.List;
+
+/**
+ * A page in a story. The first page in a chapter has a chapter title, a drop cap, and lines around
+ * the drop cap. The remaining pages have only lines.
+ */
+
+public class Page {
+    private Typeface typeface;
+    private int textSize;
+    private int lineHeight;
+    private int lineSpacing;
+    private TextBox chapterTitle;
+    private TextBox chapterSubtitle;
+    private TextBox dropCap;
+    private List<String> dropCapLines;
+    private List<String> lines;
+
+    Page(Typeface typeface, int textSize, int lineHeight, float lineSeparation) {
+        this.typeface = typeface;
+        this.textSize = textSize;
+        this.lineHeight = lineHeight;
+
+        lineSpacing = (int) ((lineHeight * lineSeparation) - lineHeight);
+    }
+
+    void setChapterTitle(TextBox chapterTitle) {
+        this.chapterTitle = chapterTitle;
+    }
+
+    public TextBox getChapterTitle() {
+        return chapterTitle;
+    }
+
+    public TextBox getChapterSubtitle() {
+        return chapterSubtitle;
+    }
+
+    public void setChapterSubtitle(TextBox chapterSubtitle) {
+        this.chapterSubtitle = chapterSubtitle;
+    }
+
+    public TextBox getDropCap() {
+        return dropCap;
+    }
+
+    void setDropCap(TextBox dropCap) {
+        this.dropCap = dropCap;
+    }
+
+    void setDropCapLines(List<String> dropCapLines) {
+        this.dropCapLines = dropCapLines;
+    }
+
+    public List<String> getDropCapLines() {
+        return dropCapLines;
+    }
+
+    void setLines(List<String> lines) {
+        this.lines = lines;
+    }
+
+    private void drawLines(Canvas canvas, Paint paint, int x, int y, List<String> lines) {
+        for (int i = 1; i < lines.size() + 1; i++) {
+            int lineY = (i * lineHeight) + ((i - 1) * lineSpacing);
+            canvas.drawText(lines.get(i - 1), x, y + lineY, paint);
+        }
+    }
+
+    void draw(Canvas canvas, Paint paint) {
+
+        paint.setTypeface(typeface);
+
+        if (chapterTitle != null) {
+            paint.setTextSize(chapterTitle.getTextSize());
+            canvas.drawText(chapterTitle.toString(), chapterTitle.getTextLeft(), chapterTitle.getTextHeight(), paint);
+        }
+
+        if (chapterSubtitle != null) {
+            paint.setTextSize(chapterSubtitle.getTextSize());
+            canvas.drawText(chapterSubtitle.toString(), chapterSubtitle.getTextLeft(), chapterTitle.getHeight() + chapterSubtitle.getTextHeight(), paint);
+        }
+
+        if (dropCap != null) {
+            paint.setTextSize(dropCap.getTextSize());
+            canvas.drawText(dropCap.toString(), 0, dropCap.getTextHeight() + chapterTitle.getHeight() + chapterSubtitle.getHeight(), paint);
+
+            if (dropCapLines != null) {
+                paint.setTextSize(textSize);
+                drawLines(canvas, paint, dropCap.getWidth() + lineSpacing, chapterTitle.getHeight() + chapterSubtitle.getHeight(), dropCapLines);
+            }
+
+            if (lines != null) {
+                paint.setTextSize(textSize);
+                drawLines(canvas, paint, 0, chapterTitle.getHeight() + chapterSubtitle.getHeight() + dropCap.getTextHeight() + lineSpacing, lines);
+            }
+        } else if (lines != null) {
+            paint.setTextSize(textSize);
+            drawLines(canvas, paint, 0, 0, lines);
+        }
+    }
+}

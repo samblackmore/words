@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sam.words.main.TabFragment">
+    tools:context="com.sam.story.main.TabFragment">
 
     <ProgressBar
         android:id="@+id/loading"
