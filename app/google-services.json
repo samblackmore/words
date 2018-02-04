@@ -8,12 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:302249197704:android:0eb7f826de9ead17",
+        "mobilesdk_app_id": "1:302249197704:android:db39e7f581d9fa38",
         "android_client_info": {
-          "package_name": "com.sam.words"
+          "package_name": "com.sam.story"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "302249197704-8di7gienh84tatglig3jo257pdbqn9n8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sam.story",
+            "certificate_hash": "3c12239eb9a44f8867d2a1d790572b735525cf26"
+          }
+        },
         {
           "client_id": "302249197704-1mktsng1iv1qondi4o9dcjklg99atag7.apps.googleusercontent.com",
           "client_type": 3
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "302249197704-1mktsng1iv1qondi4o9dcjklg99atag7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
