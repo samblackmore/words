@@ -3,6 +3,7 @@ package com.sam.story.main;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sam.story.components.WordsView;
@@ -13,6 +14,7 @@ import com.sam.story.components.WordsView;
 
 class CardHolder extends RecyclerView.ViewHolder {
 
+    ImageView mProfilePicView;
     View mItemView;
     CardView mCardView;
     TextView mHeaderView;
@@ -25,7 +27,7 @@ class CardHolder extends RecyclerView.ViewHolder {
     TextView mAuthorView;
     WordsView mWordsView;
 
-    CardHolder(View item, CardView cardView, TextView headerView, TextView newPosts, TextView newChapters, TextView newContributors, TextView likes, TextView date, TextView title, TextView author, WordsView words) {
+    CardHolder(View item, CardView cardView, TextView headerView, TextView newPosts, TextView newChapters, TextView newContributors, TextView likes, TextView date, TextView title, TextView author, ImageView profilePic, WordsView words) {
         super(item);
         mItemView = item;
         mCardView = cardView;
@@ -38,5 +40,6 @@ class CardHolder extends RecyclerView.ViewHolder {
         mNewPostsView = newPosts;
         mNewChaptersView = newChapters;
         mNewContributorsView = newContributors;
+        mProfilePicView = profilePic;
     }
 }

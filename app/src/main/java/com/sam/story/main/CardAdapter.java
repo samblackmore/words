@@ -1,13 +1,17 @@
 package com.sam.story.main;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 import com.sam.story.R;
 import com.sam.story.models.Notifications;
 import com.sam.story.models.Post;
@@ -28,6 +33,7 @@ import com.sam.story.models.Story;
 import com.sam.story.utils.TextUtil;
 import com.sam.story.utils.TimeAgo;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -125,6 +131,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         TextView dateView = (TextView) v.findViewById(R.id.story_date);
         TextView titleView = (TextView) v.findViewById(R.id.story_title);
         TextView authorView = (TextView) v.findViewById(R.id.story_author);
+        ImageView profilePicView = (ImageView) v.findViewById(R.id.profile_pic);
 
         pink = parent.getResources().getColor(R.color.pink);
         pinkLt = parent.getResources().getColor(R.color.pinkLt);
@@ -143,13 +150,38 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
             wordsView.setVisibility(View.VISIBLE);
             wordsView.setAlpha(0);
 
-            return new CardHolder(v, null, headerView, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, wordsView);
+            return new CardHolder(v, null, headerView, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, profilePicView, wordsView);
         } else {
 
             titleView.setTypeface(Typeface.DEFAULT_BOLD);
             titleView.setTextSize(16);
 
-            return new CardHolder(v, cardView, headerView, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, null);
+            return new CardHolder(v, cardView, headerView, newPostsView, newChaptersView, newContributorsView, likesView, dateView, titleView, authorView, profilePicView, null);
+        }
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
         }
     }
 
@@ -163,6 +195,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
     @Override
     public void onBindViewHolder(final CardHolder holder, int position) {
+
+
 
         ArrayList<Story> updatedStories = new ArrayList<>();
 
@@ -238,6 +272,24 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
 
         if (story != null) {
+
+            database.getReference("users").child(story.getUserId()).child("pic").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    String picURL = dataSnapshot.getValue(String.class);
+
+                    new DownloadImageTask(holder.mProfilePicView)
+                            .execute(picURL);
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
             final String storyId = story.getId();
 
             View.OnClickListener openStory = new View.OnClickListener() {
@@ -284,7 +336,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
                         showNotification(holder.mNewChaptersView, story.getChapterCount(), a.getChapterCount());
                         showNotification(holder.mNewContributorsView, story.getContributorsCount(), a.getContributorsCount());
                     }
-                    holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(0, heart, 0, 0);
+                    holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(heart, 0, 0, 0);
                 }
                 else
                     holder.mLikesView.setCompoundDrawablesWithIntrinsicBounds(heart, 0, 0, 0);

@@ -106,6 +106,13 @@
                 android:layout_below="@id/story_title"
                 />
 
+            <ImageView
+                android:id="@+id/profile_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                />
+
             <com.sam.story.components.WordsView
                 android:id="@+id/words_view"
                 android:layout_marginTop="48dp"

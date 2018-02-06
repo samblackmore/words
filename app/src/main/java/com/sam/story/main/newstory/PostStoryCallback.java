@@ -78,6 +78,8 @@ public class PostStoryCallback implements BadWordsCallback {
         childUpdates.put("/users/" + userId + "/activity/" + newStoryId + "/contributorsCount", 1);
         childUpdates.put("/users/" + userId + "/stories/" + newStoryId, true);
         childUpdates.put("/users/" + userId + "/posts/" + newPostId, true);
+        childUpdates.put("/users/" + userId + "/name", user.getDisplayName());
+        childUpdates.put("/users/" + userId + "/pic", user.getPhotoUrl() == null ? null : user.getPhotoUrl().toString());
 
         database.getReference().updateChildren(childUpdates);
 

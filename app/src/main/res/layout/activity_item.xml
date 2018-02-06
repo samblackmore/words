@@ -80,16 +80,28 @@
 
             <RelativeLayout
                 android:layout_below="@+id/card_notifications"
-                android:padding="24dp"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <ImageView
+                    android:id="@+id/profile_pic"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:layout_marginRight="12dp"
+                    />
+
                 <TextView
                     android:id="@+id/story_likes"
-                    android:drawableBottom="@drawable/ic_heart"
-
-                    android:paddingRight="24dp"
+                    android:drawableRight="@drawable/ic_heart"
+                    android:drawablePadding="4dp"
+                    android:layout_marginRight="24dp"
                     android:text="123"
+                    android:textSize="16sp"
+                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:textAlignment="center"
                     android:layout_width="wrap_content"
@@ -98,7 +110,10 @@
                 <TextView
                     android:id="@+id/story_date"
                     android:text="1h"
+                    android:textColor="@color/gray"
+                    android:padding="6dp"
                     android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -107,7 +122,7 @@
                     android:layout_centerVertical="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/story_likes">
+                    android:layout_toRightOf="@+id/profile_pic">
                     <TextView
                         android:id="@+id/story_title"
                         android:text="Title"
