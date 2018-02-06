@@ -21,8 +21,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.FirebaseDatabase;
 import com.sam.story.R;
 import com.sam.story.story.GoogleSignInFragment;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Parent class for any activity with a Google Sign In button
@@ -34,6 +38,7 @@ public class GoogleSignInActivity extends AppCompatActivity implements View.OnCl
 
     private FirebaseAuth mAuth;
     private GoogleApiClient mGoogleApiClient;
+    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -91,6 +96,14 @@ public class GoogleSignInActivity extends AppCompatActivity implements View.OnCl
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
+
+                            if (user != null) {
+                                Map<String, Object> childUpdates = new HashMap<>();
+                                childUpdates.put("/users/" + user.getUid() + "/name", user.getDisplayName());
+                                childUpdates.put("/users/" + user.getUid() + "/pic", user.getPhotoUrl() == null ? null : user.getPhotoUrl().toString());
+                                database.getReference().updateChildren(childUpdates);
+                            }
+
                             getFrag().onSignInSignOut(user);
                         } else {
                             getFrag().onSignInSignOut(null);
