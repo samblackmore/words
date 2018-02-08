@@ -241,36 +241,33 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
         }
 
         if (activityList) {
-            ArrayList<Object> list = new ArrayList<>();
-            list.add(updatedStories.size() + " updates");
-            list.addAll(updatedStories);
-            list.add(myActiveStories.size() + " my active");
-            list.addAll(myActiveStories);
-            list.add(otherActiveStories.size() + " other active");
-            list.addAll(otherActiveStories);
-            list.add(myFinishedStories.size() + " my finished");
-            list.addAll(myFinishedStories);
-            list.add(otherFinishedStories.size() + " other finished");
-            list.addAll(otherFinishedStories);
+            holder.mHeaderView.setVisibility(View.GONE);
 
-            Object item = list.get(position);
-
-            if (item instanceof String) {
-                holder.mCardView.setVisibility(View.GONE);
+            if (position == 0 && updatedStories.size() > 0) {
                 holder.mHeaderView.setVisibility(View.VISIBLE);
-                holder.mHeaderView.setText((String) item);
+                holder.mHeaderView.setText(updatedStories.size() + " updates");
             }
-            if (item instanceof Story) {
-                holder.mCardView.setVisibility(View.VISIBLE);
-                holder.mHeaderView.setVisibility(View.GONE);
-                story = (Story) item;
+            if (position == updatedStories.size() && myActiveStories.size() > 0) {
+                holder.mHeaderView.setVisibility(View.VISIBLE);
+                holder.mHeaderView.setText(myActiveStories.size() + " my active");
             }
+            if (position == updatedStories.size() + myActiveStories.size() && otherActiveStories.size() > 0) {
+                holder.mHeaderView.setVisibility(View.VISIBLE);
+                holder.mHeaderView.setText(otherActiveStories.size() + " other active");
+            }
+            if (position == updatedStories.size() + myActiveStories.size() + otherActiveStories.size() && myFinishedStories.size() > 0) {
+                holder.mHeaderView.setVisibility(View.VISIBLE);
+                holder.mHeaderView.setText(myFinishedStories.size() + " my finished");
+            }
+            if (position == updatedStories.size() + myActiveStories.size() + otherActiveStories.size() + myFinishedStories.size() && otherFinishedStories.size() > 0) {
+                holder.mHeaderView.setVisibility(View.VISIBLE);
+                holder.mHeaderView.setText(otherFinishedStories.size() + " other finished");
+            }
+        }
 
-        } else if (stories.size() > 0)
+        if (stories.size() > 0)
             story = stories.get(position);
-
-
-
+        
         if (story != null) {
 
             database.getReference("users").child(story.getUserId()).child("pic").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -383,6 +380,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
     @Override
     public int getItemCount() {
-        return stories.size() + (activityList ? 5 : 0);
+        return stories.size();
     }
 }
