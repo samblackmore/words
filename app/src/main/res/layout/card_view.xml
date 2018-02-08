@@ -104,6 +104,7 @@
                 android:orientation="horizontal">
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_pic"
+                    android:src="@mipmap/ic_person_gray"
                     android:layout_marginRight="6dp"
                     android:layout_width="24dp"
                     android:layout_height="24dp"/>

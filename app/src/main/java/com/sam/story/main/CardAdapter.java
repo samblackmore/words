@@ -279,6 +279,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
 
                     String picURL = dataSnapshot.getValue(String.class);
 
+                    if (picURL != null)
                     new DownloadImageTask(holder.mProfilePicView)
                             .execute(picURL);
 
