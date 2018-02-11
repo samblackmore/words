@@ -34,7 +34,8 @@ class StoryAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return pages.size() + 2;
+        // If no pages yet, just show title
+        return pages.size() > 0 ? pages.size() + 2 : 1;
     }
 
     public void update(List<Page> pages) {
