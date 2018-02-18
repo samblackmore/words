@@ -13,26 +13,29 @@ import java.util.List;
 class PostsListener implements ValueEventListener {
 
     private StoryActivity activity;
+    private int chapterSize;
 
-    PostsListener(StoryActivity activity) {
+    PostsListener(StoryActivity activity, int chapterSize) {
         this.activity = activity;
+        this.chapterSize = chapterSize;
     }
 
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
         List<List<Post>> postsByChapter = new ArrayList<>();
+        postsByChapter.add(new ArrayList<Post>());
+        int chapter = 0;
+        int postNo = 0;
 
-        for (DataSnapshot chapterSnapshot : dataSnapshot.getChildren()) {
-
-            List<Post> posts = new ArrayList<>();
-
-            for (DataSnapshot postSnapshot : chapterSnapshot.getChildren()) {
-
-                Post post = postSnapshot.getValue(Post.class);
-                posts.add(post);
+        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+            Post post = postSnapshot.getValue(Post.class);
+            if (postNo == chapterSize) {
+                chapter++;
+                postNo = 0;
+                postsByChapter.add(new ArrayList<Post>());
             }
-
-            postsByChapter.add(posts);
+            postsByChapter.get(chapter).add(post);
+            postNo++;
         }
 
         activity.gotPostsByChapter(postsByChapter);

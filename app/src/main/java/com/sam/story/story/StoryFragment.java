@@ -219,8 +219,8 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
             if (story != null) {
                 rootView.setVisibility(View.VISIBLE);
-                listenRef = database.getReference("poll").child(story.getId()).child(String.valueOf(chapterId));
-                valueEventListener = listenRef.limitToLast(1).addValueEventListener(new PollListener(this));
+                listenRef = database.getReference("poll").child(story.getId());
+                valueEventListener = listenRef.addValueEventListener(new PollListener(this));
             }
 
             FirebaseUser user = auth.getCurrentUser();

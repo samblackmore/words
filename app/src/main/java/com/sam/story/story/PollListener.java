@@ -20,19 +20,10 @@ class PollListener implements ValueEventListener {
 
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
+        Poll poll = dataSnapshot.getValue(Poll.class);
 
-        List<Poll> polls = new ArrayList<>();
-
-        for (DataSnapshot child : dataSnapshot.getChildren()) {
-            Poll poll = child.getValue(Poll.class);
-            if (poll != null) {
-                polls.add(poll);
-            }
-        }
-
-        if (polls.size() > 0) {
-            Poll currentPoll = polls.get(polls.size() - 1);
-            frag.gotPoll(currentPoll);
+        if (poll != null) {
+            frag.gotPoll(poll);
         }
     }
 

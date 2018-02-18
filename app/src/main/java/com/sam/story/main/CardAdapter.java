@@ -343,7 +343,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardHolder> {
             if (!activityList) {
                 holder.mTitleView.setOnClickListener(openStory);
                 holder.mWordsView.setOnClickListener(openStory);
-                database.getReference("posts").child(storyId).child("0").addListenerForSingleValueEvent(new CardPostListener(holder));
+                database.getReference("winners").child(storyId).addListenerForSingleValueEvent(new CardPostListener(holder));
             }
 
             holder.mLikesView.setOnClickListener(new View.OnClickListener() {

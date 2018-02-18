@@ -86,12 +86,12 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
         if (!story.isFinished())
             showFab(true);
 
-        DatabaseReference postsRef = database.getReference("posts").child(storyId);
+        DatabaseReference postsRef = database.getReference("winners").child(storyId);
 
         if (postsListener != null)
             postsRef.removeEventListener(postsListener);
 
-        postsListener = postsRef.addValueEventListener(new PostsListener(this));
+        postsListener = postsRef.addValueEventListener(new PostsListener(this, story.getChapterSize()));
 
         mStoryAdapter.notifyDataSetChanged();
     }
