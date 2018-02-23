@@ -56,7 +56,8 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
         rootWordsView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                tryCalcPages();
+                if (oldLeft == 0 && oldRight == 0 && oldTop == 0 && oldBottom == 0)
+                    tryCalcPages();
             }
         });
 
