@@ -2,6 +2,20 @@
 
 const functions = require('firebase-functions');
 
+exports.startRound = functions.database.ref('/posts/{storyId}/{roundId}')
+.onCreate(event => {
+    const storyId = event.params.storyId;
+    const roundId = event.params.roundId;
+    const pollRef = event.data.ref.root.child('poll').child(storyId);
+
+    console.log('got new round ' + roundId + ' in story ' + storyId)
+
+    pollRef.update({
+      endTime: Date.now() + 24 * 60 * 60 * 1000,
+      round: parseInt(roundId)
+      })
+})
+
 // Listen for vote finish becoming true then create next vote
 
 exports.finishUpdated = functions.database.ref('/poll/{storyId}/{chapterId}/{pollId}/finished')
