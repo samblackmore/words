@@ -66,6 +66,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     private Story story;
     private Poll currentPoll;
     private int chapterId;
+    private boolean alreadyPosted = false;
 
     // Fragment arguments
     public static final String ARG_PAGE_NUMBER = "page_number";
@@ -287,6 +288,17 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     }
 
     public void gotPosts(List<Post> posts) {
+        alreadyPosted = false;
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null) {
+            for (Post post : posts) {
+                if (post.getUserId().equals(user.getUid())) {
+                    alreadyPosted = true;
+                    onSignInSignOut(user);
+                }
+            }
+        }
+
         if (story != null && currentPoll != null) {
             RecyclerView.Adapter mAdapter = new VoteAdapter(posts);
             mRecyclerView.setAdapter(mAdapter);
@@ -444,23 +456,13 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
         if (user != null) {
             if (wonLastRound(user))
                 showBanner(R.string.you_won_last_round, R.drawable.ic_cake);
-            else if (alreadyPosted(user))
+            else if (alreadyPosted)
                 showBanner(R.string.submitted, R.drawable.ic_check_box);
         }
     }
 
     private boolean storyFinished() {
         return story != null && story.isFinished();
-    }
-
-    private boolean alreadyPosted(FirebaseUser user) {
-        if (currentPoll != null) {
-            for (Post post : currentPoll.getPosts()) {
-                if (post.getUserId().equals(user.getUid()))
-                    return true;
-            }
-        }
-        return false;
     }
 
     private boolean wonLastRound(FirebaseUser user) {

@@ -11,7 +11,6 @@ public class Poll {
     private long timeCreated;
     private Long endTime = null;
     private boolean finished = false;
-    private List<Post> posts = new ArrayList<>();
 
     public Poll() {
         // For firebase
@@ -30,10 +29,6 @@ public class Poll {
         return endTime;
     }
 
-    public List<Post> getPosts() {
-        return posts;
-    }
-
     public int getRound() {
         return round;
     }
@@ -46,11 +41,4 @@ public class Poll {
         this.finished = finished;
     }
 
-    public void setPosts(HashMap<String, Post> map) {
-        List<Post> posts = new ArrayList<>();
-        for (Map.Entry<String, Post> mapEntry : map.entrySet()) {
-            posts.add(mapEntry.getValue());
-        }
-        this.posts = posts;
-    }
 }
