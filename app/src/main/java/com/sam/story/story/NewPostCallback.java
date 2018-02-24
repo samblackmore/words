@@ -42,11 +42,15 @@ public class NewPostCallback implements BadWordsCallback {
     @Override
     public void allWordsClean() {
 
+        DatabaseReference storyRef = database.getReference("stories").child(storyId);
         DatabaseReference newPostRef = database.getReference("/posts/" + storyId + "/" + roundId).push();
+
         newPost.setPath(newPostRef.toString());
         newPostRef.setValue(newPost);
 
-        database.getReference("stories").child(storyId).runTransaction(new Transaction.Handler() {
+        storyRef.child("dateUpdated").setValue(System.currentTimeMillis());
+
+        storyRef.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 Story s = mutableData.getValue(Story.class);
