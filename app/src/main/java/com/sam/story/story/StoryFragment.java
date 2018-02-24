@@ -356,16 +356,6 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
     private void timerFinished() {
         timerText.setText("Voting finished!");
-
-        // To know timer finished, we first need to have retrieved end time from poll
-        // We can only get poll after getting story therefore story cannot be null
-
-        database.getReference("poll")
-                .child(story.getId())
-                .child(String.valueOf(chapterId))
-                .child(String.valueOf(currentPoll.getRound()))
-                .child("finished")
-                .setValue(true);
     }
 
     @Override
