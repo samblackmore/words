@@ -76,7 +76,9 @@ exports.finishUpdated = functions.database.ref('/poll/{storyId}/finished')
 
                         // Start new round
                         pollRef.update({
-                            round: round + 1
+                            round: round + 1,
+                            endTime: null,
+                            finished: null
                         })
                     } else {
 
@@ -107,7 +109,9 @@ exports.finishUpdated = functions.database.ref('/poll/{storyId}/finished')
 
                             // Start new round
                             pollRef.update({
-                                round: round + 1
+                                round: round + 1,
+                                endTime: null,
+                                finished: null
                             })
                         }
                     }
