@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -14,11 +15,18 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.sam.story.R;
 import com.sam.story.components.SimpleDialog;
 import com.sam.story.main.newstory.NewStoryFragment;
 import com.sam.story.settings.SettingsActivity;
+import com.sam.story.utils.DownloadImageTask;
 import com.sam.story.utils.GoogleSignInActivity;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends GoogleSignInActivity {
 
@@ -27,6 +35,9 @@ public class MainActivity extends GoogleSignInActivity {
     private FloatingActionButton fab;
     private ViewPager viewPager;
     private boolean reachedStoryLimit = false;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private CircleImageView profilePic;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,9 +78,19 @@ public class MainActivity extends GoogleSignInActivity {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
+        MenuItem profile = menu.findItem(R.id.action_profile);
+        MenuItem signOut = menu.findItem(R.id.action_sign_out);
+
         if (currentUser == null) {
-            MenuItem signOut = menu.findItem(R.id.action_sign_out);
             signOut.setVisible(false);
+            profile.setVisible(false);
+            profilePic.setVisibility(View.GONE);
+        } else {
+            profile.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_launcher));
+            profile.setEnabled(false);
+            profile.setTitle(currentUser.getDisplayName());
+            profilePic.setVisibility(View.VISIBLE);
+            getProfilePic();
         }
 
         return true;
@@ -114,5 +135,31 @@ public class MainActivity extends GoogleSignInActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        profilePic = (CircleImageView) findViewById(R.id.profile_pic);
+        getProfilePic();
+    }
+
+    private void getProfilePic() {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null) {
+            profilePic.setVisibility(View.VISIBLE);
+            database.getReference("users").child(user.getUid()).child("pic").addListenerForSingleValueEvent(new ProfilePicGetter());
+        }
+    }
+
+    class ProfilePicGetter implements ValueEventListener {
+
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            String picURL = dataSnapshot.getValue(String.class);
+            if (picURL != null)
+                new DownloadImageTask(profilePic).execute(picURL);
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
     }
 }
