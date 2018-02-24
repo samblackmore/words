@@ -9,7 +9,7 @@ public class Poll {
 
     private int round;
     private long timeCreated;
-    private Long timeEnding = null;
+    private Long endTime = null;
     private boolean finished = false;
     private List<Post> posts = new ArrayList<>();
 
@@ -26,8 +26,8 @@ public class Poll {
         return timeCreated;
     }
 
-    public Long getTimeEnding() {
-        return timeEnding;
+    public Long getEndTime() {
+        return endTime;
     }
 
     public List<Post> getPosts() {

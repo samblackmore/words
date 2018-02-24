@@ -71,8 +71,10 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     public static final String ARG_PAGE_NUMBER = "page_number";
     public static final String ARG_PAGE_COUNT = "page_count";
     private PostValidation formValidation;
-    private ValueEventListener valueEventListener;
-    private DatabaseReference listenRef;
+    private ValueEventListener listenerPoll;
+    private ValueEventListener listenerPosts;
+    private DatabaseReference listenRefPoll;
+    private DatabaseReference listenRefPosts;
     private RelativeLayout pollRoot;
     private LinearLayout theEndContainer;
     private TextView theEnd;
@@ -219,8 +221,8 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
 
             if (story != null) {
                 rootView.setVisibility(View.VISIBLE);
-                listenRef = database.getReference("poll").child(story.getId());
-                valueEventListener = listenRef.addValueEventListener(new PollListener(this));
+                listenRefPoll = database.getReference("poll").child(story.getId());
+                listenerPoll = listenRefPoll.addValueEventListener(new PollListener(this));
             }
 
             FirebaseUser user = auth.getCurrentUser();
@@ -251,8 +253,10 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (listenRef != null)
-            listenRef.removeEventListener(valueEventListener);
+        if (listenRefPoll != null)
+            listenRefPoll.removeEventListener(listenerPoll);
+        if (listenRefPosts != null)
+            listenRefPosts.removeEventListener(listenerPosts);
     }
 
     public void gotPoll(Poll poll) {
@@ -273,16 +277,20 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
             }
 
             currentPoll = poll;
-            gotPosts(poll.getPosts());
-            gotTimer(poll.getTimeEnding());
+            gotTimer(poll.getEndTime());
+
+            listenRefPosts = database.getReference("posts").child(story.getId()).child(String.valueOf(poll.getRound()));
+            listenerPosts = listenRefPosts.addValueEventListener(new PostsListener(this));
 
             onSignInSignOut(auth.getCurrentUser());
         }
     }
 
     public void gotPosts(List<Post> posts) {
-        RecyclerView.Adapter mAdapter = new VoteAdapter(posts);
-        mRecyclerView.setAdapter(mAdapter);
+        if (story != null && currentPoll != null) {
+            RecyclerView.Adapter mAdapter = new VoteAdapter(posts);
+            mRecyclerView.setAdapter(mAdapter);
+        }
     }
 
     public void gotTimer(Long timeout) {
@@ -411,7 +419,7 @@ public class StoryFragment extends Fragment implements GoogleSignInFragment, Vie
                     String message = input.replaceAll("↩\n", "\n\t");
                     Post newPost = new Post(story.getId(), user.getUid(), user.getDisplayName(), message);
 
-                    NewPostCallback newPostCallback = new NewPostCallback(activity, newPost, story.getId(), String.valueOf(chapterId), String.valueOf(currentPoll.getRound()));
+                    NewPostCallback newPostCallback = new NewPostCallback(activity, newPost, story.getId(), String.valueOf(currentPoll.getRound()));
                     BadWordsCheck badWordsCheck = new BadWordsCheck(input, newPostCallback);
                     badWordsCheck.execute();
 

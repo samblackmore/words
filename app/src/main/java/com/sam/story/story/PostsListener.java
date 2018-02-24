@@ -12,37 +12,26 @@ import java.util.List;
 
 class PostsListener implements ValueEventListener {
 
-    private StoryActivity activity;
-    private int chapterSize;
+    private StoryFragment fragment;
 
-    PostsListener(StoryActivity activity, int chapterSize) {
-        this.activity = activity;
-        this.chapterSize = chapterSize;
+    PostsListener(StoryFragment fragment) {
+        this.fragment = fragment;
     }
 
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
-        List<List<Post>> postsByChapter = new ArrayList<>();
-        postsByChapter.add(new ArrayList<Post>());
-        int chapter = 0;
-        int postNo = 0;
+        List<Post> posts = new ArrayList<>();
 
         for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
             Post post = postSnapshot.getValue(Post.class);
-            if (postNo == chapterSize) {
-                chapter++;
-                postNo = 0;
-                postsByChapter.add(new ArrayList<Post>());
-            }
-            postsByChapter.get(chapter).add(post);
-            postNo++;
+            posts.add(post);
         }
 
-        activity.gotPostsByChapter(postsByChapter);
+        fragment.gotPosts(posts);
     }
 
     @Override
     public void onCancelled(DatabaseError databaseError) {
-        Toast.makeText(activity, "Failed to get story! " + databaseError.toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(fragment.getContext(), "Failed to get posts for round! " + databaseError.toString(), Toast.LENGTH_SHORT).show();
     }
 }

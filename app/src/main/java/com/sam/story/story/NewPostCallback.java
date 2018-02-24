@@ -25,40 +25,27 @@ import java.util.Map;
 
 public class NewPostCallback implements BadWordsCallback {
 
-    private final int COUNTDOWN_LENGTH = 5 * 60 * 1000;
-    //private final int COUNTDOWN_LENGTH = 24 * 60 * 60 * 1000;
-    //private final int COUNTDOWN_LENGTH = 30 * 1000;
-
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private StoryActivity storyActivity;
     private Post newPost;
     private String storyId;
-    private String chapterId;
-    private String pollId;
+    private String roundId;
 
-    public NewPostCallback(StoryActivity storyActivity, Post newPost, String storyId, String chapterId, String pollId) {
+    public NewPostCallback(StoryActivity storyActivity, Post newPost, String storyId, String roundId) {
         this.storyActivity = storyActivity;
         this.newPost = newPost;
         this.storyId = storyId;
-        this.chapterId = chapterId;
-        this.pollId = pollId;
+        this.roundId = roundId;
     }
 
     @Override
     public void allWordsClean() {
 
-        String pollPath = "/poll/" + storyId + "/" + chapterId + "/" + pollId;
-        DatabaseReference pollRef = database.getReference(pollPath);
-        DatabaseReference newPostRef = pollRef.child("posts").push();
+        DatabaseReference newPostRef = database.getReference("/posts/" + storyId + "/" + roundId).push();
         newPost.setPath(newPostRef.toString());
-        String postId = newPostRef.getKey();
+        newPostRef.setValue(newPost);
 
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(pollPath + "/timeEnding", System.currentTimeMillis() + COUNTDOWN_LENGTH);
-        childUpdates.put(pollPath + "/posts/" + postId, newPost);
-
-        database.getReference().updateChildren(childUpdates);
         database.getReference("stories").child(storyId).runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {

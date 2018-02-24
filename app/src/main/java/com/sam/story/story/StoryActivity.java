@@ -45,7 +45,7 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
     private FloatingActionButton fab;
     private String storyId;
     private List<List<Post>> postsByChapter;
-    private ValueEventListener postsListener;
+    private ValueEventListener winnersListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,10 +89,10 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
 
         DatabaseReference postsRef = database.getReference("winners").child(storyId);
 
-        if (postsListener != null)
-            postsRef.removeEventListener(postsListener);
+        if (winnersListener != null)
+            postsRef.removeEventListener(winnersListener);
 
-        postsListener = postsRef.addValueEventListener(new PostsListener(this, story.getChapterSize()));
+        winnersListener = postsRef.addValueEventListener(new WinnersListener(this, story.getChapterSize()));
 
         mStoryAdapter.notifyDataSetChanged();
     }
@@ -100,7 +100,7 @@ public class StoryActivity extends GoogleSignInActivity implements View.OnClickL
     /**
      * Callback for {@link StoryListener} once current story retrieved from Firebase
      */
-    public void gotPostsByChapter(List<List<Post>> postsByChapter) {
+    public void gotWinnersByChapter(List<List<Post>> postsByChapter) {
 
         this.postsByChapter = postsByChapter;
 
